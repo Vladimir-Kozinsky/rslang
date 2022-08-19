@@ -1,0 +1,13 @@
+{
+  "tabWidth": 2,
+  "endOfLine": "lf",
+  "overrides": [
+    {
+      "files": ["*.ts", "*.js", "*.cjs"],
+      "options": {
+        "trailingComma": "es5",
+        "singleQuote": true
+      }
+    }
+  ]
+}

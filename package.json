@@ -6,7 +6,8 @@
   "scripts": {
     "build": "webpack --mode production",
     "dev": "webpack-dev-server --mode development --open",
-    "lint": "eslint --ext .ts"
+    "lint": "eslint --ext .ts",
+    "prettier": "prettier --write ."
   },
   "repository": {
     "type": "git",
@@ -26,6 +27,7 @@
     "json-loader": "^0.5.7",
     "json-minimizer-webpack-plugin": "^4.0.0",
     "mini-css-extract-plugin": "^2.6.1",
+    "prettier": "^2.7.1",
     "sass": "^1.54.0",
     "sass-loader": "^13.0.2",
     "style-loader": "^3.3.1",
