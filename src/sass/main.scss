@@ -1,7 +1,8 @@
+@import "./abstracts/variables";
+
+@import "./base/reset";
+@import "./base/typography";
+
 @import "./components/container";
 
-body {
-    margin: 0;
-    padding: 0;
-    background-color: rgba(223, 225, 238, 0.8);
-}
+@import "./layout/body";
