@@ -39,7 +39,7 @@ export default class MainPageView extends ElementCreator {
               <a href="#about-app" class="menu-item__link">О ПРИЛОЖЕНИИ</a>
             </li>
             <li class="menu-item">
-              <a href="#about-team" class="menu-item__link">НАША КОМАНДА</a>
+              <a href="#team" class="menu-item__link">НАША КОМАНДА</a>
             </li>
             <li class="menu-item">
               <a href="" class="menu-item__link" data-page="book">УЧЕБНИК</a>
@@ -72,7 +72,7 @@ export default class MainPageView extends ElementCreator {
     const { bodyInnerWrapper } = this.elements.htmlElements;
 
     const main = this.createElement('main', bodyInnerWrapper, { class: 'main' });
-    const sectionWelcome = this.createElement('section', main, { class: 'section-about-app' });
+    const sectionWelcome = this.createElement('section', main, { class: 'section-welcome' });
     const sectionWelcomeDescription = this.createElement('div', sectionWelcome, { class: 'section-welcome__description' });
     const sectionWelcomeTitle = this.createElement(
       'h2',
@@ -170,10 +170,10 @@ export default class MainPageView extends ElementCreator {
             </li>
             `
     );
-    const sectionAboutAppAdditionalInfo = this.createElement('p', sectionAboutApp, { class: 'section-about-app__additional-info' });
+    const sectionAboutAppAdditionalInfo = this.createElement('p', sectionAboutApp, { class: 'section-about-app__additional-info' }, 'Для получения всех возможностей необходимо авторизоваться');
 
-    const sectionTeam = this.createElement('section', main, { class: 'section-about-app' });
-    const sectionTeamTitle = this.createElement('section', sectionTeam, { class: 'section-about-app' }, '< НАША КОМАНДА >');
+    const sectionTeam = this.createElement('section', main, { class: 'section-team' });
+    const sectionTeamTitle = this.createElement('h2', sectionTeam, { id: 'team', lass: 'section-title' }, '< НАША КОМАНДА >');
     const developersList = this.createElement('ul', sectionTeam, { class: 'developers-list' });
     developersList.insertAdjacentHTML(
       'afterbegin',
@@ -182,8 +182,7 @@ export default class MainPageView extends ElementCreator {
               <div class="developers-item__image"></div>
               <h3 class="developers-item__name">Имя + фамилия</h3>
               <p class="developers-item__text">
-                Следите за своим прогрессом в освоении языка в реальном времени. 
-                Доступны результаты как и за день, так и в долгосрочной перспективе 
+                Вклад в проект
               </p>
             </li>
 
@@ -191,8 +190,7 @@ export default class MainPageView extends ElementCreator {
               <div class="developers-item__image"></div>
               <h3 class="developers-item__name">Имя + фамилия</h3>
               <p class="developers-item__text">
-                Следите за своим прогрессом в освоении языка в реальном времени. 
-                Доступны результаты как и за день, так и в долгосрочной перспективе 
+                Вклад в проект
               </p>
             </li>
 
@@ -200,8 +198,7 @@ export default class MainPageView extends ElementCreator {
               <div class="developers-item__image"></div>
               <h3 class="developers-item__name">Имя + фамилия</h3>
               <p class="developers-item__text">
-                Следите за своим прогрессом в освоении языка в реальном времени. 
-                Доступны результаты как и за день, так и в долгосрочной перспективе 
+                Вклад в проект
               </p>
             </li>
             `
