@@ -107,7 +107,7 @@ export default class MainPageView extends ElementCreator {
       { id: 'about-app', class: 'section-title' },
       '< ВОЗМОЖНОСТИ ПРИЛОЖЕНИЯ >'
     );
-    const sectionAboutAppDescriptionList = this.createElement('ul', sectionAboutApp, { class: 'decriptions-list' });
+    const sectionAboutAppDescriptionList = this.createElement('ul', sectionAboutApp, { class: 'descriptions-list' });
     sectionAboutAppDescriptionList.insertAdjacentHTML(
       'afterbegin',
       `
