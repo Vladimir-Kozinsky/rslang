@@ -1,0 +1,10 @@
+@import "./components/container";
+@import "./components/mini-games";
+@import "./components/_sprint";
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: rgba(223, 225, 238, 0.8);
+  font-family: "Poppins", sans-serif;
+}

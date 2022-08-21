@@ -1,0 +1,36 @@
+.container {
+  margin: 0 auto;
+  display: flex;
+  height: 100vh;
+  background-color: rgba(246, 245, 245, 1);
+  border-radius: 20px;
+}
+
+.container__menu {
+  width: 320px;
+  background-color: rgba(60, 54, 90, 1);
+  border-radius: 20px;
+}
+
+.container__content {
+  flex-grow: 1;
+}
+
+.nav__item {
+  margin-top: 20px;
+  list-style-type: none;
+  display: block;
+  color: #ffffff;
+  position: relative;
+
+  a {
+    display: block;
+    height: 60px;
+    border-radius: 50px 0 0 50px;
+    background-color: rgba(60, 54, 90, 1);
+    text-decoration: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}
