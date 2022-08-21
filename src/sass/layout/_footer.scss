@@ -2,7 +2,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  
+
   padding: 25px 100px;
 
   .footer__copyright {
@@ -17,7 +17,7 @@
     .developers-social-item .developers-social-item__link {
       color: $color-text-dark;
 
-      transition: .2s;
+      transition: 0.2s;
 
       &:hover {
         color: $color-active-link;

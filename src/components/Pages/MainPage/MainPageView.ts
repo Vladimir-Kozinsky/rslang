@@ -170,7 +170,12 @@ export default class MainPageView extends ElementCreator {
             </li>
             `
     );
-    const sectionAboutAppAdditionalInfo = this.createElement('p', sectionAboutApp, { class: 'section-about-app__additional-info' }, 'Для получения всех возможностей необходимо авторизоваться');
+    const sectionAboutAppAdditionalInfo = this.createElement(
+      'p',
+      sectionAboutApp,
+      { class: 'section-about-app__additional-info' },
+      'Для получения всех возможностей необходимо авторизоваться'
+    );
 
     const sectionTeam = this.createElement('section', main, { class: 'section-team' });
     const sectionTeamTitle = this.createElement('h2', sectionTeam, { id: 'team', lass: 'section-title' }, '< НАША КОМАНДА >');

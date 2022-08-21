@@ -22,13 +22,11 @@
   }
 
   .menu {
-
     .menu-list {
       display: flex;
       gap: 10px;
 
       .menu-item {
-        
         .menu-item__link {
           position: relative;
 
@@ -37,20 +35,20 @@
           font-size: 20px;
           color: $color-text-dark;
 
-          transition: .2s;
+          transition: 0.2s;
 
           &::after,
           &::before {
-            content: '';
+            content: "";
             position: absolute;
             left: 50%;
             top: 36px;
-            
+
             width: 0%;
             height: 2px;
 
             background-color: $color-active-link;
-            transition: .3s;
+            transition: 0.3s;
           }
 
           &:hover {
@@ -66,8 +64,6 @@
               width: 45%;
             }
           }
-
-          
         }
       }
     }
@@ -98,7 +94,7 @@
       background: transparent;
 
       cursor: pointer;
-      transition: .2s;
+      transition: 0.2s;
 
       &:hover {
         color: $color-text-light;
