@@ -5,6 +5,7 @@ export default class MainPageView extends ElementCreator {
     this.drawBodyWrapper();
     this.drawHeader();
     this.drawMain();
+    this.drawFooter();
   }
 
   drawBodyWrapper(): void {
@@ -204,6 +205,36 @@ export default class MainPageView extends ElementCreator {
               </p>
             </li>
             `
+    );
+  }
+
+  drawFooter(): void {
+    const { bodyInnerWrapper } = this.elements.htmlElements;
+
+    const footer = this.createElement('footer', bodyInnerWrapper, { class: 'footer' });
+    const footerCopyright = this.createElement('span', footer, { class: 'footer__copyright' }, '© 2022');
+    const footerDevelopersSocialList = this.createElement('ul', footer, { class: 'developers-social-list' });
+    footerDevelopersSocialList.insertAdjacentHTML(
+      'afterbegin',
+      `
+          <li class="developers-social-item">
+            <a href="https://github.com/Vladimir-Kozinsky" class="developers-social-item__link">Vladimir-Kozinsky</a>
+          </li>
+
+          <li class="developers-social-item">
+            <a href="https://github.com/ShahzodK" class="developers-social-item__link">ShahzodK</a>
+          </li>
+
+          <li class="developers-social-item">
+            <a href="https://github.com/ScaronTr" class="developers-social-item__link">ScaronTr</a>
+          </li>
+          `
+    );
+    const footerSchoolLink = this.createElement('a', footer, { href: 'https://rs.school/js/', class: 'school-link' });
+    const schoolIcon = this.createElementSVG(
+      footerSchoolLink,
+      { class: 'school-link__icon-wrapper' },
+      { href: './assets/img/svg/sprite.svg#rss-logo', class: 'school-link__icon' }
     );
   }
 }
