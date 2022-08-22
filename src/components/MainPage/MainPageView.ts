@@ -1,4 +1,4 @@
-import ElementCreator from '../../Utils/ElementCreator';
+import ElementCreator from '../Utils/ElementCreator';
 
 export default class MainPageView extends ElementCreator {
   drawStartScreen(): void {

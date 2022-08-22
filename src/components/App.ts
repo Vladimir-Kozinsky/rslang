@@ -1,5 +1,5 @@
 import Container from './Container/Container';
-import MainPageController from './Pages/MainPage/MainPageController';
+import MainPageController from './MainPage/MainPageController';
 
 class App {
   mainPageController: MainPageController;
