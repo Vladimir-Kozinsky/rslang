@@ -1,3 +1,5 @@
+import Sprint from './Sprint';
+
 class MiniGames {
   createCarts(
     imgName: string,
@@ -67,14 +69,16 @@ class MiniGames {
             cartContainer.remove();
             this.createStartPage(
               'Спринт',
-              'Спринт - Выберите правильный ли перевод или нет.'
+              'Спринт - Выберите правильный ли перевод или нет.',
+              'Спринт'
             );
             break;
           case 'audioChallenge':
             cartContainer.remove();
             this.createStartPage(
               'Аудиовызов',
-              'Аудиовызов - Из 5 вариантой выберите правильный перевод озвученного слова.'
+              'Аудиовызов - Из 5 вариантой выберите правильный перевод озвученного слова.',
+              'Аудиовызов'
             );
             break;
           default:
@@ -84,10 +88,12 @@ class MiniGames {
     });
   }
 
-  createStartPage(title: string, desc: string) {
+  createStartPage(title: string, desc: string, gameName: string) {
     const content = document.querySelector(
       '.container__content'
     ) as HTMLDivElement;
+
+    const sprint = new Sprint();
 
     const startPageContainer = document.createElement('div') as HTMLDivElement;
     startPageContainer.classList.add('start-page__container');
@@ -129,6 +135,22 @@ class MiniGames {
 
     const startBtn = document.createElement('button') as HTMLButtonElement;
     startBtn.textContent = 'Начать';
+    startBtn.dataset.gameName = gameName;
+
+    startBtn.addEventListener('click', () => {
+      switch (startBtn.dataset.gameName) {
+        case 'Аудиовызов':
+          break;
+        case 'Спринт':
+          content.innerHTML = '';
+          sprint.createPage();
+          sprint.appendWordsToPage(selectDifficulty.value);
+          break;
+
+        default:
+          break;
+      }
+    });
 
     content.append(startPageContainer);
     startPageContainer.append(backIcon);

@@ -10,7 +10,6 @@ class App {
 
   drowContainer() {
     const body = document.querySelector('body') as HTMLBodyElement;
-    const sprint = new Sprint();
     const container = new Container();
     body.append(container.createContainer());
   }
@@ -20,8 +19,9 @@ class App {
     const miniGames = new MiniGames();
     nav?.addEventListener('click', (e: Event) => {
       const target = e.target as HTMLLinkElement;
-      const content = document.querySelector('.container__content') as HTMLDivElement;
-      console.log(target.textContent);
+      const content = document.querySelector(
+        '.container__content'
+      ) as HTMLDivElement;
       switch (target.textContent) {
         case 'Личный кабинет':
           
