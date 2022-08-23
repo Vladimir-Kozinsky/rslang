@@ -87,7 +87,54 @@ class Sprint {
     currentWordContainer.append(falseBtn);
     currentWordContainer.append(trueBtn);
   }
+  
+  async createWordsForGame(difficulty: string) {
+    const api = new GamesApi();
+    const randomPage = Math.floor(Math.random() * 30).toString();
+    const wordsArr: Word[] = await api.getWords(difficulty, randomPage);
+    const wrongTranslatedWordsIndexes: number[] = [];
+    function shuffleArr(array: Word[]) {
+      let currentIndex = array.length;
+      let randomIndex;
+      while (currentIndex !== 0) {
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex -= 1;
 
+        [array[currentIndex], array[randomIndex]] = [
+          array[randomIndex],
+          array[currentIndex],
+        ];
+      }
+
+      return array;
+    }
+    shuffleArr(wordsArr);
+
+    const clonedArr: Word[] = JSON.parse(JSON.stringify(wordsArr));
+
+    function shuffleTranslatedWords(arr: Word[]) {
+      arr.forEach((item: Word) => {
+        const random = Math.random();
+        const randomIndex = Math.floor(Math.random() * arr.length);
+        if (random > 0.7) {
+          item.wordTranslate = arr[randomIndex].wordTranslate;
+        }
+      });
+    }
+    shuffleTranslatedWords(clonedArr);
+
+    function findWrongTranslates(arr: Word[], shuffledArr: Word[]) {
+      arr.forEach((item: Word, index: number) => {
+        if (item.wordTranslate !== shuffledArr[index].wordTranslate) {
+          wrongTranslatedWordsIndexes.push(index);
+        }
+      });
+      return wrongTranslatedWordsIndexes;
+    }
+    findWrongTranslates(wordsArr, clonedArr);
+
+    return { wordsArr, clonedArr, wrongTranslatedWordsIndexes };
+  }
   }
 
 export default Sprint;
