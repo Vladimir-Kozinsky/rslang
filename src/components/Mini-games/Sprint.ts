@@ -87,7 +87,7 @@ class Sprint {
     currentWordContainer.append(falseBtn);
     currentWordContainer.append(trueBtn);
   }
-  
+
   async createWordsForGame(difficulty: string) {
     const api = new GamesApi();
     const randomPage = Math.floor(Math.random() * 30).toString();
@@ -134,6 +134,104 @@ class Sprint {
     findWrongTranslates(wordsArr, clonedArr);
 
     return { wordsArr, clonedArr, wrongTranslatedWordsIndexes };
+  }
+  
+  async appendWordsToPage(difficulty: string) {
+    const wordContainer = document.querySelector(
+      '.sprint-current-word__container'
+    );
+    const word = document.querySelector('.sprint-word') as HTMLHeadingElement;
+    const translatedWord = document.querySelector(
+      '.sprint-translated-word'
+    ) as HTMLHeadingElement;
+    const wordAudio = document.querySelector('.word-audio');
+    const wordAudioExample = document.querySelector('.word-audio-example');
+    const points = document.querySelector(
+      '.sprint-statistics-point'
+    ) as HTMLSpanElement;
+    const time = document.querySelector(
+      '.sprint-statistics-time'
+    ) as HTMLSpanElement;
+    const createdWords = await this.createWordsForGame(difficulty);
+    const {clonedArr} = createdWords;
+    const {wordsArr} = createdWords;
+    const correctAnswers: { word: string; wordTranslate: string }[] = [];
+    const inCorrectAnswers: { word: string; wordTranslate: string }[] = [];
+    const wrongTranslatedWordIndexes: number[] =
+      createdWords.wrongTranslatedWordsIndexes;
+    let currentIndex: number = 0;
+    const currentWord: string = clonedArr[currentIndex].word;
+    word.textContent = currentWord;
+    translatedWord.textContent = clonedArr[currentIndex].wordTranslate;
+    wordAudio!.innerHTML = `
+    <source src="https://react-learnwords-shahzod.herokuapp.com/${clonedArr[currentIndex].audio}" type="audio/mpeg">
+   `;
+    wordAudioExample!.innerHTML = `
+    <source src="https://react-learnwords-shahzod.herokuapp.com/${clonedArr[currentIndex].audioExample}" type="audio/mpeg">
+   `;
+
+    const timeToStop = setInterval(() => {
+      time.textContent = (+time.textContent! - 1).toString();
+      if (time.textContent === '0') {
+        clearInterval(timeToStop);
+        this.createResultsPage(+points.textContent!, correctAnswers, inCorrectAnswers);
+      }
+    }, 1000);
+    timeToStop;
+
+    function findTranslate(origWord: string) {
+     for (let i = 0; i < wordsArr.length; i += 1) {
+      if(wordsArr[i].word === origWord) {
+        return wordsArr[i].wordTranslate;
+      }
+     }
+    }
+    wordContainer?.addEventListener('click', (e: Event) => {
+      const target = e.target as HTMLButtonElement;
+      if(currentIndex > 19) {
+        clearInterval(timeToStop);
+        this.createResultsPage(+points.textContent!, correctAnswers, inCorrectAnswers);
+      }
+      if (target.classList.contains('sprint-button__true')) {
+        if (wrongTranslatedWordIndexes.includes(currentIndex)) {
+          currentIndex += 1;
+          word.textContent = clonedArr[currentIndex].word;
+          translatedWord.textContent = clonedArr[currentIndex].wordTranslate;
+          inCorrectAnswers.push({
+            word: word.textContent!,
+            wordTranslate: findTranslate(word.textContent!)!
+          })
+        } else {
+          correctAnswers.push({
+            word: word.textContent!,
+            wordTranslate: translatedWord.textContent!,
+          });
+          currentIndex += 1;
+          points.textContent = (+points.textContent! + 20).toString();
+          word.textContent = clonedArr[currentIndex].word;
+          translatedWord.textContent = clonedArr[currentIndex].wordTranslate;
+        }
+      } else if (target.classList.contains('sprint-button__false')) {
+        if (wrongTranslatedWordIndexes.includes(currentIndex)) {
+          correctAnswers.push({
+            word: word.textContent!,
+            wordTranslate: findTranslate(word.textContent!)!
+          })
+          currentIndex += 1;
+          points.textContent = (+points.textContent! + 20).toString();
+          word.textContent = clonedArr[currentIndex].word;
+          translatedWord.textContent = clonedArr[currentIndex].wordTranslate;
+        } else {
+          inCorrectAnswers.push({
+            word: word.textContent!,
+            wordTranslate: translatedWord.textContent!,
+          });
+          currentIndex += 1;
+          word.textContent = clonedArr[currentIndex].word;
+          translatedWord.textContent = clonedArr[currentIndex].wordTranslate;
+        }
+      }
+    });
   }
   }
 
