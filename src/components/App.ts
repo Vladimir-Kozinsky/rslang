@@ -1,17 +1,29 @@
-import Container from "./Container/Container";
+import Container from './Container/Container';
+import MainPageController from './MainPage/MainPageController';
 
 class App {
-    startApp() {
-        console.log('start app');
-        this.drowContainer();
-    }
-    drowContainer() {
-        const body = document.querySelector('body') as HTMLBodyElement;
+  mainPageController: MainPageController;
 
-        const container = new Container();
+  constructor() {
+    this.mainPageController = new MainPageController();
+  }
 
-        body.append(container.createContainer());
-    }
+  startApp() {
+    console.log('start app');
+    this.drawMainPage();
+  }
+
+  drowContainer() {
+    const body = document.querySelector('body') as HTMLBodyElement;
+
+    const container = new Container();
+
+    body.append(container.createContainer());
+  }
+
+  drawMainPage(): void {
+    this.mainPageController.getStartScreen();
+  }
 }
 
 export default App;

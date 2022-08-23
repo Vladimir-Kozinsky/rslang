@@ -14,8 +14,8 @@
 }
 
 .container__content {
-    height: 1080px;
-    flex-grow: 1;
+  height: 1080px;
+  flex-grow: 1;
 }
 
 .logo {
@@ -28,12 +28,22 @@
 }
 
 .nav__item {
-    margin-top: 20px;
-    list-style-type: none;
-    display: block;
-    color: #ffffff;
-    position: relative;
+  margin-top: 20px;
+  list-style-type: none;
+  display: block;
+  color: #ffffff;
+  position: relative;
 
+  a {
+    display: block;
+    height: 60px;
+    border-radius: 50px 0 0 50px;
+    background-color: rgba(60, 54, 90, 1);
+    text-decoration: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
     .beforeBlockBg {
         background-color: rgba(246, 245, 245, 1);
         height: 30px;
