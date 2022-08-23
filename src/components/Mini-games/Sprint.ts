@@ -188,7 +188,7 @@ class Sprint {
     }
     wordContainer?.addEventListener('click', (e: Event) => {
       const target = e.target as HTMLButtonElement;
-      if(currentIndex > 19) {
+      if(currentIndex > 18) {
         clearInterval(timeToStop);
         this.createResultsPage(+points.textContent!, correctAnswers, inCorrectAnswers);
       }
@@ -233,6 +233,86 @@ class Sprint {
       }
     });
   }
+ 
+  createResultsPage(points: number, correctAnswers: { word: string; wordTranslate: string }[], inCorrectAnswers: { word: string; wordTranslate: string }[]) {
+    const content = document.querySelector(
+      '.container__content'
+    ) as HTMLDivElement;
+    const containerBlock = document.querySelector(
+      '.container'
+    ) as HTMLDivElement;
+    const container = new Container();
+    containerBlock.prepend(container.createMenu());
+    content.innerHTML = '';
+    
+    const resultsCartContainer = document.createElement('div');
+    resultsCartContainer.classList.add('sprint-results-cart__container');
+
+    const resultsCart = document.createElement('div');
+    resultsCart.classList.add('sprint-results-cart');
+    
+    const title = document.createElement('h2') as HTMLHeadingElement;
+    title.textContent = 'Ваш результат:'
+
+    const totalPoints = document.createElement('span') as HTMLSpanElement;
+    totalPoints.classList.add('total-points');
+    totalPoints.textContent = `${points.toString()} баллов`;
+
+    const answersBlock = document.createElement('div') as HTMLDivElement;
+    answersBlock.classList.add('sprint-results-answers-block');
+
+    const correctAnswersContainer = document.createElement('div') as HTMLDivElement;
+    
+    const correctAnswersTotal = document.createElement('span') as HTMLSpanElement;
+    correctAnswersTotal.classList.add('sprint-results-correct-answers-total');
+    correctAnswersTotal.textContent = `Правильные ответы:${(correctAnswers.length).toString()}`;
+
+    for (let i = 0; i < correctAnswers.length; i += 1) {
+      const correctAnswerBlock = document.createElement('div') as HTMLDivElement;
+      correctAnswerBlock.classList.add('correct-answer__block')
+      const answerAudio = document.createElement('audio') as HTMLAudioElement;
+      answerAudio.classList.add('correct-answer__audio')
+      const correctAnswerWord = document.createElement('span') as HTMLSpanElement;
+      correctAnswerWord.classList.add('correct-answer__word')
+
+      correctAnswerWord.textContent = `${correctAnswers[i].word} - ${correctAnswers[i].wordTranslate}`;
+      correctAnswersContainer.append(correctAnswerBlock)
+      correctAnswerBlock.append(answerAudio);
+      correctAnswerBlock.append(correctAnswerWord);
+    }
+
+    const inCorrectAnswersContainer = document.createElement('div') as HTMLDivElement;
+
+    const inCorrectAnswersTotal = document.createElement('span') as HTMLSpanElement;
+    inCorrectAnswersTotal.classList.add('sprint-results-incorrect-answers-total');
+    inCorrectAnswersTotal.textContent = `Неправильные ответы:${(inCorrectAnswers.length)}`;   
+    
+    for (let i = 0; i < inCorrectAnswers.length; i += 1) {
+      const inCorrectAnswerBlock = document.createElement('div') as HTMLDivElement;
+      inCorrectAnswerBlock.classList.add('inCorrect-answer__block')
+      const answerAudio = document.createElement('audio') as HTMLAudioElement;
+      answerAudio.classList.add('inCorrect-answer__audio')
+      const inCorrectAnswerWord = document.createElement('span') as HTMLSpanElement;
+      inCorrectAnswerWord.classList.add('inCorrect-answer__word')
+
+      inCorrectAnswerWord.textContent = `${inCorrectAnswers[i].word} - ${inCorrectAnswers[i].wordTranslate}`;
+      inCorrectAnswersContainer.append(inCorrectAnswerBlock)
+      inCorrectAnswerBlock.append(answerAudio);
+      inCorrectAnswerBlock.append(inCorrectAnswerWord);
+    }
+   
+   content.append(resultsCartContainer);
+   resultsCartContainer.append(resultsCart);
+   resultsCart.append(title);
+   resultsCart.append(totalPoints);
+   resultsCart.append(answersBlock);
+   answersBlock.append(correctAnswersContainer);
+   answersBlock.append(inCorrectAnswersContainer);
+   correctAnswersContainer.prepend(correctAnswersTotal)
+   inCorrectAnswersContainer.prepend(inCorrectAnswersTotal);
+
   }
+
+}
 
 export default Sprint;
