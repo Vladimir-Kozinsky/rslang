@@ -14,8 +14,8 @@
 }
 
 .container__content {
-  height: 1080px;
-  flex-grow: 1;
+    height: 1080px;
+    flex-grow: 1;
 }
 
 .logo {
@@ -28,22 +28,11 @@
 }
 
 .nav__item {
-  margin-top: 20px;
-  list-style-type: none;
-  display: block;
-  color: #ffffff;
-  position: relative;
-
-  a {
+    margin-top: 20px;
+    margin-left: 40px;
+    list-style-type: none;
     display: block;
-    height: 60px;
-    border-radius: 50px 0 0 50px;
-    background-color: rgba(60, 54, 90, 1);
-    text-decoration: none;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
+    position: relative;
     .beforeBlockBg {
         background-color: rgba(246, 245, 245, 1);
         height: 30px;
@@ -60,7 +49,6 @@
         width: 280px;
         display: none;
     }
-
     .middleBlock {
         display: block;
         height: 60px;
@@ -73,37 +61,41 @@
         font-weight: 700;
         position: relative;
     }
-
-    .middleBlock__icon {
-        width: 24px;
-        height: 24px;
-        filter: invert(68%) sepia(18%) saturate(160%) hue-rotate(179deg) brightness(87%) contrast(88%);
-        margin-right: 20px;
-        position: absolute;
-        left: 22px;
-        top: 19px;
-        transition: all 0.2s;
-    }
-
     a {
+        display: block;
+        height: 60px;
+        color: #ffffff;
+        border-radius: 50px 0 0 50px;
+        text-decoration: none;
+        display: flex;
+        justify-content: start;
+        align-items: center;
         margin-left: 15px;
-        padding-left: 20px;
+        padding-left: 30px;
         width: 190px;
         height: 20px;
         transition: all 0.2s;
-
         &:hover {
             cursor: pointer;
             color: hsl(250, 25%, 80%);
             .middleBlock__icon {
                 height: 26px;
                 width: 26px;
-                left: 21px;
+                left: 25px;
                 top: 18px;
             }
         }
     }
-
+    .middleBlock__icon {
+        width: 24px;
+        height: 24px;
+        filter: invert(68%) sepia(18%) saturate(160%) hue-rotate(179deg) brightness(87%) contrast(88%);
+        margin-right: 20px;
+        position: absolute;
+        left: 26px;
+        top: 19px;
+        transition: all 0.2s;
+    }
     .afterBlockBg {
         background-color: rgba(246, 245, 245, 1);
         height: 30px;
@@ -120,25 +112,23 @@
         width: 280px;
         display: none;
     }
-
     &.active {
+        a {
+            color: rgba(60, 54, 90, 1);
+        }
         .beforeBlockBg {
             display: block;
         }
         .beforeBlock {
             display: block;
         }
-
         .middleBlock {
             background-color: rgba(246, 245, 245, 1);
-            color: rgba(60, 54, 90, 1);
             border-radius: 50px 0 0 50px;
         }
-
         .middleBlock__icon {
             filter: invert(0%) sepia(0%) saturate(7500%) hue-rotate(3deg) brightness(30%) contrast(108%);
         }
-
         .afterBlockBg {
             display: block;
         }
