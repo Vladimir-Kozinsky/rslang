@@ -1,0 +1,10 @@
+.body {
+  font-family: Ubuntu, Arial, Tahoma, sans-serif;
+  color: $color-text-dark;
+
+  background: $color-bg-body;
+}
+
+.body__inner-wrapper {
+  background: $color-bg-body-inner-wrapper;
+}
