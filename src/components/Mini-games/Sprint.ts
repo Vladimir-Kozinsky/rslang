@@ -1,3 +1,4 @@
+import App from '../App';
 import Container from '../Container/Container';
 import Word from '../interfaces/interfaces';
 import GamesApi from './gamesApi';
@@ -241,6 +242,7 @@ class Sprint {
     const containerBlock = document.querySelector(
       '.container'
     ) as HTMLDivElement;
+    const app = new App();
     const container = new Container();
     containerBlock.prepend(container.createMenu());
     content.innerHTML = '';
@@ -311,6 +313,7 @@ class Sprint {
    correctAnswersContainer.prepend(correctAnswersTotal)
    inCorrectAnswersContainer.prepend(inCorrectAnswersTotal);
 
+   app.switchToAnotherPage();
   }
 
 }
