@@ -1,0 +1,36 @@
+@import "./../components/widget";
+
+.stats-wrap {
+    margin: 50px;
+    display: grid;
+    gap: 40px;
+    grid-template-columns: 1fr 315px;
+    grid-template-areas: 
+    "stats user"
+    "stats links"
+}
+
+.stats {
+    grid-area: stats;
+}
+
+.widgets-container {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.user-block {
+    grid-area: user;
+    height: 330px;
+    background-color: aqua;
+}
+
+.links-block {
+    grid-area: links;
+    width: 315px;
+    height: 400px;
+    background-color: rgb(255, 0, 0);
+}
