@@ -24,10 +24,8 @@ class App {
       ) as HTMLDivElement;
       switch (target.textContent) {
         case 'Личный кабинет':
-          
           break;
         case 'Словарь':
-          
           break;
         case 'Мини-игры':
           content.innerHTML = '';
@@ -46,16 +44,14 @@ class App {
           miniGames.goToStartPage();
           break;
         case 'Учебник':
-          
           break;
         case 'Выход':
-        
           break;
-      
+
         default:
           break;
       }
-    })
+    });
   }
 }
 

@@ -2,6 +2,7 @@ import App from '../App';
 import Container from '../Container/Container';
 import Word from '../interfaces/interfaces';
 import GamesApi from './gamesApi';
+import MiniGames from './MiniGames';
 
 class Sprint {
   createPage() {
@@ -36,8 +37,10 @@ class Sprint {
 
     const wordAudio = document.createElement('audio') as HTMLAudioElement;
     wordAudio.classList.add('word-audio');
-    
-    const wordAudioExample = document.createElement('audio') as HTMLAudioElement;
+
+    const wordAudioExample = document.createElement(
+      'audio'
+    ) as HTMLAudioElement;
     wordAudioExample.classList.add('word-audio-example');
 
     const currentWordContainer = document.createElement(
@@ -76,7 +79,7 @@ class Sprint {
     sprintContainer.append(title);
     sprintContainer.append(sprintstatisticsContainer);
     sprintContainer.append(cart);
-    audioContainer.append(wordAudio); 
+    audioContainer.append(wordAudio);
     audioContainer.append(wordAudioExample);
     sprintstatisticsContainer.append(points);
     sprintstatisticsContainer.append(time);
@@ -136,7 +139,7 @@ class Sprint {
 
     return { wordsArr, clonedArr, wrongTranslatedWordsIndexes };
   }
-  
+
   async appendWordsToPage(difficulty: string) {
     const wordContainer = document.querySelector(
       '.sprint-current-word__container'
@@ -154,8 +157,8 @@ class Sprint {
       '.sprint-statistics-time'
     ) as HTMLSpanElement;
     const createdWords = await this.createWordsForGame(difficulty);
-    const {clonedArr} = createdWords;
-    const {wordsArr} = createdWords;
+    const { clonedArr } = createdWords;
+    const { wordsArr } = createdWords;
     const correctAnswers: { word: string; wordTranslate: string }[] = [];
     const inCorrectAnswers: { word: string; wordTranslate: string }[] = [];
     const wrongTranslatedWordIndexes: number[] =
@@ -175,23 +178,33 @@ class Sprint {
       time.textContent = (+time.textContent! - 1).toString();
       if (time.textContent === '0') {
         clearInterval(timeToStop);
-        this.createResultsPage(+points.textContent!, correctAnswers, inCorrectAnswers);
+        this.createResultsPage(
+          +points.textContent!,
+          correctAnswers,
+          inCorrectAnswers
+        );
       }
     }, 1000);
     timeToStop;
 
     function findTranslate(origWord: string) {
-     for (let i = 0; i < wordsArr.length; i += 1) {
-      if(wordsArr[i].word === origWord) {
-        return wordsArr[i].wordTranslate;
+      for (let i = 0; i < wordsArr.length; i += 1) {
+        if (wordsArr[i].word === origWord) {
+          return wordsArr[i].wordTranslate;
+        }
       }
-     }
     }
+
+    // Control from mouse
     wordContainer?.addEventListener('click', (e: Event) => {
       const target = e.target as HTMLButtonElement;
-      if(currentIndex > 18) {
+      if (currentIndex > 18) {
         clearInterval(timeToStop);
-        this.createResultsPage(+points.textContent!, correctAnswers, inCorrectAnswers);
+        this.createResultsPage(
+          +points.textContent!,
+          correctAnswers,
+          inCorrectAnswers
+        );
       }
       if (target.classList.contains('sprint-button__true')) {
         if (wrongTranslatedWordIndexes.includes(currentIndex)) {
@@ -200,8 +213,8 @@ class Sprint {
           translatedWord.textContent = clonedArr[currentIndex].wordTranslate;
           inCorrectAnswers.push({
             word: word.textContent!,
-            wordTranslate: findTranslate(word.textContent!)!
-          })
+            wordTranslate: findTranslate(word.textContent!)!,
+          });
         } else {
           correctAnswers.push({
             word: word.textContent!,
@@ -216,8 +229,8 @@ class Sprint {
         if (wrongTranslatedWordIndexes.includes(currentIndex)) {
           correctAnswers.push({
             word: word.textContent!,
-            wordTranslate: findTranslate(word.textContent!)!
-          })
+            wordTranslate: findTranslate(word.textContent!)!,
+          });
           currentIndex += 1;
           points.textContent = (+points.textContent! + 20).toString();
           word.textContent = clonedArr[currentIndex].word;
@@ -233,9 +246,71 @@ class Sprint {
         }
       }
     });
+
+    // Control from keyboard
+    document.addEventListener('keydown', (e: KeyboardEvent) => {
+      const keyName = e.key;
+      if (currentIndex > 18) {
+        clearInterval(timeToStop);
+        this.createResultsPage(
+          +points.textContent!,
+          correctAnswers,
+          inCorrectAnswers
+        );
+      }
+      // eslint-disable-next-line default-case
+      switch (keyName) {
+        case 'ArrowRight':
+          if (wrongTranslatedWordIndexes.includes(currentIndex)) {
+            currentIndex += 1;
+            word.textContent = clonedArr[currentIndex].word;
+            translatedWord.textContent = clonedArr[currentIndex].wordTranslate;
+            inCorrectAnswers.push({
+              word: word.textContent!,
+              wordTranslate: findTranslate(word.textContent!)!,
+            });
+          } else {
+            correctAnswers.push({
+              word: word.textContent!,
+              wordTranslate: translatedWord.textContent!,
+            });
+            currentIndex += 1;
+            points.textContent = (+points.textContent! + 20).toString();
+            word.textContent = clonedArr[currentIndex].word;
+            translatedWord.textContent = clonedArr[currentIndex].wordTranslate;
+          }
+          break;
+        case 'ArrowLeft':
+          if (wrongTranslatedWordIndexes.includes(currentIndex)) {
+            correctAnswers.push({
+              word: word.textContent!,
+              wordTranslate: findTranslate(word.textContent!)!,
+            });
+            currentIndex += 1;
+            points.textContent = (+points.textContent! + 20).toString();
+            word.textContent = clonedArr[currentIndex].word;
+            translatedWord.textContent = clonedArr[currentIndex].wordTranslate;
+          } else {
+            inCorrectAnswers.push({
+              word: word.textContent!,
+              wordTranslate: translatedWord.textContent!,
+            });
+            currentIndex += 1;
+            word.textContent = clonedArr[currentIndex].word;
+            translatedWord.textContent = clonedArr[currentIndex].wordTranslate;
+          }
+    }
+  
+
+    });
+
   }
- 
-  createResultsPage(points: number, correctAnswers: { word: string; wordTranslate: string }[], inCorrectAnswers: { word: string; wordTranslate: string }[]) {
+
+  createResultsPage(
+    points: number,
+    correctAnswers: { word: string; wordTranslate: string }[],
+    inCorrectAnswers: { word: string; wordTranslate: string }[]
+  ) {
     const content = document.querySelector(
       '.container__content'
     ) as HTMLDivElement;
@@ -246,15 +321,15 @@ class Sprint {
     const container = new Container();
     containerBlock.prepend(container.createMenu());
     content.innerHTML = '';
-    
+
     const resultsCartContainer = document.createElement('div');
     resultsCartContainer.classList.add('sprint-results-cart__container');
 
     const resultsCart = document.createElement('div');
     resultsCart.classList.add('sprint-results-cart');
-    
+
     const title = document.createElement('h2') as HTMLHeadingElement;
-    title.textContent = 'Ваш результат:'
+    title.textContent = 'Ваш результат:';
 
     const totalPoints = document.createElement('span') as HTMLSpanElement;
     totalPoints.classList.add('total-points');
@@ -263,59 +338,76 @@ class Sprint {
     const answersBlock = document.createElement('div') as HTMLDivElement;
     answersBlock.classList.add('sprint-results-answers-block');
 
-    const correctAnswersContainer = document.createElement('div') as HTMLDivElement;
-    
-    const correctAnswersTotal = document.createElement('span') as HTMLSpanElement;
+    const correctAnswersContainer = document.createElement(
+      'div'
+    ) as HTMLDivElement;
+
+    const correctAnswersTotal = document.createElement(
+      'span'
+    ) as HTMLSpanElement;
     correctAnswersTotal.classList.add('sprint-results-correct-answers-total');
-    correctAnswersTotal.textContent = `Правильные ответы:${(correctAnswers.length).toString()}`;
+    correctAnswersTotal.textContent = `Правильные ответы:${correctAnswers.length.toString()}`;
 
     for (let i = 0; i < correctAnswers.length; i += 1) {
-      const correctAnswerBlock = document.createElement('div') as HTMLDivElement;
-      correctAnswerBlock.classList.add('correct-answer__block')
+      const correctAnswerBlock = document.createElement(
+        'div'
+      ) as HTMLDivElement;
+      correctAnswerBlock.classList.add('correct-answer__block');
       const answerAudio = document.createElement('audio') as HTMLAudioElement;
-      answerAudio.classList.add('correct-answer__audio')
-      const correctAnswerWord = document.createElement('span') as HTMLSpanElement;
-      correctAnswerWord.classList.add('correct-answer__word')
+      answerAudio.classList.add('correct-answer__audio');
+      const correctAnswerWord = document.createElement(
+        'span'
+      ) as HTMLSpanElement;
+      correctAnswerWord.classList.add('correct-answer__word');
 
       correctAnswerWord.textContent = `${correctAnswers[i].word} - ${correctAnswers[i].wordTranslate}`;
-      correctAnswersContainer.append(correctAnswerBlock)
+      correctAnswersContainer.append(correctAnswerBlock);
       correctAnswerBlock.append(answerAudio);
       correctAnswerBlock.append(correctAnswerWord);
     }
 
-    const inCorrectAnswersContainer = document.createElement('div') as HTMLDivElement;
+    const inCorrectAnswersContainer = document.createElement(
+      'div'
+    ) as HTMLDivElement;
 
-    const inCorrectAnswersTotal = document.createElement('span') as HTMLSpanElement;
-    inCorrectAnswersTotal.classList.add('sprint-results-incorrect-answers-total');
-    inCorrectAnswersTotal.textContent = `Неправильные ответы:${(inCorrectAnswers.length)}`;   
-    
+    const inCorrectAnswersTotal = document.createElement(
+      'span'
+    ) as HTMLSpanElement;
+    inCorrectAnswersTotal.classList.add(
+      'sprint-results-incorrect-answers-total'
+    );
+    inCorrectAnswersTotal.textContent = `Неправильные ответы:${inCorrectAnswers.length}`;
+
     for (let i = 0; i < inCorrectAnswers.length; i += 1) {
-      const inCorrectAnswerBlock = document.createElement('div') as HTMLDivElement;
-      inCorrectAnswerBlock.classList.add('inCorrect-answer__block')
+      const inCorrectAnswerBlock = document.createElement(
+        'div'
+      ) as HTMLDivElement;
+      inCorrectAnswerBlock.classList.add('inCorrect-answer__block');
       const answerAudio = document.createElement('audio') as HTMLAudioElement;
-      answerAudio.classList.add('inCorrect-answer__audio')
-      const inCorrectAnswerWord = document.createElement('span') as HTMLSpanElement;
-      inCorrectAnswerWord.classList.add('inCorrect-answer__word')
+      answerAudio.classList.add('inCorrect-answer__audio');
+      const inCorrectAnswerWord = document.createElement(
+        'span'
+      ) as HTMLSpanElement;
+      inCorrectAnswerWord.classList.add('inCorrect-answer__word');
 
       inCorrectAnswerWord.textContent = `${inCorrectAnswers[i].word} - ${inCorrectAnswers[i].wordTranslate}`;
-      inCorrectAnswersContainer.append(inCorrectAnswerBlock)
+      inCorrectAnswersContainer.append(inCorrectAnswerBlock);
       inCorrectAnswerBlock.append(answerAudio);
       inCorrectAnswerBlock.append(inCorrectAnswerWord);
     }
-   
-   content.append(resultsCartContainer);
-   resultsCartContainer.append(resultsCart);
-   resultsCart.append(title);
-   resultsCart.append(totalPoints);
-   resultsCart.append(answersBlock);
-   answersBlock.append(correctAnswersContainer);
-   answersBlock.append(inCorrectAnswersContainer);
-   correctAnswersContainer.prepend(correctAnswersTotal)
-   inCorrectAnswersContainer.prepend(inCorrectAnswersTotal);
 
-   app.switchToAnotherPage();
+    content.append(resultsCartContainer);
+    resultsCartContainer.append(resultsCart);
+    resultsCart.append(title);
+    resultsCart.append(totalPoints);
+    resultsCart.append(answersBlock);
+    answersBlock.append(correctAnswersContainer);
+    answersBlock.append(inCorrectAnswersContainer);
+    correctAnswersContainer.prepend(correctAnswersTotal);
+    inCorrectAnswersContainer.prepend(inCorrectAnswersTotal);
+
+    app.switchToAnotherPage();
   }
-
 }
 
 export default Sprint;
