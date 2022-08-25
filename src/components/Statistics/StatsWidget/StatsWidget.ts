@@ -1,6 +1,7 @@
+
 class StatsWidget {
 
-    createWidget(header: string, unit: string, value: number) {
+    createWidget(header: string, unit: string, value?: number) {
         const widget = document.createElement('div') as HTMLDivElement;
         widget.className = 'widget';
 
@@ -17,8 +18,20 @@ class StatsWidget {
 
         const widgetDataValue = document.createElement('span') as HTMLSpanElement;
         widgetDataValue.className = 'widget-data__value'
-        widgetDataValue.textContent = value.toString();
 
+        if (value) {
+         widgetDataValue.textContent = value.toString();   
+        } else {
+            widgetDataValue.textContent = 'unknow';
+            widget.classList.add('disabled');
+            const muteBlock = document.createElement('div') as HTMLDivElement;
+            muteBlock.className = 'mute-block';
+            widget.append(muteBlock);
+            const muteBlockImg = document.createElement('img') as HTMLImageElement;
+            muteBlockImg.src = '../../../assets/img/svg/lock.svg';
+            muteBlock.append(muteBlockImg);
+        }
+        
         widgetData.append(widgetDataUnit);
         widgetData.append(widgetDataValue);
         widget.append(widgetHeader);

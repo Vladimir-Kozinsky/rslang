@@ -1,10 +1,11 @@
+/* eslint-disable class-methods-use-this */
 import StatsWidget from "./StatsWidget/StatsWidget";
-import userFemale from "./../../assets/img/svg/user-female.svg"
+import userFemale from "../../assets/img/svg/user-female.svg"
 
 interface ISatsData {
     name: string;
     unit: string;
-    value: number;
+    value: number | undefined;
 }
 
 const statsData: ISatsData[] = [
@@ -16,7 +17,7 @@ const statsData: ISatsData[] = [
     {
         name: 'Процент  правильных ответов сегодня',
         unit: '%',
-        value: 21
+        value: undefined
     },
     {
         name: 'Колличество новых слов сегодня',
@@ -27,6 +28,7 @@ const statsData: ISatsData[] = [
 
 class Statistics {
     userId: string;
+
     constructor(userId: string) {
         this.userId = userId;
     }
@@ -50,6 +52,7 @@ class Statistics {
         container.append(statsWrap);
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-shadow
     createStatsBlock(header: string, statsData: ISatsData[]) {
         const statsBlock = document.createElement('div') as HTMLDivElement;
         statsBlock.className = 'stats-block';
@@ -123,7 +126,6 @@ class Statistics {
 
             userStatsCont.append(userStats);
         })
-
 
         userInfoBlock.append(userStatsCont);
         userBlock.append(userInfoBlock);
