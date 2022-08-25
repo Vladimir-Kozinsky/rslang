@@ -12,6 +12,10 @@
 
 .stats {
     grid-area: stats;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 .stats-block__header {
@@ -102,5 +106,34 @@
     grid-area: links;
     width: 315px;
     height: 400px;
-    background-color: rgb(255, 0, 0);
+}
+
+.link-block {
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background-color: #FFF;
+    width: 240px;
+    height: 100px;
+    border-radius: 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 0 30px rgb(136, 136, 136, 0.5);
+}
+
+.link-block-wrap {
+    width: 64px;
+    height: 64px;
+    background: conic-gradient(#FF8CC3, #FFBDA4, #8DF0FF, #FF8CC3);
+    border-radius: 16px;
+}
+
+.link-block__img {
+    width: 64px;
+    height: 64px;
+}
+
+.link-block__title {
+    width: 100px;
+    text-align: center;
 }

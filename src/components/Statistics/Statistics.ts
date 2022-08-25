@@ -109,7 +109,7 @@ class Statistics {
         userStatsData.forEach(item => {
             const userStats = document.createElement('div') as HTMLDivElement;
 
-            userStats.className ='user-stats__block'
+            userStats.className = 'user-stats__block'
 
             const userStatsHeader = document.createElement('span') as HTMLSpanElement;
             userStatsHeader.className = 'user-stats__header';
@@ -135,6 +135,34 @@ class Statistics {
     createLinksBlock() {
         const linksBlock = document.createElement('div') as HTMLDivElement;
         linksBlock.className = 'links-block';
+
+        const links = [
+            { title: 'Аудиовызов', image: 'headphone.svg' },
+            { title: 'Спринт', image: 'sneaker.svg' },
+            { title: 'Словарь', image: 'book.svg' },
+        ]
+
+        links.forEach(item => {
+            const linkBlock = document.createElement('div') as HTMLDivElement;
+            linkBlock.className = 'link-block';
+
+            const linkBlockImgWrap = document.createElement('div') as HTMLDivElement;
+            linkBlockImgWrap.className = 'link-block-wrap';
+
+            const linkBlockImg = document.createElement('img') as HTMLImageElement;
+            linkBlockImg.className = 'link-block__img';
+            linkBlockImg.src = `./../../assets/img/svg/${item.image}`;
+            linkBlockImgWrap.append(linkBlockImg);
+
+            linkBlock.append(linkBlockImgWrap);
+
+            const linkBlockTitle = document.createElement('h4') as HTMLHeadingElement;
+            linkBlockTitle.className = 'link-block__title';
+            linkBlockTitle.textContent = item.title;
+            linkBlock.append(linkBlockTitle);
+
+            linksBlock.append(linkBlock);
+        })
 
 
 
