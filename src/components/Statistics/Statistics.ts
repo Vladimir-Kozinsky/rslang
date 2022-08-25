@@ -1,4 +1,5 @@
 import StatsWidget from "./StatsWidget/StatsWidget";
+import userFemale from "./../../assets/img/svg/user-female.svg"
 
 interface ISatsData {
     name: string;
@@ -72,8 +73,61 @@ class Statistics {
     }
 
     createUserBlock() {
+
+        const userStatsData = [
+            { text: 'Изученные слова', value: '146' },
+            { text: 'Попыток', value: '2' }
+        ]
+
         const userBlock = document.createElement('div') as HTMLDivElement;
         userBlock.className = 'user-block';
+
+
+        const userPhotoBlock = document.createElement('div') as HTMLDivElement;
+        userPhotoBlock.className = 'user-block__photo';
+
+        const userPhoto = document.createElement('img') as HTMLImageElement;
+        userPhoto.src = userFemale
+        userPhotoBlock.append(userPhoto);
+
+        const userInfoBlock = document.createElement('div') as HTMLDivElement;
+        userInfoBlock.className = 'user-block__info'
+
+        const userName = document.createElement('h4') as HTMLHeadingElement;
+        userName.className = 'info-block__name';
+        userName.textContent = 'Annie Leonchart'
+        userInfoBlock.append(userName);
+
+        const userEmail = document.createElement('h4') as HTMLHeadingElement;
+        userEmail.className = 'info-block__email';
+        userEmail.textContent = 'annie_leonchart@mail.com'
+        userInfoBlock.append(userEmail);
+
+        const userStatsCont = document.createElement('div') as HTMLDivElement;
+        userStatsCont.className = 'user-stats__container';
+
+        userStatsData.forEach(item => {
+            const userStats = document.createElement('div') as HTMLDivElement;
+
+            userStats.className ='user-stats__block'
+
+            const userStatsHeader = document.createElement('span') as HTMLSpanElement;
+            userStatsHeader.className = 'user-stats__header';
+            userStatsHeader.textContent = item.text;
+            userStats.append(userStatsHeader);
+
+            const userStatsValue = document.createElement('span') as HTMLSpanElement;
+            userStatsValue.className = 'user-stats__value'
+            userStatsValue.textContent = item.value;
+            userStats.append(userStatsValue);
+
+            userStatsCont.append(userStats);
+        })
+
+
+        userInfoBlock.append(userStatsCont);
+        userBlock.append(userInfoBlock);
+        userBlock.append(userPhotoBlock);
 
         return userBlock;
     }
@@ -81,10 +135,10 @@ class Statistics {
     createLinksBlock() {
         const linksBlock = document.createElement('div') as HTMLDivElement;
         linksBlock.className = 'links-block';
-        
 
-        
-        return linksBlock; 
+
+
+        return linksBlock;
     }
 
 
