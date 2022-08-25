@@ -1,13 +1,10 @@
-@import "./abstracts/variables";
-
-@import "./base/reset";
-@import "./base/typography";
-
 @import "./components/container";
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap');
+@import "./components/mini-games";
+@import "./components/_sprint";
 
-@import "./pages/mainPage";
-
-@import "./layout/body";
-@import "./layout/header";
-@import "./layout/footer";
+body {
+  margin: 0;
+  padding: 0;
+  background-color: rgba(223, 225, 238, 0.8);
+  font-family: "Poppins", sans-serif;
+}
