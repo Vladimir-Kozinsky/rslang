@@ -1,9 +1,6 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const CopyPlugin = require("copy-webpack-plugin");
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-
 
 module.exports = {
     entry: path.resolve(__dirname, './src/index.ts'),
@@ -84,16 +81,10 @@ module.exports = {
         path: path.resolve(__dirname, 'dist'),
         filename: 'main.js',
     },
-    
+
     devtool: 'source-map',
     plugins: [
         new HtmlWebpackPlugin({ template: './src/index.html' }),
         new MiniCssExtractPlugin(),
-        new CopyPlugin({
-            patterns: [
-                { from: './src/assets/', to: "assets" },
-            ],
-        }),
-        new CleanWebpackPlugin(),
     ],
 }

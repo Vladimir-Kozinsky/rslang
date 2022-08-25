@@ -1,7 +1,6 @@
 import Container from './Container/Container';
 import MiniGames from './Mini-games/MiniGames';
 import Sprint from './Mini-games/Sprint';
-import MainPageController from './MainPage/MainPageController';
 
 class App {
   startApp() {
@@ -54,10 +53,6 @@ class App {
       }
     });
   }
-    
-  drawMainPage(): void {
-    this.mainPageController.getStartScreen();
-    }
 }
-    
+
 export default App;

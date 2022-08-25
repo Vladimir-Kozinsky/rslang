@@ -1,13 +1,11 @@
 {
   "tabWidth": 2,
   "endOfLine": "lf",
-  "printWidth": 140,
   "overrides": [
     {
       "files": ["*.ts", "*.js", "*.cjs"],
       "options": {
         "trailingComma": "es5",
-        "printWidth": 140,
         "singleQuote": true
       }
     }
