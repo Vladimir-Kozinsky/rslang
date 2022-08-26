@@ -28,6 +28,18 @@ export default class ApiData {
     }
   }
 
+  static setLocalStorageListener(): void {
+    window.onbeforeunload = () => {
+      localStorage.setItem('token', this.token);
+      localStorage.setItem('refreshToken', this.token);
+      localStorage.setItem('tokenExpirationDate', `${this.tokenExpirationDate}`);
+      localStorage.setItem('userIsAuth', `${this.userIsAuth}`);
+      localStorage.setItem('userId', this.userId);
+      localStorage.setItem('userName', this.userName);
+      localStorage.setItem('userGender', this.userGender);
+    };
+  }
+
   static clear() {
     localStorage.clear();
     this.token = '';
