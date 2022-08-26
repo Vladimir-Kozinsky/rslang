@@ -4,10 +4,12 @@
     margin: 50px;
     display: grid;
     gap: 40px;
-    grid-template-columns: 1fr 315px;
+    grid-template-columns: 1fr 350px;
     grid-template-areas:
         "stats user"
         "stats links";
+    overflow-y: auto;
+    height: 85vh;
 }
 
 .stats {
@@ -16,6 +18,11 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    min-width: 680px;
+}
+
+.stats-block {
+    width: 100%;
 }
 
 .stats-block__header {
@@ -26,8 +33,7 @@
     margin-top: 20px;
     margin-bottom: 20px;
     display: flex;
-    justify-content: center;
-    gap: 40px;
+    justify-content: space-between;
 }
 
 .user-block {
@@ -117,19 +123,22 @@
     margin-bottom: 20px;
     box-shadow: 0 0 30px rgb(136, 136, 136, 0.5);
     position: relative;
-   
+
     &:hover {
         cursor: pointer;
+
         .link-block-wrap {
             width: 66px;
             height: 66px;
             top: 17px;
             left: 19px
         }
+
         .link-block__img {
             width: 66px;
             height: 66px;
         }
+
         .link-block__title {
             color: hsl(250, 25%, 80%);
         }
