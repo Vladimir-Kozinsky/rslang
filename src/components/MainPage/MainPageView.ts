@@ -1,4 +1,5 @@
 import ElementCreator from '../Utils/ElementCreator';
+import { userPersonalData } from '../types';
 
 export default class MainPageView extends ElementCreator {
   drawStartScreen(): void {
@@ -56,16 +57,19 @@ export default class MainPageView extends ElementCreator {
           `
     );
     const account = this.createElement('div', header, { class: 'account' });
-    const accountUserName = this.createElement('span', account, { class: 'account__user-name' }, 'Гость');
-    const accountUserIcon = this.createElementSVG(
+    // const accountUserName = this.createElement('span', account, { class: 'account__user-name' }, 'Гость');
+    // const accountUserIcon = this.createElementSVG(
+    //   account,
+    //   { class: 'account__user-icon-wrapper' },
+    //   {
+    //     href: './assets/img/svg/sprite.svg#guest-user',
+    //     class: 'account__user-icon',
+    //   }
+    // );
+    // const accountAuthorizeButton = this.createElement('button', account, { class: 'account__authorize-button button' }, 'Войти');
+    Object.assign(this.elements.htmlElements, {
       account,
-      { class: 'account__user-icon-wrapper' },
-      {
-        href: './assets/img/svg/sprite.svg#guest-user',
-        class: 'account__user-icon',
-      }
-    );
-    const accountAuthorizeButton = this.createElement('button', account, { class: 'account__authorize-button button' }, 'Войти');
+    });
   }
 
   drawMain(): void {
@@ -238,5 +242,85 @@ export default class MainPageView extends ElementCreator {
       { class: 'school-link__icon-wrapper' },
       { href: './assets/img/svg/sprite.svg#rss-logo', class: 'school-link__icon' }
     );
+  }
+
+  drawGuestUserView(): HTMLButtonElement {
+    console.log('da');
+    const { account } = this.elements.htmlElements;
+    account.innerHTML = '';
+
+    const accountUserName = this.createElement('span', account, { class: 'account__user-name' }, 'Гость');
+    const accountUserIcon = this.createElementSVG(
+      account,
+      { class: 'account__user-icon-wrapper' },
+      {
+        href: './assets/img/svg/sprite.svg#guest-user',
+        class: 'account__user-icon',
+      }
+    );
+    const accountSignInButton = this.createElement(
+      'button',
+      account,
+      { class: 'account__signin-button button' },
+      'Войти'
+    ) as HTMLButtonElement;
+    return accountSignInButton;
+  }
+
+  drawAuthUserView(userPersonalData: userPersonalData): HTMLButtonElement {
+    const { account } = this.elements.htmlElements;
+    account.innerHTML = '';
+
+    const accountUserName = this.createElement('span', account, { class: 'account__user-name' }, userPersonalData.name);
+    if (userPersonalData.gender === 'male') {
+      const accountUserIcon = this.createElement('div', account, { class: 'account__user-icon' });
+      accountUserIcon.style.cssText = `
+        background: url("../assets/img/svg/user-male.svg"),
+        conic-gradient(
+          from 180deg at 50% 50%,
+          #ffbda4 -0.12deg,
+          #8df0ff 133.98deg,
+          #ff8cc3 232.5deg,
+          #ffbda4 359.88deg,
+          #8df0ff 493.98deg
+        );
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: contain;
+      `;
+    } else if (userPersonalData.gender === 'female') {
+      const accountUserIcon = this.createElement('div', account, { class: 'account__user-icon' });
+      accountUserIcon.style.cssText = `
+        background: url("../assets/img/svg/user-female.svg"),
+        conic-gradient(
+          from 180deg at 50% 50%,
+          #ffbda4 -0.12deg,
+          #8df0ff 133.98deg,
+          #ff8cc3 232.5deg,
+          #ffbda4 359.88deg,
+          #8df0ff 493.98deg
+        );
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: contain;
+      `;
+    } else {
+      console.log('da');
+      const accountUserIcon = this.createElementSVG(
+        account,
+        { class: 'account__user-icon-wrapper' },
+        {
+          href: './assets/img/svg/sprite.svg#guest-user',
+          class: 'account__user-icon',
+        }
+      );
+    }
+    const accountLogoutButton = this.createElement(
+      'button',
+      account,
+      { class: 'account__logout-button button' },
+      'Выйти'
+    ) as HTMLButtonElement;
+    return accountLogoutButton;
   }
 }
