@@ -3,16 +3,60 @@
     margin: 0 auto;
     padding: 0 20px;
     height: 50px;
-    background-color: rgb(60, 54, 90);
+    background-color: #3c365a;
     border-radius: 0 0 20px 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-
 }
 
 .pagenator {
     width: 100px;
     background-color: bisque;
     height: 10px;
+}
+
+.header-menu {
+    position: relative;
+    width: 60px;
+}
+
+.header-menu__items {
+    position: relative;
+    top: -20px;
+    left: -60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: all 0.3s;
+    &.active {
+        top: 150px;
+        .header-menu__item {
+            position: relative;
+            display: flex;
+        }
+    }
+
+    .header-menu__item {
+        height: 30px;
+        border-radius: 40px;
+        border: 4px solid rgb(166, 194, 251);
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 10px;
+        color: rgb(236, 238, 255);
+        font-weight: 700;
+        position: absolute;
+        display: none;
+        transition: all 0.3s;
+        &:hover {
+            cursor: pointer;
+            a {
+                font-size: 18px;
+            }
+        }
+        &.active {
+            display: flex;
+        }
+    }
 }
