@@ -15,4 +15,13 @@ interface Word {
   textExampleTranslate: string;
 }
 
+export interface AudioCallData {
+  word: string;
+  wordTranslate: string;
+  wordTranslates: (string | string[])[];
+  wordImage: string;
+  isTrue?: boolean;
+  wordAudio: string;
+}
+
 export default Word;
