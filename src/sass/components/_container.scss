@@ -11,14 +11,14 @@
     height: 100vh;
     background-color: rgba(60, 54, 90, 1);
     border-radius: 0 20px 20px 0;
-  }
-  
-  .container__content {
-    height: 1080px;
-    flex-grow: 1;
-  }
-  
-  .logo {
+}
+
+.container__content {
+  height: 1080px;
+  flex-grow: 1;
+}
+
+.logo:not(.header .logo) {
     margin-top: 40px;
     margin-left: 40px;
   }
