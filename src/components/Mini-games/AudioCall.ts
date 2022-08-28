@@ -188,6 +188,139 @@ class AudioCall {
 
   }
 
+  async appendResult(data: AudioCallData[], cartNum: number, isTrue: string, option: HTMLButtonElement) {
+    const audioContainer = document.querySelector('.audioCall-audio__container') as HTMLDivElement;
+    const trueImage = document.createElement('img');
+    const options: Element[] = Array.from(document.querySelectorAll('.options__button'));
+    const progressDots: HTMLSpanElement[] = Array.from(document.querySelectorAll('span[data-word-num]'));
+
+    trueImage.setAttribute('src', `https://react-learnwords-shahzod.herokuapp.com/${data[cartNum].wordImage}`)
+    audioContainer.append(trueImage);
+    if(isTrue === 'true') {
+      option.style.background = '#0EA501';
+      progressDots[cartNum].style.background = '#0EA501';
+      data[cartNum].isTrue = true;
+    }
+    else if(isTrue === 'false') {
+      const trueWord = options.find((item) => item.innerHTML === data[cartNum].wordTranslate) as HTMLButtonElement;
+      trueWord.style.background = '#0EA501'
+      option.style.background = '#981111'
+      progressDots[cartNum].style.background = '#981111'
+      data[cartNum].isTrue = false;
+    }
+    else {
+        const trueWord = options.find((item) => item.innerHTML === data[cartNum].wordTranslate) as HTMLButtonElement;
+        trueWord.style.background = '#0EA501'
+        progressDots[cartNum].style.background = '#C9CC31';
+      }
+
+    options[5].innerHTML = 'Дальше';
+
+    audioContainer.append(trueImage);
+  }
+
+  async createResultsPage(data: AudioCallData[]) {
+    const content = document.querySelector(
+      '.container__content'
+    ) as HTMLDivElement;
+    const app = new App();
+    const container = new Container();
+
+    const containerBlock = document.querySelector('.container') as HTMLDivElement;
+    containerBlock.prepend(container.createMenu());
+    content.innerHTML = '';
+
+    const resultsCartContainer = document.createElement('div');
+    resultsCartContainer.classList.add('audioCall-results-cart__container');
+    resultsCartContainer.classList.add('results-cart__container');
+
+    const resultsContainer = document.createElement('div');
+    resultsContainer.classList.add('audioCall-results__container');
+    resultsContainer.classList.add('results__container');
+     
+    const resultsCart = document.createElement('div');
+    resultsCart.classList.add('audioCall-results-cart');
+    resultsCart.classList.add('results-cart');
+
+    const title = document.createElement('h2') as HTMLHeadingElement;
+    title.textContent = 'Ваш результат:';
+
+    const answersBlock = document.createElement('div') as HTMLDivElement;
+    answersBlock.classList.add('audioCall-results-answers-block');
+    answersBlock.classList.add('results-answers-block');
+
+    // audio plays when clicking to the icon
+    answersBlock.addEventListener('click', (e: Event) => {
+      const target = e.target as HTMLDivElement;
+      if(target.classList.contains('correct-answer__audio') || target.classList.contains('inCorrect-answer__audio')) {
+        const audio = target.children[0] as HTMLAudioElement;
+        audio.play();
+      }
+    })
+
+    const correctAnswers = data.filter((item) => item.isTrue);
+
+    const correctAnswersContainer = document.createElement('div') as HTMLDivElement;
+
+    const correctAnswersTotal = document.createElement('span') as HTMLSpanElement;
+    correctAnswersTotal.classList.add('audioCall-results-correct-answers-total');
+    correctAnswersTotal.classList.add('results-correct-answers-total');
+    correctAnswersTotal.textContent = `Правильные ответы:${correctAnswers.length.toString()}`;
+    
+    for (let i = 0; i < correctAnswers.length; i += 1) {
+      const correctAnswerBlock = document.createElement('div') as HTMLDivElement;
+      correctAnswerBlock.classList.add('correct-answer__block');
+      const answerAudio = document.createElement('div') as HTMLDivElement;
+      answerAudio.classList.add('correct-answer__audio');
+      const correctAnswerWord = document.createElement('span') as HTMLSpanElement;
+      correctAnswerWord.classList.add('correct-answer__word');
+
+      answerAudio.innerHTML = `<audio>
+        <source src="${correctAnswers[i].wordAudio}" type="">
+      </audio>`;
+      correctAnswerWord.textContent = `${correctAnswers[i].word} - ${correctAnswers[i].wordTranslate}`;
+      correctAnswersContainer.append(correctAnswerBlock);
+      correctAnswerBlock.append(answerAudio);
+      correctAnswerBlock.append(correctAnswerWord);
+    }
+
+    const inCorrectAnswers = data.filter((item) => item.isTrue === false)
+    const inCorrectAnswersContainer = document.createElement('div') as HTMLDivElement;
+
+    const inCorrectAnswersTotal = document.createElement('span') as HTMLSpanElement;
+    inCorrectAnswersTotal.classList.add('audioCall-results-incorrect-answers-total');
+    inCorrectAnswersTotal.classList.add('results-incorrect-answers-total');
+    inCorrectAnswersTotal.textContent = `Неправильные ответы:${inCorrectAnswers.length}`;
+
+    for (let i = 0; i < inCorrectAnswers.length; i += 1) {
+      const inCorrectAnswerBlock = document.createElement('div') as HTMLDivElement;
+      inCorrectAnswerBlock.classList.add('inCorrect-answer__block');
+      const answerAudio = document.createElement('div') as HTMLDivElement;
+      answerAudio.classList.add('inCorrect-answer__audio');
+      const inCorrectAnswerWord = document.createElement('span') as HTMLSpanElement;
+      inCorrectAnswerWord.classList.add('inCorrect-answer__word');
+
+      answerAudio.innerHTML = `<audio>
+      <source src="${inCorrectAnswers[i].wordAudio}" type="">
+    </audio>`;
+      inCorrectAnswerWord.textContent = `${inCorrectAnswers[i].word} - ${inCorrectAnswers[i].wordTranslate}`;
+      inCorrectAnswersContainer.append(inCorrectAnswerBlock);
+      inCorrectAnswerBlock.append(answerAudio);
+      inCorrectAnswerBlock.append(inCorrectAnswerWord);
+    }
+
+    content.append(resultsCartContainer);
+    resultsCartContainer.append(resultsCart);
+    resultsCart.append(title);
+    resultsCart.append(answersBlock);
+    answersBlock.append(correctAnswersContainer);
+    answersBlock.append(inCorrectAnswersContainer);
+    correctAnswersContainer.prepend(correctAnswersTotal);
+    inCorrectAnswersContainer.prepend(inCorrectAnswersTotal);
+
+    app.switchToAnotherPage();
+  }
+
 }
 
 export default AudioCall;
