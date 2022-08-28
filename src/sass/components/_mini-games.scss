@@ -15,15 +15,7 @@
   justify-content: left;
   width: 450px;
   height: 370px;
-  background: linear-gradient(
-    to right top,
-    #8dd6f5,
-    #9dcae7,
-    #b6bcd3,
-    #d0b2c0,
-    #dfaab2,
-    #f8958a
-  );
+  background: linear-gradient(to right top, #8dd6f5, #9dcae7, #b6bcd3, #d0b2c0, #dfaab2, #f8958a);
   color: white;
   border-radius: 24px;
   filter: drop-shadow(10px 10px 80px rgba(63, 39, 102, 0.1));
@@ -32,11 +24,7 @@
 
   &:hover {
     cursor: pointer;
-    background-image: linear-gradient(
-        0deg,
-        rgba(0, 0, 0, 0.05),
-        rgba(0, 0, 0, 0.05)
-      ),
+    background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.05)),
       linear-gradient(0deg, rgba(235, 0, 255, 0.35), rgba(235, 0, 255, 0.35));
   }
 
@@ -130,5 +118,88 @@
   .back__button {
     position: absolute;
     left: 0;
+  }
+}
+
+.results {
+  background: linear-gradient(#9dcae7, #b6bcd3, #d0b2c0);
+&-cart {
+  @include centralize();
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  width: 700px;
+  background: linear-gradient(0deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)), rgba(149, 155, 165, 0.5);
+  padding-bottom: 35px;
+  padding-left: 50px;
+  padding-right: 50px;
+  box-shadow: 10px 10px 80px rgba(63, 39, 102, 0.1);
+  border-radius: 24px;
+
+  h2 {
+    font-size: 40px;
+    font-weight: 700;
+  }
+  .total-points {
+    font-size: 35px;
+    font-weight: 700;
+    color: #0fbe00;
+  }
+  &__container {
+    height: 100vh;
+    padding-top: 80px;
+    background: linear-gradient(#9dcae7, #b6bcd3, #d0b2c0);
+  }
+}
+
+&-correct-answers-total {
+  font-size: 18px;
+  font-weight: 700;
+  color: #0fbe00;
+  margin-bottom: 5px;
+  display: inline-block;
+}
+&-incorrect-answers-total {
+  font-size: 18px;
+  font-weight: 700;
+  color: #981111;
+  margin-bottom: 5px;
+  display: inline-block;
+}
+&-answers-block {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 40px;
+  font-weight: 700;
+  .correct-answer, .inCorrect-answer {
+    &__audio {
+    background: url('../assets/img/svg/resultsAudio.svg') no-repeat;
+    background-size: 25px 25px;
+    display: inline-block;
+    width: 25px;
+    height: 25px;
+    margin-right: 10px;
+    &:hover {
+      cursor: pointer;
+    }
+      }
+    &__block {
+      display: flex;
+      align-items: center;
+      }
+    }
+  }
+}
+
+.return-to-prev-page {
+  background: url('../assets/img/svg/arrow-left.svg') no-repeat;
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background-size: 50px 50px;
+  width: 50px;
+  height: 50px;
+  &:hover {
+    cursor:pointer
   }
 }
