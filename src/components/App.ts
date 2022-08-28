@@ -2,11 +2,24 @@ import Container from './Container/Container';
 import MiniGames from './Mini-games/MiniGames';
 import Sprint from './Mini-games/Sprint';
 import MainPageController from './MainPage/MainPageController';
+import AuthController from './Auth/AuthController';
+import ApiData from './Api/ApiData';
 
 class App {
+  mainPageController: MainPageController;
+  authController: AuthController;
+
+  constructor() {
+    ApiData.getDataFromLocalStorage();
+    this.mainPageController = new MainPageController();
+    this.authController = new AuthController();
+  }
+
   startApp() {
+    ApiData.setLocalStorageListener();
     console.log('start app');
-    this.drowContainer();
+    this.authController.checkToken();
+    this.drawMainPage();
   }
 
   drowContainer() {
