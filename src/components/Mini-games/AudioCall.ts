@@ -104,6 +104,90 @@ class AudioCall {
      return dataForCart
   }
 
+  async appendDataToPage(difficulty: string) {
+    const getData: AudioCallData[] = await this.createWordsForGame(difficulty);
+    const audioContainer = document.querySelector('.audioCall-audio__container') as HTMLDivElement;
+    let cartNum: number = 0;
+    audioContainer!.innerHTML =`    
+    <audio autoplay>
+      <source src="${getData[0].wordAudio}" type="">
+    </audio>`;
+    let randomIndexes: number[] = [];
+    function createRandomIndexesorWords() {
+      while(randomIndexes.length < 5){
+        const randomIndex = Math.floor(Math.random() * 5);
+        if(randomIndexes.indexOf(randomIndex) === -1) randomIndexes.push(randomIndex);
+      }
+      return randomIndexes
+    }
+    createRandomIndexesorWords();
+    function appendWrongTranslates() {
+      const options: Element[] = Array.from(document.querySelectorAll('.options__button'));
+      options.forEach((item: Element, index: number) => {
+        if(index === 5) item.innerHTML = 'Не Знаю';
+        else if(index !== 5) item.innerHTML = getData[0].wordTranslates.flat()[index];
+      });
+    }
+    appendWrongTranslates();
+    const optionsContainer = document.querySelector('.audioCall-options__container');
+
+    // play audio onclick
+    audioContainer!.addEventListener('click', () => {
+      const audio = audioContainer!.children[0] as HTMLAudioElement;
+      audio.play();
+    })
+
+    // create new Cart after click to options
+    optionsContainer?.addEventListener('click', (e: Event) => {
+      randomIndexes = [];
+      createRandomIndexesorWords();
+      const options: HTMLButtonElement[] = Array.from(document.querySelectorAll('.options__button'));
+      const target = e.target as HTMLButtonElement;
+      
+      // create page with results if the cart is last
+      if(cartNum > 19) {
+        this.createResultsPage(getData);
+      }
+      // disable buttons after click
+      options.forEach((item: HTMLButtonElement) => {
+        if(item !== options[5] && target.classList.contains('options__button')) item.disabled = true;
+      });
+      if(target.classList.contains('options__button') && getData[cartNum].wordTranslate === target.innerHTML) {
+        console.log(true);
+        this.appendResult(getData, cartNum, 'true', target);        
+        cartNum += 1;
+      }
+      else if (target.classList.contains('options__button') && target.innerHTML !== 'Не знаю' && target.innerHTML !== 'Дальше') {
+        console.log(false);
+        console.log(target.innerHTML);
+        this.appendResult(getData, cartNum, 'false', target);        
+        cartNum += 1;
+      }
+      else if(target.classList.contains('options__button') && target.innerHTML === 'Не знаю') {
+        this.appendResult(getData, cartNum, 'doNotKnow', target);        
+        cartNum += 1;
+      }
+      else if(target.innerHTML === 'Дальше') {
+        console.log(target.innerHTML);
+        console.log('object');
+        audioContainer!.innerHTML =`    
+        <audio autoplay>
+          <source src="${getData[cartNum].wordAudio}" type="">
+        </audio>`;
+        options.forEach((item: HTMLButtonElement, index: number) => {
+          if(item.innerHTML !== 'Не Знаю') { 
+            item.disabled = false;
+            item.innerHTML = getData[cartNum].wordTranslates.flat()[randomIndexes[index]];
+            item.style.background = '#38304f';
+            item.removeAttribute('style');
+          };
+        }); 
+        target.innerHTML = 'Не знаю';
+      }
+    })
+
+  }
+
 }
 
 export default AudioCall;
