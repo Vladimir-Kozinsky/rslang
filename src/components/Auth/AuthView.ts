@@ -1,6 +1,6 @@
 import ElementCreator from '../Utils/ElementCreator';
 
-export default class AuthorizationView extends ElementCreator {
+export default class AuthView extends ElementCreator {
   drawAuthContainer(): void {
     const body = document.body;
 

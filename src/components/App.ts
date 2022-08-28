@@ -1,22 +1,22 @@
 import Container from './Container/Container';
 import MainPageController from './MainPage/MainPageController';
-import AuthorizationController from './Authorization/AuthorizationController';
+import AuthController from './Auth/AuthController';
 import ApiData from './Api/ApiData';
 
 class App {
   mainPageController: MainPageController;
-  authorizationController: AuthorizationController;
+  authController: AuthController;
 
   constructor() {
     ApiData.getDataFromLocalStorage();
     this.mainPageController = new MainPageController();
-    this.authorizationController = new AuthorizationController();
+    this.authController = new AuthController();
   }
 
   startApp() {
     ApiData.setLocalStorageListener();
     console.log('start app');
-    this.authorizationController.checkToken();
+    this.authController.checkToken();
     this.drawMainPage();
   }
 

@@ -1,14 +1,14 @@
 import ApiData from '../Api/ApiData';
 import MainPageView from './MainPageView';
-import AuthorizationController from '../Authorization/AuthorizationController';
+import AuthController from '../Auth/AuthController';
 
 export default class MainPageController {
   view: MainPageView;
-  authController: AuthorizationController;
+  authController: AuthController;
 
   constructor() {
     this.view = new MainPageView();
-    this.authController = new AuthorizationController();
+    this.authController = new AuthController();
   }
 
   getStartScreen(): void {

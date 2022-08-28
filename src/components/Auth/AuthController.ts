@@ -1,14 +1,14 @@
 import UserAccountApi from '../Api/UserAccountApi';
 import { IAuthData, tokenData, userPersonalData } from '../types';
-import AuthorizationView from './AuthorizationView';
+import AuthView from './AuthView';
 import ApiData from '../Api/ApiData';
 
-export default class AuthorizationController {
-  view: AuthorizationView;
+export default class AuthController {
+  view: AuthView;
   api: UserAccountApi;
 
   constructor() {
-    this.view = new AuthorizationView();
+    this.view = new AuthView();
     this.api = new UserAccountApi();
   }
 
@@ -17,7 +17,6 @@ export default class AuthorizationController {
       try {
         const getUserResponse = await this.api.getUser();
         if (!getUserResponse.ok) {
-          console.log('!ok');
           if (getUserResponse.status === 401) {
             const getNewUserTokensResponse = await this.api.getNewTokens();
             if (getNewUserTokensResponse.ok) {
@@ -35,7 +34,6 @@ export default class AuthorizationController {
             throw new Error('User not found');
           }
         } else {
-          console.log(ApiData.tokenExpirationDate - Date.now() - 1000 * 60 * 10);
           setTimeout(() => {
             this.checkToken();
           }, ApiData.tokenExpirationDate - Date.now() - 1000 * 60 * 10);

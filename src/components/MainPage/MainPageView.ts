@@ -57,16 +57,6 @@ export default class MainPageView extends ElementCreator {
           `
     );
     const account = this.createElement('div', header, { class: 'account' });
-    // const accountUserName = this.createElement('span', account, { class: 'account__user-name' }, 'Гость');
-    // const accountUserIcon = this.createElementSVG(
-    //   account,
-    //   { class: 'account__user-icon-wrapper' },
-    //   {
-    //     href: './assets/img/svg/sprite.svg#guest-user',
-    //     class: 'account__user-icon',
-    //   }
-    // );
-    // const accountAuthorizeButton = this.createElement('button', account, { class: 'account__authorize-button button' }, 'Войти');
     Object.assign(this.elements.htmlElements, {
       account,
     });
@@ -245,7 +235,6 @@ export default class MainPageView extends ElementCreator {
   }
 
   drawGuestUserView(): HTMLButtonElement {
-    console.log('da');
     const { account } = this.elements.htmlElements;
     account.innerHTML = '';
 
