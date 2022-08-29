@@ -28,4 +28,30 @@ type tokenData = Pick<IAuthData, 'token' | 'refreshToken'>;
 type userAuthData = Pick<IUserData, 'email' | 'password'>;
 type userPersonalData = Pick<IUserData, 'name' | 'gender'>;
 
-export { IObj, IElements, IUserData, IAuthData, tokenData, userAuthData, userPersonalData };
+interface IWordOptions {
+  difficulty: string;
+  optional: IObj<string>;
+}
+
+interface IStatisticsOptions {
+  learnedWords: number;
+  optional: IObj<string>;
+}
+
+interface ISettingsOptions {
+  wordsPerDay: number;
+  optional: IObj<string>;
+}
+
+export {
+  IObj,
+  IElements,
+  IUserData,
+  IAuthData,
+  tokenData,
+  userAuthData,
+  userPersonalData,
+  IWordOptions,
+  IStatisticsOptions,
+  ISettingsOptions,
+};
