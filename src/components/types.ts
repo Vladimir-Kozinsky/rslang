@@ -33,4 +33,25 @@ interface IWordOptions {
   optional: IObj<string>;
 }
 
-export { IObj, IElements, IUserData, IAuthData, tokenData, userAuthData, userPersonalData, IWordOptions };
+interface IStatisticsOptions {
+  learnedWords: number;
+  optional: IObj<string>;
+}
+
+interface ISettingsOptions {
+  wordsPerDay: number;
+  optional: IObj<string>;
+}
+
+export {
+  IObj,
+  IElements,
+  IUserData,
+  IAuthData,
+  tokenData,
+  userAuthData,
+  userPersonalData,
+  IWordOptions,
+  IStatisticsOptions,
+  ISettingsOptions,
+};
