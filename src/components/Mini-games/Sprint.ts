@@ -93,9 +93,12 @@ class Sprint {
     currentWordContainer.append(trueBtn);
   }
 
-  async createWordsForGame(difficulty: string) {
+  async createWordsForGame(difficulty: string, page: number = -1) {
     const api = new GamesApi();
-    const randomPage = Math.floor(Math.random() * 30).toString();
+    let randomPage: number;
+    // if game launched from menu choose random page
+    if(page === -1) randomPage = Math.floor(Math.random() * 30).toString();
+    else randomPage = page.toString();
     const wordsArr: Word[] = await api.getWords(difficulty, randomPage);
     const wrongTranslatedWordsIndexes: number[] = [];
     function shuffleArr(array: Word[]) {
@@ -180,16 +183,35 @@ class Sprint {
       }
     }
 
+    const callStatistics = () => {
+      const newWords: string  = (correctAnswers.length + inCorrectAnswers.length).toString();
+      const correctAnswerPercentage: string = `${Math.round(100 / ((inCorrectAnswers.length + correctAnswers.length) / correctAnswers.length)).toString()}%`; 
+
+      let streaksArr: number[][] = [];
+      clonedArr.forEach((item: Word, index: number) => {
+        if(index > 0) {
+          if(item.isTrue && !clonedArr[index - 1].isTrue) streaksArr.push([1]);
+          else if(item.isTrue && clonedArr[index - 1].isTrue) streaksArr[streaksArr.length - 1][0]++;
+        }
+        else if(item.isTrue) streaksArr.push([1]);
+      });
+      const longestStreak: string = streaksArr.sort((a, b) => b[0] - a[0])[0][0].toString();
+
+      this.sendDataToStatistics(correctAnswerPercentage, newWords, longestStreak)
+    }
+
     // Control from mouse
     wordContainer?.addEventListener('click', (e: Event) => {
       const target = e.target as HTMLButtonElement;
       if (currentIndex > 18) {
         clearInterval(timeToStop);
+        console.log(callStatistics());
+        console.log(wordsArr);
+        console.log(clonedArr);
         this.createResultsPage(+points.textContent!, correctAnswers, inCorrectAnswers);
       }
       if (target.classList.contains('sprint-button__true')) {
         if (wrongTranslatedWordIndexes.includes(currentIndex)) {
-          currentIndex += 1;
           word.textContent = clonedArr[currentIndex].word;
           translatedWord.textContent = clonedArr[currentIndex].wordTranslate;
           inCorrectAnswers.push({
@@ -197,12 +219,17 @@ class Sprint {
             wordTranslate: findTranslate(word.textContent!)!,
             wordAudio: clonedArr[currentIndex].audio,
           });
+          clonedArr[currentIndex].isTrue = false;
+          currentIndex += 1;
+          word.textContent = clonedArr[currentIndex].word;
+          translatedWord.textContent = clonedArr[currentIndex].wordTranslate;
         } else {
           correctAnswers.push({
             word: word.textContent!,
             wordTranslate: translatedWord.textContent!,
             wordAudio: clonedArr[currentIndex].audio,
           });
+          clonedArr[currentIndex].isTrue = true;
           currentIndex += 1;
           points.textContent = (+points.textContent! + 20).toString();
           word.textContent = clonedArr[currentIndex].word;
@@ -215,6 +242,7 @@ class Sprint {
             wordTranslate: findTranslate(word.textContent!)!,
             wordAudio: clonedArr[currentIndex].audio,
           });
+          clonedArr[currentIndex].isTrue = true;
           currentIndex += 1;
           points.textContent = (+points.textContent! + 20).toString();
           word.textContent = clonedArr[currentIndex].word;
@@ -225,6 +253,7 @@ class Sprint {
             wordTranslate: translatedWord.textContent!,
             wordAudio: clonedArr[currentIndex].audio,
           });
+          clonedArr[currentIndex].isTrue = false;
           currentIndex += 1;
           word.textContent = clonedArr[currentIndex].word;
           translatedWord.textContent = clonedArr[currentIndex].wordTranslate;
@@ -237,20 +266,21 @@ class Sprint {
       const keyName = e.key;
       if (currentIndex > 18) {
         clearInterval(timeToStop);
+        callStatistics()
         this.createResultsPage(+points.textContent!, correctAnswers, inCorrectAnswers);
       }
       // eslint-disable-next-line default-case
       switch (keyName) {
         case 'ArrowRight':
           if (wrongTranslatedWordIndexes.includes(currentIndex)) {
-            currentIndex += 1;
-            word.textContent = clonedArr[currentIndex].word;
-            translatedWord.textContent = clonedArr[currentIndex].wordTranslate;
             inCorrectAnswers.push({
               word: word.textContent!,
               wordTranslate: findTranslate(word.textContent!)!,
               wordAudio: clonedArr[currentIndex].audio,
             });
+            currentIndex += 1;
+            word.textContent = clonedArr[currentIndex].word;
+            translatedWord.textContent = clonedArr[currentIndex].wordTranslate; 
           } else {
             correctAnswers.push({
               word: word.textContent!,
@@ -387,6 +417,45 @@ class Sprint {
     inCorrectAnswersContainer.prepend(inCorrectAnswersTotal);
 
     app.switchToAnotherPage();
+  }
+
+  async sendDataToStatistics(sprintCorrectAnswersPercentage: string, sprintNewWords: string, sprintLongestStreak: string) {
+    const base: string = `https://react-learnwords-shahzod.herokuapp.com`;
+    const token: string = localStorage.getItem('token')!;
+    const id: string = localStorage.getItem('userId')!;
+    const getStatistics = await (await fetch(`${base}/users/${id}/statistics`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      }
+    })).json();
+
+    if(getStatistics.optional.sprintCorrectAnswersPercentage) {
+      const prevCorrectAnswersPercentage: number = +getStatistics.optional.sprintCorrectAnswersPercentage.slice(0, -1);
+      const prevNewWords: number = +getStatistics.optional.sprintNewWords;
+      const prevLongestStreak: number = +getStatistics.optional.sprintLongestStreak;
+      sprintCorrectAnswersPercentage = `${Math.round(((+sprintCorrectAnswersPercentage.slice(0, -1) + prevCorrectAnswersPercentage) / 2)).toString()}%`;
+      sprintNewWords = (+sprintNewWords + prevNewWords).toString();
+      console.log(true);
+      if(prevLongestStreak > +sprintLongestStreak) {
+        console.log(2);
+         sprintLongestStreak = prevLongestStreak.toString()
+      };
+    }
+
+    const response = await fetch(`${base}/users/${id}/statistics`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify({ 
+        optional: {
+                   sprintCorrectAnswersPercentage,
+                   sprintNewWords,
+                   sprintLongestStreak} })
+    });
   }
 }
 

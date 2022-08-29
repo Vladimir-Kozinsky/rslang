@@ -146,7 +146,22 @@ class AudioCall {
       
       // create page with results if the cart is last
       if(cartNum > 19) {
-        this.createResultsPage(getData);
+        let streaksArr: number[][] = [];
+        const progressDots = Array.from(document.querySelectorAll('[data-word-num]')) as HTMLSpanElement[];
+        progressDots.forEach((item: HTMLSpanElement, index: number) => {
+          if(index > 0) {
+            if(item.style.background === 'rgb(14, 165, 1)' && progressDots[index - 1].style.background !== 'rgb(14, 165, 1)') streaksArr.push([1]);
+            else if(item.style.background === 'rgb(14, 165, 1)' && progressDots[index - 1].style.background === 'rgb(14, 165, 1)') streaksArr[streaksArr.length - 1][0]++;
+          }
+          else {
+            if(item.style.background === 'rgb(14, 165, 1)') streaksArr.push([1]);  
+          }
+        });
+        const longestStreak: string = streaksArr.sort((a, b) => b[0] - a[0])[0][0].toString();
+        if(longestStreak.length === 0) this.createResultsPage(getData, '0');
+        else {
+          this.createResultsPage(getData, longestStreak);
+        }
       }
       // disable buttons after click
       options.forEach((item: HTMLButtonElement) => {
@@ -219,7 +234,7 @@ class AudioCall {
     audioContainer.append(trueImage);
   }
 
-  async createResultsPage(data: AudioCallData[]) {
+  async createResultsPage(data: AudioCallData[], longestStreak: string) {
     const content = document.querySelector(
       '.container__content'
     ) as HTMLDivElement;
@@ -309,6 +324,10 @@ class AudioCall {
       inCorrectAnswerBlock.append(inCorrectAnswerWord);
     }
 
+    // percentage of correct answers for statistics
+    const correctAnswerPercentage: string = `${Math.round(100 / (data.length / correctAnswers.length)).toString()}%`;
+    // amount of new Words
+    const newWords: string = data.length.toString(); 
     content.append(resultsCartContainer);
     resultsCartContainer.append(resultsCart);
     resultsCart.append(title);
@@ -319,8 +338,48 @@ class AudioCall {
     inCorrectAnswersContainer.prepend(inCorrectAnswersTotal);
 
     app.switchToAnotherPage();
+
+     this.sendDataToStatistics(correctAnswerPercentage, newWords, longestStreak);
   }
 
+  async sendDataToStatistics(audioCallCorrectAnswersPercentage: string, audioCallNewWords: string, audioCallLongestStreak: string) {
+    const base: string = `https://react-learnwords-shahzod.herokuapp.com`;
+    const token: string = localStorage.getItem('token')!;
+    const id: string = localStorage.getItem('userId')!;
+    const getStatistics = await (await fetch(`${base}/users/${id}/statistics`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      }
+    })).json();
+
+    if(getStatistics.optional.audioCallCorrectAnswersPercentage) {
+      const prevCorrectAnswersPercentage: number = +getStatistics.optional.audioCallCorrectAnswersPercentage.slice(0, -1);
+      const prevNewWords: number = +getStatistics.optional.audioCallNewWords;
+      const prevLongestStreak: number = +getStatistics.optional.audioCallLongestStreak;
+      audioCallCorrectAnswersPercentage = `${Math.round(((+audioCallCorrectAnswersPercentage.slice(0, -1) + prevCorrectAnswersPercentage) / 2)).toString()  }%`;
+      audioCallNewWords = (+audioCallNewWords + prevNewWords).toString();
+      console.log(true);
+      if(prevLongestStreak > +audioCallLongestStreak) {
+        console.log(2);
+         audioCallLongestStreak = prevLongestStreak.toString()
+      };
+    }
+
+    const response = await fetch(`${base}/users/${id}/statistics`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify({ 
+        optional: {
+                   audioCallCorrectAnswersPercentage,
+                   audioCallNewWords,
+                   audioCallLongestStreak} })
+    });
+  }
 }
 
 export default AudioCall;
