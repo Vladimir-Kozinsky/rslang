@@ -60,3 +60,89 @@
         }
     }
 }
+
+.ebook__words {
+    height: 85vh;
+    padding: 40px 20px;
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    justify-content: center;
+    overflow-y: auto;
+}
+
+.word-block {
+    width: 400px;
+    height: 350px;
+    border-radius: 25px;
+    background-color: rgb(60, 54, 89);
+    position: relative;
+    overflow: hidden;
+}
+
+.word-block__filter {
+    position: absolute;
+    z-index: 10;
+    width: 100%;
+    height: 200px;
+    background: linear-gradient(transparent, #3c365a);
+}
+
+.word-block__img-wrap {
+    height: 200px;
+    overflow: hidden;
+    img {
+        width: 100%;
+    }
+}
+
+.word-block__info {
+    position: relative;
+    top: -70px;
+    padding: 0 15px;
+    z-index: 10;
+}
+
+.info-block__word {
+    color: white;
+    font-size: 24px;
+    margin: 0;
+    padding: 0;
+}
+
+.info-block__word-trans {
+    color: white;
+    font-size: 18px;
+    font-weight: 700;
+}
+.info-block__word-transcript {
+    color: white;
+    font-size: 18px;
+    font-weight: 400;
+    margin-left: 10px;
+}
+
+.info-block__voice-icon {
+    width: 30px;
+    margin-left: 15px;
+    position: relative;
+    top: 8px;
+    &:hover {
+        cursor: pointer;
+    }
+}
+
+p {
+    color: white;
+    margin: 0px;
+    padding: 0px;
+    margin-top: 5px;
+    font-size: 14px;
+}
+.info-block__text-example {
+    color: white;
+}
+
+.info-block__text-meaning {
+    font-style: italic;
+}

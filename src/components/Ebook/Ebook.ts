@@ -1,13 +1,96 @@
-/* eslint-disable class-methods-use-this */
-/* eslint-disable no-plusplus */
+import EbookAPI, { IWord } from "../API/API";
+
+
 class Ebook {
-    drawEbook() {
+    async drawEbook() {
         const container = document.querySelector('.container__content') as HTMLDivElement;
         const ebook = document.createElement('div') as HTMLDivElement;
         ebook.className = 'ebook';
 
         ebook.append(this.drawHeader());
+        ebook.append(await this.drawWords());
+
         container.append(ebook);
+    }
+
+    async drawWords() {
+        const data = await EbookAPI.getWords('0', '0');
+        const ebookWords = document.createElement('div') as HTMLDivElement;
+        ebookWords.className = 'ebook__words'
+        if (data && data.status === 'OK') {
+            data.words.forEach((item: IWord) => {
+                ebookWords.append(this.createWordBlock(item));
+            })
+        }
+        return ebookWords;
+    }
+
+    createWordBlock(item: IWord) {
+        const wordBlock = document.createElement('div') as HTMLDivElement;
+        wordBlock.className = 'word-block';
+
+        const wordBlockImgWrap = document.createElement('div') as HTMLDivElement;
+        wordBlockImgWrap.className = 'word-block__img-wrap';
+
+        const wordBlockImg = document.createElement('img') as HTMLImageElement;
+        wordBlockImg.src = `http://localhost:6666/${item.image}`;
+
+        wordBlockImgWrap.append(wordBlockImg);
+
+        const filterBlock = document.createElement('div') as HTMLDivElement;
+        filterBlock.className = 'word-block__filter';
+        wordBlock.append(filterBlock);
+        wordBlock.append(wordBlockImgWrap);
+
+        const wordBlockInfo = document.createElement('div') as HTMLDivElement;
+        wordBlockInfo.className = 'word-block__info';
+
+        const word = document.createElement('h4') as HTMLHeadElement;
+        word.className = 'info-block__word';
+        word.textContent = item.word;
+        wordBlockInfo.append(word);
+
+        const transcription = document.createElement('span') as HTMLSpanElement;
+        transcription.className = 'info-block__word-trans';
+        transcription.textContent = item.wordTranslate;
+        wordBlockInfo.append(transcription);
+
+        const wordTranslate = document.createElement('span') as HTMLSpanElement;
+        wordTranslate.className = 'info-block__word-transcript';
+        wordTranslate.textContent = item.transcription;
+        wordBlockInfo.append(wordTranslate);
+
+        const voiceIcon = document.createElement('img') as HTMLImageElement;
+        voiceIcon.className = 'info-block__voice-icon';
+        voiceIcon.src = '../../assets/img/svg/voice-icon.svg';
+        wordBlockInfo.append(voiceIcon);
+
+        const textExample = document.createElement('p') as HTMLParagraphElement;
+        textExample.className = 'info-block__text-example';
+        textExample.innerHTML = item.textExample;
+        wordBlockInfo.append(textExample);
+
+        const textMeaning = document.createElement('p') as HTMLParagraphElement;
+        textMeaning.className = 'info-block__text-meaning';
+        textMeaning.innerHTML = item.textMeaning;
+        wordBlockInfo.append(textMeaning);
+
+        const line = document.createElement('hr') as HTMLHRElement;
+        line.className = 'info-block__line';
+        wordBlockInfo.append(line);
+
+        const textExampleTranslate = document.createElement('p') as HTMLParagraphElement;
+        textExampleTranslate.className = 'info-block__text-example-trans';
+        textExampleTranslate.innerHTML = item.textExampleTranslate;
+        wordBlockInfo.append(textExampleTranslate);
+
+        const textMeaningTranslate = document.createElement('p') as HTMLParagraphElement;
+        textMeaningTranslate.className = 'info-block__text-meaning-trans';
+        textMeaningTranslate.innerHTML = item.textMeaningTranslate;
+        wordBlockInfo.append(textMeaningTranslate);
+        wordBlock.append(wordBlockInfo);
+
+        return wordBlock;
     }
 
     drawHeader() {
@@ -51,11 +134,7 @@ class Ebook {
 
         sections.forEach(item => {
             menuItems.append(this.createMenuItem(item.text, item.bg, item.size));
-
-
         })
-
-
 
         headerMenu.append(menuItems);
         return headerMenu;
@@ -84,6 +163,7 @@ class Ebook {
         menuItem.style.background = bg;
         return menuItem;
     }
+
 }
 
 export default Ebook;
