@@ -108,6 +108,20 @@ class Sprint {
         wordsArr.push(additionalWords[i])
       }
     }
+
+    // create counter which counts how many times user guessed right choice and delete words if it guessed right n times 
+    for (let i = 0; i < wordsArr.length; i += 1) {
+      if(!wordsArr[i].guessedRight) {
+        wordsArr[i].guessedRight = 0;
+      }
+      else if(wordsArr[i].guessedRight! >= 3 && wordsArr[i].difficulty === 'easy') {
+        wordsArr.splice(i, 1);
+      }
+      else if(wordsArr[i].guessedRight! >= 5 && wordsArr[i].difficulty === 'hard') {
+        wordsArr.splice(i, 1);
+      }
+    }
+
     const wrongTranslatedWordsIndexes: number[] = [];
     function shuffleArr(array: Word[]) {
       let currentIndex = array.length;
@@ -238,6 +252,7 @@ class Sprint {
             wordAudio: clonedArr[currentIndex].audio,
           });
           clonedArr[currentIndex].isTrue = true;
+          clonedArr[currentIndex].guessedRight! = clonedArr[currentIndex].guessedRight! + 1;
           currentIndex += 1;
           points.textContent = (+points.textContent! + 20).toString();
           word.textContent = clonedArr[currentIndex].word;
@@ -251,6 +266,7 @@ class Sprint {
             wordAudio: clonedArr[currentIndex].audio,
           });
           clonedArr[currentIndex].isTrue = true;
+          clonedArr[currentIndex].guessedRight! = clonedArr[currentIndex].guessedRight! + 1;
           currentIndex += 1;
           points.textContent = (+points.textContent! + 20).toString();
           word.textContent = clonedArr[currentIndex].word;

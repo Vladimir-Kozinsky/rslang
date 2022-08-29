@@ -1,4 +1,5 @@
 interface Word {
+  isTrue?: boolean;
   id: string;
   group: 0;
   page: 0;
@@ -13,6 +14,8 @@ interface Word {
   wordTranslate: string;
   textMeaningTranslate: string;
   textExampleTranslate: string;
+  guessedRight?: number;
+  difficulty?: string;
 }
 
 export interface AudioCallData {
@@ -22,6 +25,8 @@ export interface AudioCallData {
   wordImage: string;
   isTrue?: boolean;
   wordAudio: string;
+  guessedRight?: number;
+  difficulty?: string;
 }
 
 export default Word;

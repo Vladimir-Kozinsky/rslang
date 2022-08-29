@@ -74,7 +74,14 @@ class AudioCall {
           wordsArr.push(additionalWords[i])
         }
       }
-      
+
+    // create counter which counts how many times user guessed right choice
+    for (let i = 0; i < wordsArr.length; i += 1) {
+      if(!wordsArr[i].guessedRight) {
+        wordsArr[i].guessedRight = 0;
+      }
+    }
+
       function shuffleArr(array: Word[]) {
         let currentIndex = array.length;
         let randomIndex;
@@ -97,6 +104,7 @@ class AudioCall {
       const wordAudio = `https://react-learnwords-shahzod.herokuapp.com/${wordsArr[i].audio}`
       const {wordTranslate} = wordsArr[i];
       const wrongTranslates: string[] = [];
+      const {guessedRight} = wordsArr[i];
       let wrongTranslatesAmount: number = 4;
       const wordImage = wordsArr[i].image;
       dataForCart.push({
@@ -104,7 +112,8 @@ class AudioCall {
         wordTranslate,
         wordTranslates: [wrongTranslates, wordTranslate],
         wordImage,
-        wordAudio
+        wordAudio,
+        guessedRight
       });
       for (let j = 0; j < wrongTranslatesAmount; j += 1) {
         const randomIndex = Math.floor(Math.random() * 19);
@@ -180,12 +189,13 @@ class AudioCall {
       });
       if(target.classList.contains('options__button') && getData[cartNum].wordTranslate === target.innerHTML) {
         console.log(true);
-        this.appendResult(getData, cartNum, 'true', target);        
+        getData[cartNum].guessedRight! = getData[cartNum].guessedRight! + 1;
+        this.appendResult(getData, cartNum, 'true', target); 
+        console.log(getData);   
         cartNum += 1;
       }
       else if (target.classList.contains('options__button') && target.innerHTML !== 'Не знаю' && target.innerHTML !== 'Дальше') {
         console.log(false);
-        console.log(target.innerHTML);
         this.appendResult(getData, cartNum, 'false', target);        
         cartNum += 1;
       }
