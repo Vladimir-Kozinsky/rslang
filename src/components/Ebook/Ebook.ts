@@ -7,10 +7,16 @@ class Ebook {
 
     totalPages: string;
 
+    isAuth: boolean;
+
+    theme: string;
+
     constructor() {
         this.group = '0';
         this.page = '0';
         this.totalPages = '30';
+        this.isAuth = true;
+        this.theme = '#3c365a';
     }
 
     async drawEbook() {
@@ -48,6 +54,7 @@ class Ebook {
     createWordBlock(item: IWord) {
         const wordBlock = document.createElement('div') as HTMLDivElement;
         wordBlock.className = 'word-block';
+        wordBlock.style.background = this.theme;
 
         const wordBlockImgWrap = document.createElement('div') as HTMLDivElement;
         wordBlockImgWrap.className = 'word-block__img-wrap';
@@ -57,8 +64,24 @@ class Ebook {
 
         wordBlockImgWrap.append(wordBlockImg);
 
+
+
         const filterBlock = document.createElement('div') as HTMLDivElement;
         filterBlock.className = 'word-block__filter';
+        filterBlock.style.background = `linear-gradient(transparent, ${this.theme})`;
+        if (this.isAuth) {
+            const difficultBtn = document.createElement('button') as HTMLButtonElement;
+            difficultBtn.className = 'word-block__difficult-btn';
+            difficultBtn.textContent = 'В сложные';
+            difficultBtn.style.background = this.theme;
+
+            const learnedtBtn = document.createElement('button') as HTMLButtonElement;
+            learnedtBtn.className = 'word-block__learned-btn';
+            learnedtBtn.textContent = 'В изученные';
+            learnedtBtn.style.background = this.theme;
+            filterBlock.append(difficultBtn);
+            filterBlock.append(learnedtBtn);
+        }
         wordBlock.append(filterBlock);
         wordBlock.append(wordBlockImgWrap);
 
@@ -83,6 +106,14 @@ class Ebook {
         const voiceIcon = document.createElement('img') as HTMLImageElement;
         voiceIcon.className = 'info-block__voice-icon';
         voiceIcon.src = '../../assets/img/svg/voice-icon.svg';
+        voiceIcon.addEventListener('click', () => {
+            const audio = new Audio(`http://localhost:6666/${item.audioExample}`);
+            voiceIcon.src = '../../assets/img/svg/voice-icon-active.svg'
+            audio.play();
+            audio.onended = () => {
+                voiceIcon.src = '../../assets/img/svg/voice-icon.svg'
+            }
+        })
         wordBlockInfo.append(voiceIcon);
 
         const textExample = document.createElement('p') as HTMLParagraphElement;
@@ -131,13 +162,13 @@ class Ebook {
     createHeaderMenu() {
 
         const sections = [
-            { text: '1 Секция', bg: 'green', size: '90px' },
-            { text: '2 Секция', bg: '#00ef00', size: '100px' },
-            { text: '3 Секция', bg: 'yellow', size: '110px' },
-            { text: '4 Секция', bg: 'orange', size: '120px' },
-            { text: '5 Секция', bg: 'green', size: '130px' },
-            { text: '6 Секция', bg: 'red', size: '140px' },
-            { text: '7 Секция', bg: '#3c365a', size: '150px' }
+            { text: '1 Секция', bg: '#3c365a', size: '90px' },
+            { text: '2 Секция', bg: '#563E20', size: '100px' },
+            { text: '3 Секция', bg: '#1E434C', size: '110px' },
+            { text: '4 Секция', bg: '#BA5536', size: '120px' },
+            { text: '5 Секция', bg: '#004D47', size: '130px' },
+            { text: '6 Секция', bg: '#053538', size: '140px' },
+            { text: '7 Секция', bg: '#896E69', size: '150px' }
         ]
         const headerMenu = document.createElement('div') as HTMLDivElement;
         headerMenu.className = 'header-menu';
@@ -162,7 +193,7 @@ class Ebook {
     createMenuItem(text: string, bg: string, size: string) {
         const menuItem = document.createElement('li') as HTMLElement;
         menuItem.className = 'header-menu__item';
-        menuItem.addEventListener('click', (event) => {
+        menuItem.addEventListener('click', async (event) => {
             const currentMenuItem = event.currentTarget as HTMLElement;
             if (!currentMenuItem.classList.contains('active')) {
                 const menuItems = document.querySelectorAll('.header-menu__item');
@@ -170,12 +201,15 @@ class Ebook {
                     item.classList.remove('active');
                 })
                 if (currentMenuItem.textContent) {
+
+
                     let group = currentMenuItem.textContent.split('')[0];
                     if (group) {
                         group = (+group - 1).toString();
                     }
                     this.group = group;
-                    this.drawWords(group, this.page);
+                    this.theme = bg;
+                    await this.drawWords(group, this.page);
                     menuItem.classList.add('active');
                 }
             }

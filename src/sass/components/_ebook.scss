@@ -36,16 +36,16 @@
 }
 .pagenator__page-btn__first {
     left: -75px;
-    
+
     &:hover {
-        left: -77px
+        left: -77px;
     }
 }
 
 .pagenator__page-btn__prev {
     left: -30px;
     &:hover {
-        left: -32px
+        left: -32px;
     }
 }
 
@@ -53,14 +53,14 @@
     transform: rotate(180deg);
     left: 45px;
     &:hover {
-        left: 43px
+        left: 43px;
     }
 }
 
 .pagenator__page-btn__last {
     left: 70px;
     &:hover {
-        left: 68px
+        left: 68px;
     }
 }
 
@@ -124,7 +124,6 @@
     width: 400px;
     height: 350px;
     border-radius: 25px;
-    background-color: rgb(60, 54, 89);
     position: relative;
     overflow: hidden;
 }
@@ -134,7 +133,22 @@
     z-index: 10;
     width: 100%;
     height: 200px;
-    background: linear-gradient(transparent, #3c365a);
+}
+
+.word-block__difficult-btn,
+.word-block__learned-btn {
+    border: white 3px solid;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 15px;
+    margin-top: 10px;
+    margin-left: 10px;
+    transition: all 0.2s;
+    &:hover {
+        cursor: pointer;
+        border: 3px solid hsl(250, 25%, 80%);
+        color: hsl(250, 25%, 80%);
+    }
 }
 
 .word-block__img-wrap {
