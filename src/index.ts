@@ -4,3 +4,4 @@ import './sass/main.scss';
 const app = new App();
 app.startApp();
 app.switchToAnotherPage();
+
