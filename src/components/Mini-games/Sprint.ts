@@ -95,11 +95,19 @@ class Sprint {
 
   async createWordsForGame(difficulty: string, page: number = -1) {
     const api = new GamesApi();
-    let randomPage: number;
+    let randomPage: string;
     // if game launched from menu choose random page
     if(page === -1) randomPage = Math.floor(Math.random() * 30).toString();
     else randomPage = page.toString();
+
     const wordsArr: Word[] = await api.getWords(difficulty, randomPage);
+    // create additional words if they are not enough
+    if(wordsArr.length < 15 && +randomPage > 0) {
+      const additionalWords: Word[] = await api.getWords(difficulty, (+randomPage - 1).toString());
+      for (let i = 0; i < 20 - wordsArr.length; i += 1) {
+        wordsArr.push(additionalWords[i])
+      }
+    }
     const wrongTranslatedWordsIndexes: number[] = [];
     function shuffleArr(array: Word[]) {
       let currentIndex = array.length;
