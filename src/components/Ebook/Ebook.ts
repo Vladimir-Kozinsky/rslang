@@ -1,7 +1,18 @@
 import EbookAPI, { IWord } from "../API/API";
 
-
 class Ebook {
+    group: string;
+
+    page: string;
+
+    totalPages: string;
+
+    constructor() {
+        this.group = '0';
+        this.page = '0';
+        this.totalPages = '30';
+    }
+
     async drawEbook() {
         const container = document.querySelector('.container__content') as HTMLDivElement;
         const ebook = document.createElement('div') as HTMLDivElement;
@@ -13,10 +24,19 @@ class Ebook {
         container.append(ebook);
     }
 
-    async drawWords() {
-        const data = await EbookAPI.getWords('0', '0');
-        const ebookWords = document.createElement('div') as HTMLDivElement;
-        ebookWords.className = 'ebook__words'
+    async drawWords(group: string = this.group, page: string = this.page) {
+        const data = await EbookAPI.getWords(group, page);
+        let ebookWords = document.querySelector('.ebook__words') as HTMLDivElement;
+
+        if (!ebookWords) {
+            ebookWords = document.createElement('div') as HTMLDivElement;
+            ebookWords.className = 'ebook__words'
+        } else {
+            while (ebookWords.firstChild) {
+                ebookWords.removeChild(ebookWords.firstChild);
+            }
+        }
+
         if (data && data.status === 'OK') {
             data.words.forEach((item: IWord) => {
                 ebookWords.append(this.createWordBlock(item));
@@ -100,9 +120,8 @@ class Ebook {
         const headerLogo = document.createElement('div') as HTMLDivElement;
         header.append(headerLogo);
 
-        const pagenator = document.createElement('div') as HTMLDivElement;
-        pagenator.className = 'pagenator';
-        header.append(pagenator);
+
+        header.append(this.createPagenator());
 
         header.append(this.createHeaderMenu());
 
@@ -143,12 +162,23 @@ class Ebook {
     createMenuItem(text: string, bg: string, size: string) {
         const menuItem = document.createElement('li') as HTMLElement;
         menuItem.className = 'header-menu__item';
-        menuItem.addEventListener('click', () => {
-            const menuItems = document.querySelectorAll('.header-menu__item');
-            menuItems.forEach(item => {
-                item.classList.remove('active');
-            })
-            menuItem.classList.add('active');
+        menuItem.addEventListener('click', (event) => {
+            const currentMenuItem = event.currentTarget as HTMLElement;
+            if (!currentMenuItem.classList.contains('active')) {
+                const menuItems = document.querySelectorAll('.header-menu__item');
+                menuItems.forEach(item => {
+                    item.classList.remove('active');
+                })
+                if (currentMenuItem.textContent) {
+                    let group = currentMenuItem.textContent.split('')[0];
+                    if (group) {
+                        group = (+group - 1).toString();
+                    }
+                    this.group = group;
+                    this.drawWords(group, this.page);
+                    menuItem.classList.add('active');
+                }
+            }
         })
 
         const link = document.createElement('a') as HTMLElement;
@@ -162,6 +192,70 @@ class Ebook {
         menuItem.style.width = size;
         menuItem.style.background = bg;
         return menuItem;
+    }
+
+    createPagenator() {
+        const pagenator = document.createElement('div') as HTMLDivElement;
+        pagenator.className = 'pagenator';
+
+        const firstPageBtn = document.createElement('img') as HTMLImageElement;
+        firstPageBtn.className = 'pagenator__page-btn pagenator__page-btn__first';
+        firstPageBtn.src = '../../assets/img/svg/pagenatorBtnDoubleLeft.svg';
+        pagenator.append(firstPageBtn);
+
+        const prevPageBtn = document.createElement('img') as HTMLImageElement;
+        prevPageBtn.className = 'pagenator__page-btn pagenator__page-btn__prev';
+        prevPageBtn.src = '../../assets/img/svg/pagenatorBtn.svg';
+        pagenator.append(prevPageBtn);
+
+        const page = document.createElement('span') as HTMLSpanElement;
+        page.className = 'pagenator__page';
+        page.textContent = `${+this.page + 1}`;
+        pagenator.append(page);
+
+        const nextPageBtn = document.createElement('img') as HTMLImageElement;
+        nextPageBtn.className = 'pagenator__page-btn pagenator__page-btn__next';
+        nextPageBtn.src = '../../assets/img/svg/pagenatorBtn.svg';
+        pagenator.append(nextPageBtn);
+
+        const lastPageBtn = document.createElement('img') as HTMLImageElement;
+        lastPageBtn.className = 'pagenator__page-btn pagenator__page-btn__last';
+        lastPageBtn.src = '../../assets/img/svg/pagenatorBtnDoubleRight.svg';
+        pagenator.append(lastPageBtn);
+
+        firstPageBtn.addEventListener('click', () => {
+            if (this.page !== '0') {
+                this.drawWords(this.group, '0');
+                page.textContent = '1';
+                this.page = '0';
+            }
+        })
+
+        prevPageBtn.addEventListener('click', () => {
+            if (this.page !== '0') {
+                this.drawWords(this.group, (+this.page - 1).toString());
+                page.textContent = this.page;
+                this.page = `${+this.page - 1}`;
+            }
+        })
+
+        nextPageBtn.addEventListener('click', () => {
+            if (this.page !== '29') {
+                this.drawWords(this.group, (+this.page + 1).toString());
+                page.textContent = `${+this.page + 2}`;
+                this.page = `${+this.page + 1}`;
+            }
+        })
+
+        lastPageBtn.addEventListener('click', () => {
+            if (this.page !== '29') {
+                this.drawWords(this.group, '29');
+                page.textContent = '30';
+                this.page = '29';
+            }
+        })
+
+        return pagenator;
     }
 
 }
