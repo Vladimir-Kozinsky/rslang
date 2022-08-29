@@ -28,4 +28,9 @@ type tokenData = Pick<IAuthData, 'token' | 'refreshToken'>;
 type userAuthData = Pick<IUserData, 'email' | 'password'>;
 type userPersonalData = Pick<IUserData, 'name' | 'gender'>;
 
-export { IObj, IElements, IUserData, IAuthData, tokenData, userAuthData, userPersonalData };
+interface IWordOptions {
+  difficulty: string;
+  optional: IObj<string>;
+}
+
+export { IObj, IElements, IUserData, IAuthData, tokenData, userAuthData, userPersonalData, IWordOptions };
