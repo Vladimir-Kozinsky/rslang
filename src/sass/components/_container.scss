@@ -124,8 +124,10 @@
 
         .middleBlock {
             background-color: rgba(246, 245, 245, 1);
-            color: rgba(60, 54, 90, 1);
             border-radius: 50px 0 0 50px;
+        }
+        .middleBlock__link {
+            color: rgba(60, 54, 90, 1);
         }
 
         .middleBlock__icon {
