@@ -65,6 +65,7 @@ class Container {
       beforeBg.append(before);
 
       const link = document.createElement('a') as HTMLElement;
+      link.className = 'middleBlock__link';
       link.textContent = item.text;
       link.id = item.id;
 
