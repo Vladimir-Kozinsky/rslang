@@ -16,6 +16,9 @@ export default class AuthView extends ElementCreator {
   drawSignIn(): void {
     const { auth } = this.elements.htmlElements;
     auth.innerHTML = '';
+
+    document.body.classList.add('body-scroll-block');
+
     const cancelButton = this.createElement('button', auth, { class: 'auth__cancel-button' });
     const authIcon = this.createElementSVG(
       auth,
@@ -55,6 +58,8 @@ export default class AuthView extends ElementCreator {
   drawSignUp(): void {
     const { auth } = this.elements.htmlElements;
     auth.innerHTML = '';
+
+    document.body.classList.add('body-scroll-block');
 
     const cancelButton = this.createElement('button', auth, { class: 'auth__cancel-button' });
     const authForm = this.createElement('form', auth, { class: 'auth-form' });
@@ -143,5 +148,6 @@ export default class AuthView extends ElementCreator {
   clearAuthContainer(): void {
     const { auth } = this.elements.htmlElements;
     auth.innerHTML = '';
+    document.body.classList.remove('body-scroll-block');
   }
 }
