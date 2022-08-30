@@ -1,4 +1,4 @@
-import { IUserData, IAuthData, tokenData, userAuthData } from '../types';
+import { IUserData, userAuthData, IStatisticsOptions, ISettingsOptions } from '../types';
 import ApiData from './ApiData';
 
 export default class UserAccountApi {
@@ -62,6 +62,50 @@ export default class UserAccountApi {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(userAuthData),
+    });
+  }
+
+  async getStatistics(): Promise<Response> {
+    return await fetch(`${ApiData.basePath}/users/${ApiData.userId}/statistics`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${ApiData.token}`,
+        'Accept': 'application/json',
+      },
+    });
+  }
+
+  async updateStatistics(statisticsOptions: IStatisticsOptions): Promise<Response> {
+    return await fetch(`${ApiData.basePath}/users/${ApiData.userId}/statistics`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${ApiData.token}`,
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(statisticsOptions),
+    });
+  }
+
+  async getSettings(): Promise<Response> {
+    return await fetch(`${ApiData.basePath}/users/${ApiData.userId}/settings`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${ApiData.token}`,
+        'Accept': 'application/json',
+      },
+    });
+  }
+
+  async updateSettings(settingsOptions: ISettingsOptions): Promise<Response> {
+    return await fetch(`${ApiData.basePath}/users/${ApiData.userId}/settings`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${ApiData.token}`,
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(settingsOptions),
     });
   }
 }
