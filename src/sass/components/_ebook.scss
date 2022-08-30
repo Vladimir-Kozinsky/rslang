@@ -10,6 +10,47 @@
     align-items: center;
 }
 
+.ebook-header__mimi-games {
+    display: flex;
+    gap: 20px;
+}
+
+.sprint-game,
+.audioCall-game {
+    width: 115px;
+    height: 30px;
+    border-radius: 15px;
+    border: 3px solid white;
+    display: flex;
+    align-items: center;
+    transition: all 0.2s;
+    &:hover {
+        cursor: pointer;
+        border: 3px solid hsl(250, 25%, 80%);
+        .sprint-game__title, .audioCall-game__title {
+            color: hsl(250, 25%, 80%);
+        }
+    }
+}
+
+.audioCall-game {
+    width: 140px;
+}
+
+.sprint-game__img {
+    height: 50px;
+}
+
+.audioCall-game__img {
+    height: 35px;
+}
+
+.sprint-game__title,
+.audioCall-game__title {
+    color: white;
+    transition: all 0.2s;
+}
+
 .pagenator {
     width: 100px;
     height: 10px;

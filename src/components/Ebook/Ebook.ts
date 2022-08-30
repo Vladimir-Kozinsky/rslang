@@ -148,8 +148,38 @@ class Ebook {
         const header = document.createElement('div') as HTMLDivElement;
         header.className = 'ebook-header';
 
-        const headerLogo = document.createElement('div') as HTMLDivElement;
-        header.append(headerLogo);
+        const miniGames = document.createElement('div') as HTMLDivElement;
+        miniGames.className = 'ebook-header__mimi-games';
+        
+        const sprint = document.createElement('div') as HTMLDivElement;
+        sprint.className = 'sprint-game';
+        
+        const sprintImg = document.createElement('img') as HTMLImageElement;
+        sprintImg.className = 'sprint-game__img';
+        sprintImg.src = '../../assets/img/png/sneaker.png'
+        sprint.append(sprintImg);
+
+        const sprintTitle = document.createElement('h4') as HTMLHeadingElement;
+        sprintTitle.className = 'sprint-game__title';
+        sprintTitle.textContent = 'Спринт';
+        sprint.append(sprintTitle);
+
+        const audioCall = document.createElement('div') as HTMLDivElement;
+        audioCall.className = 'audioCall-game';
+
+        const audioCallImg = document.createElement('img') as HTMLImageElement;
+        audioCallImg.className = 'audioCall-game__img';
+        audioCallImg.src = '../../assets/img/png/headphones.png'
+        audioCall.append(audioCallImg);
+
+        const audioCallTitle = document.createElement('h4') as HTMLHeadingElement;
+        audioCallTitle.className = 'audioCall-game__title';
+        audioCallTitle.textContent = 'Аудиовызов';
+        audioCall.append(audioCallTitle);
+        
+        miniGames.append(sprint);
+        miniGames.append(audioCall);
+        header.append(miniGames);
 
 
         header.append(this.createPagenator());
