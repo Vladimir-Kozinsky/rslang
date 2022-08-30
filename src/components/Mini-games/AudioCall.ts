@@ -62,13 +62,26 @@ class AudioCall {
     async createWordsForGame(difficulty: string, page: number = -1) {
       const api = new GamesApi();
       let randomPage: string;
+      const id: string = localStorage.getItem('userId')!;
+      const token: string = localStorage.getItem('token')!;
+
       // if game launched from menu choose random page
       if(page === -1) randomPage = Math.floor(Math.random() * 30).toString();
       else randomPage = page.toString();
 
-      const wordsArr: Word[] = await api.getWords(difficulty, randomPage);
+      let wordsArr: Word[];
+
+      // check is user guest or registered
+      if(id){
+        console.log(4);
+         wordsArr = (await api.getUserAggregatedWords(id, token, difficulty, randomPage))[0].paginatedResults;
+         console.log(randomPage);
+      }
+      else wordsArr = await api.getWords(difficulty, randomPage);
+
       // create additional words if they are not enough
       if(wordsArr.length < 15 && +randomPage > 0) {
+        console.log(wordsArr.length);
         const additionalWords: Word[] = await api.getWords(difficulty, (+randomPage - 1).toString());
         for (let i = 0; i < 20 - wordsArr.length; i += 1) {
           wordsArr.push(additionalWords[i])
@@ -77,9 +90,12 @@ class AudioCall {
 
     // create counter which counts how many times user guessed right choice
     for (let i = 0; i < wordsArr.length; i += 1) {
-      if(!wordsArr[i].guessedRight) {
-        wordsArr[i].guessedRight = 0;
+      if(wordsArr[i].userWord) {
+        if(!wordsArr[i].userWord!.optional.wordData.guessedRight) {
+          wordsArr[i].userWord!.optional.wordData.guessedRight = 0;
+        }
       }
+ 
     }
 
       function shuffleArr(array: Word[]) {
@@ -104,16 +120,23 @@ class AudioCall {
       const wordAudio = `https://react-learnwords-shahzod.herokuapp.com/${wordsArr[i].audio}`
       const {wordTranslate} = wordsArr[i];
       const wrongTranslates: string[] = [];
-      const {guessedRight} = wordsArr[i];
+      let guessedRight: number
+      if(wordsArr[i].userWord) {
+         guessedRight = wordsArr[i].userWord!.optional.wordData.guessedRight!;
+      }
+      else  guessedRight = 0;
+      console.log(guessedRight);
       let wrongTranslatesAmount: number = 4;
       const wordImage = wordsArr[i].image;
+      const wordId = wordsArr[i]._id;
       dataForCart.push({
         word,
         wordTranslate,
         wordTranslates: [wrongTranslates, wordTranslate],
         wordImage,
         wordAudio,
-        guessedRight
+        guessedRight,
+        wordId
       });
       for (let j = 0; j < wrongTranslatesAmount; j += 1) {
         const randomIndex = Math.floor(Math.random() * 19);
@@ -166,6 +189,14 @@ class AudioCall {
       
       // create page with results if the cart is last
       if(cartNum > 19) {
+        // send user words to user/words
+        const api = new GamesApi();
+        const id: string = localStorage.getItem('userId')!;
+        const token: string = localStorage.getItem('token')!;
+        for (let i = 0; i < getData.length; i += 1) {
+          api.createUpdateUserWord(id, token, getData[i].wordId!, getData[i], 'hard')
+        }
+
         let streaksArr: number[][] = [];
         const progressDots = Array.from(document.querySelectorAll('[data-word-num]')) as HTMLSpanElement[];
         progressDots.forEach((item: HTMLSpanElement, index: number) => {
@@ -177,11 +208,12 @@ class AudioCall {
             if(item.style.background === 'rgb(14, 165, 1)') streaksArr.push([1]);  
           }
         });
-        const longestStreak: string = streaksArr.sort((a, b) => b[0] - a[0])[0][0].toString();
-        if(longestStreak.length === 0) this.createResultsPage(getData, '0');
+        if(streaksArr.length === 0) this.createResultsPage(getData, '0');
         else {
+          const longestStreak: string = streaksArr.sort((a, b) => b[0] - a[0])[0][0].toString();
           this.createResultsPage(getData, longestStreak);
         }
+
       }
       // disable buttons after click
       options.forEach((item: HTMLButtonElement) => {
@@ -373,20 +405,36 @@ class AudioCall {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`,
       }
-    })).json();
+    }));
 
-    if(getStatistics.optional.audioCallCorrectAnswersPercentage) {
-      const prevCorrectAnswersPercentage: number = +getStatistics.optional.audioCallCorrectAnswersPercentage.slice(0, -1);
-      const prevNewWords: number = +getStatistics.optional.audioCallNewWords;
-      const prevLongestStreak: number = +getStatistics.optional.audioCallLongestStreak;
+    let data;
+    if(getStatistics.ok) {
+      data = await getStatistics.json();
+    }
+    else {
+      data = {
+        optional: {
+          audioCallCorrectAnswersPercentage,
+          audioCallNewWords,
+          audioCallLongestStreak 
+        }
+      }
+    }
+
+    if(data.optional.audioCallCorrectAnswersPercentage) {
+      const prevCorrectAnswersPercentage: number = +data.optional.audioCallCorrectAnswersPercentage.slice(0, -1);
+      const prevNewWords: number = +data.optional.audioCallNewWords;
+      const prevLongestStreak: number = +data.optional.audioCallLongestStreak;
       audioCallCorrectAnswersPercentage = `${Math.round(((+audioCallCorrectAnswersPercentage.slice(0, -1) + prevCorrectAnswersPercentage) / 2)).toString()  }%`;
       audioCallNewWords = (+audioCallNewWords + prevNewWords).toString();
-      console.log(true);
       if(prevLongestStreak > +audioCallLongestStreak) {
-        console.log(2);
          audioCallLongestStreak = prevLongestStreak.toString()
       };
     }
+      data.optional.audioCallCorrectAnswersPercentage = audioCallCorrectAnswersPercentage;
+      data.optional.audioCallNewWords = audioCallNewWords;
+      data.optional.audioCallLongestStreak = audioCallLongestStreak;
+    
 
     const response = await fetch(`${base}/users/${id}/statistics`, {
       method: 'PUT',
@@ -394,11 +442,7 @@ class AudioCall {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`,
       },
-      body: JSON.stringify({ 
-        optional: {
-                   audioCallCorrectAnswersPercentage,
-                   audioCallNewWords,
-                   audioCallLongestStreak} })
+      body: JSON.stringify({optional: data.optional})
     });
   }
 }
