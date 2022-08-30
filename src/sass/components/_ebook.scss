@@ -18,7 +18,7 @@
 .sprint-game,
 .audioCall-game {
     width: 115px;
-    height: 30px;
+    height: 35px;
     border-radius: 15px;
     border: 3px solid white;
     display: flex;
@@ -27,7 +27,8 @@
     &:hover {
         cursor: pointer;
         border: 3px solid hsl(250, 25%, 80%);
-        .sprint-game__title, .audioCall-game__title {
+        .sprint-game__title,
+        .audioCall-game__title {
             color: hsl(250, 25%, 80%);
         }
     }
@@ -49,6 +50,7 @@
 .audioCall-game__title {
     color: white;
     transition: all 0.2s;
+    font-size: 14px;
 }
 
 .pagenator {
@@ -113,14 +115,14 @@
 .header-menu__items {
     position: relative;
     z-index: 20;
-    top: -20px;
+    top: -18px;
     left: -60px;
     display: flex;
     flex-direction: column;
     align-items: center;
     transition: all 0.3s;
     &.active {
-        top: 150px;
+        top: 140px;
         .header-menu__item {
             position: relative;
             display: flex;
@@ -128,21 +130,25 @@
     }
 
     .header-menu__item {
-        height: 30px;
+        height: 35px;
         border-radius: 40px;
-        border: 4px solid rgb(166, 194, 251);
+        border: 3px solid rgb(166, 194, 251);
         justify-content: center;
         align-items: center;
         margin-bottom: 10px;
-        color: rgb(236, 238, 255);
-        font-weight: 700;
         position: absolute;
         display: none;
         transition: all 0.3s;
+        .header-menu__item__link {
+            transition: all 0.2s;
+            color: rgb(236, 238, 255);
+            font-size: 14px;
+        font-weight: 700;
+        }
         &:hover {
             cursor: pointer;
-            a {
-                font-size: 18px;
+            .header-menu__item__link {
+                font-size: 16px;
             }
         }
         &.active {
@@ -204,6 +210,8 @@
     position: relative;
     top: -70px;
     padding: 0 15px;
+    overflow-y: auto;
+    height: 200px;
     z-index: 10;
 }
 

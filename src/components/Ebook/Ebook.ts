@@ -1,9 +1,28 @@
-import EbookAPI, { IWord } from "../API/API";
+import ApiData from "../Api/ApiData";
+import WordsApi from "../Api/WordsApi";
+
+
+export interface IWord {
+    "id": string;
+    "group": number;
+    "page": number;
+    "word": string;
+    "image": string;
+    "audio": string;
+    "audioMeaning": string;
+    "audioExample": string;
+    "textMeaning": string;
+    "textExample": string;
+    "transcription": string;
+    "textExampleTranslate": string;
+    "textMeaningTranslate": string;
+    "wordTranslate": string;
+}
 
 class Ebook {
-    group: string;
+    group: number;
 
-    page: string;
+    page: number;
 
     totalPages: string;
 
@@ -11,12 +30,15 @@ class Ebook {
 
     theme: string;
 
+    wordsApi: WordsApi;
+
     constructor() {
-        this.group = '0';
-        this.page = '0';
+        this.group = 0;
+        this.page = 0;
         this.totalPages = '30';
         this.isAuth = true;
         this.theme = '#3c365a';
+        this.wordsApi = new WordsApi();
     }
 
     async drawEbook() {
@@ -30,8 +52,8 @@ class Ebook {
         container.append(ebook);
     }
 
-    async drawWords(group: string = this.group, page: string = this.page) {
-        const data = await EbookAPI.getWords(group, page);
+    async drawWords(group: number = this.group, page: number = this.page) {
+        const responce = await this.wordsApi.getChunkWords(group, page);
         let ebookWords = document.querySelector('.ebook__words') as HTMLDivElement;
 
         if (!ebookWords) {
@@ -43,8 +65,9 @@ class Ebook {
             }
         }
 
-        if (data && data.status === 'OK') {
-            data.words.forEach((item: IWord) => {
+        if (responce.statusText === 'OK') {
+            const words = await responce.json();
+            words.forEach((item: IWord) => {
                 ebookWords.append(this.createWordBlock(item));
             })
         }
@@ -60,7 +83,7 @@ class Ebook {
         wordBlockImgWrap.className = 'word-block__img-wrap';
 
         const wordBlockImg = document.createElement('img') as HTMLImageElement;
-        wordBlockImg.src = `http://localhost:6666/${item.image}`;
+        wordBlockImg.src = `${ApiData.basePath}/${item.image}`;
 
         wordBlockImgWrap.append(wordBlockImg);
 
@@ -107,7 +130,7 @@ class Ebook {
         voiceIcon.className = 'info-block__voice-icon';
         voiceIcon.src = '../../assets/img/svg/voice-icon.svg';
         voiceIcon.addEventListener('click', () => {
-            const audio = new Audio(`http://localhost:6666/${item.audioExample}`);
+            const audio = new Audio(`${ApiData.basePath}/${item.audioExample}`);
             voiceIcon.src = '../../assets/img/svg/voice-icon-active.svg'
             audio.play();
             audio.onended = () => {
@@ -150,10 +173,10 @@ class Ebook {
 
         const miniGames = document.createElement('div') as HTMLDivElement;
         miniGames.className = 'ebook-header__mimi-games';
-        
+
         const sprint = document.createElement('div') as HTMLDivElement;
         sprint.className = 'sprint-game';
-        
+
         const sprintImg = document.createElement('img') as HTMLImageElement;
         sprintImg.className = 'sprint-game__img';
         sprintImg.src = '../../assets/img/png/sneaker.png'
@@ -176,7 +199,7 @@ class Ebook {
         audioCallTitle.className = 'audioCall-game__title';
         audioCallTitle.textContent = 'Аудиовызов';
         audioCall.append(audioCallTitle);
-        
+
         miniGames.append(sprint);
         miniGames.append(audioCall);
         header.append(miniGames);
@@ -231,21 +254,20 @@ class Ebook {
                     item.classList.remove('active');
                 })
                 if (currentMenuItem.textContent) {
-
-
-                    let group = currentMenuItem.textContent.split('')[0];
+                    let group: number = +currentMenuItem.textContent.split('')[0];
                     if (group) {
-                        group = (+group - 1).toString();
+                        group -= 1;
                     }
                     this.group = group;
                     this.theme = bg;
-                    await this.drawWords(group, this.page);
                     menuItem.classList.add('active');
+                    await this.drawWords(group, this.page);
                 }
             }
         })
 
         const link = document.createElement('a') as HTMLElement;
+        link.className = 'header-menu__item__link';
         link.textContent = text
         menuItem.append(link);
 
@@ -288,34 +310,34 @@ class Ebook {
         pagenator.append(lastPageBtn);
 
         firstPageBtn.addEventListener('click', () => {
-            if (this.page !== '0') {
-                this.drawWords(this.group, '0');
+            if (this.page !== 0) {
+                this.drawWords(this.group, 0);
                 page.textContent = '1';
-                this.page = '0';
+                this.page = 0;
             }
         })
 
         prevPageBtn.addEventListener('click', () => {
-            if (this.page !== '0') {
-                this.drawWords(this.group, (+this.page - 1).toString());
-                page.textContent = this.page;
-                this.page = `${+this.page - 1}`;
+            if (this.page !== 0) {
+                this.drawWords(this.group, this.page - 1);
+                page.textContent = this.page.toString();
+                this.page -= 1;
             }
         })
 
         nextPageBtn.addEventListener('click', () => {
-            if (this.page !== '29') {
-                this.drawWords(this.group, (+this.page + 1).toString());
-                page.textContent = `${+this.page + 2}`;
-                this.page = `${+this.page + 1}`;
+            if (this.page !== 29) {
+                this.drawWords(this.group, this.page + 1);
+                page.textContent = `${this.page + 2}`;
+                this.page += 1;
             }
         })
 
         lastPageBtn.addEventListener('click', () => {
-            if (this.page !== '29') {
-                this.drawWords(this.group, '29');
+            if (this.page !== 29) {
+                this.drawWords(this.group, 29);
                 page.textContent = '30';
-                this.page = '29';
+                this.page = 29;
             }
         })
 
