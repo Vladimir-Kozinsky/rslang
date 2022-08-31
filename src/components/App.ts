@@ -1,12 +1,12 @@
 import Container from './Container/Container';
 import MiniGames from './Mini-games/MiniGames';
-import Sprint from './Mini-games/Sprint';
 import MainPageController from './MainPage/MainPageController';
 import AuthController from './Auth/AuthController';
 import ApiData from './Api/ApiData';
 
 class App {
   mainPageController: MainPageController;
+
   authController: AuthController;
 
   constructor() {
@@ -17,9 +17,9 @@ class App {
 
   startApp() {
     ApiData.setLocalStorageListener();
-    console.log('start app');
     this.authController.checkToken();
-    this.drawMainPage();
+    console.log(localStorage.getItem('userId'));
+    this.drowContainer();
   }
 
   drowContainer() {
@@ -33,9 +33,7 @@ class App {
     const miniGames = new MiniGames();
     nav?.addEventListener('click', (e: Event) => {
       const target = e.target as HTMLLinkElement;
-      const content = document.querySelector(
-        '.container__content'
-      ) as HTMLDivElement;
+      const content = document.querySelector('.container__content') as HTMLDivElement;
       switch (target.textContent) {
         case 'Личный кабинет':
           break;
@@ -49,12 +47,7 @@ class App {
             'Улучшите свои навыки прослушивания с помощью игры Аудиовызов. ',
             'audioChallenge'
           );
-          miniGames.createCarts(
-            'sneaker.png',
-            'Спринт',
-            'Тренируйте навыки быстрого перевода с игрой Спринт.',
-            'sprint'
-          );
+          miniGames.createCarts('sneaker.png', 'Спринт', 'Тренируйте навыки быстрого перевода с игрой Спринт.', 'sprint');
           miniGames.goToStartPage();
           break;
         case 'Учебник':
@@ -67,10 +60,10 @@ class App {
       }
     });
   }
-    
+
   drawMainPage(): void {
     this.mainPageController.getStartScreen();
-    }
+  }
 }
-    
+
 export default App;

@@ -1,15 +1,10 @@
 import Sprint from './Sprint';
+import AudioCall from './AudioCall';
+import Container from '../Container/Container';
 
 class MiniGames {
-  createCarts(
-    imgName: string,
-    title: string,
-    description: string,
-    gameName: string
-  ) {
-    const content = document.querySelector(
-      '.container__content'
-    ) as HTMLDivElement;
+  createCarts(imgName: string, title: string, description: string, gameName: string) {
+    const content = document.querySelector('.container__content') as HTMLDivElement;
     let cartContainer: HTMLDivElement;
 
     const cart = document.createElement('div') as HTMLDivElement;
@@ -41,9 +36,7 @@ class MiniGames {
   }
 
   createTitle() {
-    const content = document.querySelector(
-      '.container__content'
-    ) as HTMLDivElement;
+    const content = document.querySelector('.container__content') as HTMLDivElement;
 
     const title = document.createElement('h2');
     title.textContent = 'Мини-игры';
@@ -52,34 +45,18 @@ class MiniGames {
   }
 
   goToStartPage() {
-    const cartContainer = document.querySelector(
-      '.games-cart__container'
-    ) as HTMLDivElement;
+    const cartContainer = document.querySelector('.games-cart__container') as HTMLDivElement;
     cartContainer.addEventListener('click', (e: Event) => {
       const target = e.target as HTMLDivElement;
-      if (
-        target.classList.contains('games__cart') ||
-        target.parentElement!.classList.contains('games__cart')
-      ) {
-        switch (
-          target.dataset.gameName ||
-          target.parentElement!.dataset.gameName
-        ) {
+      if (target.classList.contains('games__cart') || target.parentElement!.classList.contains('games__cart')) {
+        switch (target.dataset.gameName || target.parentElement!.dataset.gameName) {
           case 'sprint':
             cartContainer.remove();
-            this.createStartPage(
-              'Спринт',
-              'Спринт - Выберите правильный ли перевод или нет.',
-              'Спринт'
-            );
+            this.createStartPage('Спринт', 'Спринт - Выберите правильный ли перевод или нет.', 'Спринт');
             break;
           case 'audioChallenge':
             cartContainer.remove();
-            this.createStartPage(
-              'Аудиовызов',
-              'Аудиовызов - Из 5 вариантой выберите правильный перевод озвученного слова.',
-              'Аудиовызов'
-            );
+            this.createStartPage('Аудиовызов', 'Аудиовызов - Из 5 вариантой выберите правильный перевод озвученного слова.', 'Аудиовызов');
             break;
           default:
             break;
@@ -89,17 +66,16 @@ class MiniGames {
   }
 
   createStartPage(title: string, desc: string, gameName: string) {
-    const content = document.querySelector(
-      '.container__content'
-    ) as HTMLDivElement;
+    const content = document.querySelector('.container__content') as HTMLDivElement;
 
     const sprint = new Sprint();
+    const audioCall = new AudioCall();
 
     const startPageContainer = document.createElement('div') as HTMLDivElement;
     startPageContainer.classList.add('start-page__container');
 
-    const backIcon = document.createElement('button') as HTMLButtonElement;
-    backIcon.classList.add('back__button');
+    const backIcon = document.createElement('div') as HTMLDivElement;
+    backIcon.classList.add('return-to-prev-page');
 
     const startPageContent = document.createElement('div') as HTMLDivElement;
     startPageContent.classList.add('start-page__content');
@@ -124,9 +100,7 @@ class MiniGames {
       list.append(listElement);
     }
 
-    const selectDifficulty = document.createElement(
-      'select'
-    ) as HTMLSelectElement;
+    const selectDifficulty = document.createElement('select') as HTMLSelectElement;
     for (let i = 1; i < 6; i += 1) {
       const options = document.createElement('option') as HTMLOptionElement;
       options.textContent = i.toString();
@@ -140,6 +114,9 @@ class MiniGames {
     startBtn.addEventListener('click', () => {
       switch (startBtn.dataset.gameName) {
         case 'Аудиовызов':
+          content.innerHTML = '';
+          audioCall.createPage();
+          audioCall.appendDataToPage(selectDifficulty.value);
           break;
         case 'Спринт':
           content.innerHTML = '';
@@ -160,32 +137,24 @@ class MiniGames {
     startPageContent.append(list);
     startPageContent.append(selectDifficulty);
     startPageContent.append(startBtn);
-    this.backToPage();
+    backIcon.addEventListener('click', () => {
+      this.backToPage();
+    })
   }
 
   backToPage() {
-    const backIcon = document.querySelector(
-      '.back__button'
-    ) as HTMLButtonElement;
-    const startPage = document.querySelector(
-      '.start-page__container'
-    ) as HTMLDivElement;
-    backIcon.addEventListener('click', () => {
-      startPage!.remove();
-      this.createCarts(
-        'headphones.png',
-        'Аудиовызов',
-        'Улучшите свои навыки прослушивания с помощью игры Аудиовызов. ',
-        'audioChallenge'
-      );
-      this.createCarts(
-        'sneaker.png',
-        'Спринт',
-        'Тренируйте навыки быстрого перевода с игрой Спринт.',
-        'sprint'
-      );
-      this.goToStartPage();
-    });
+    const backIcon = document.querySelector('.return-to-prev-page') as HTMLDivElement;
+    const containerBlock = document.querySelector('.container') as HTMLDivElement;
+    const content = document.querySelector('.container__content') as HTMLDivElement;
+    const container = new Container();
+    
+    content.innerHTML = '';
+    this.createCarts('headphones.png', 'Аудиовызов', 'Улучшите свои навыки прослушивания с помощью игры Аудиовызов. ', 'audioChallenge');
+    this.createCarts('sneaker.png', 'Спринт', 'Тренируйте навыки быстрого перевода с игрой Спринт.', 'sprint');
+    if(!containerBlock.children[0].classList.contains('container__menu')) {
+      containerBlock.prepend(container.createMenu());
+    }
+    this.goToStartPage();
   }
 }
 
