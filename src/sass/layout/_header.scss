@@ -83,9 +83,18 @@
       height: 40px;
     }
 
-    .account__authorize-button {
-      width: 110px;
+    .account__user-icon {
+      position: relative;
+      width: 40px;
       height: 40px;
+      border: 2px solid #242730;
+      border-radius: 50%;
+    }
+
+    .account__signin-button,
+    .account__logout-button {
+      height: 40px;
+      padding: 0 30px;
       border: 2px solid $color-text-dark;
       border-radius: 20px;
 

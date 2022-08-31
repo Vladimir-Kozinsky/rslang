@@ -1,0 +1,134 @@
+@mixin centralize() {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.games-cart__container {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 80px;
+}
+
+.games__cart {
+  display: flex;
+  flex-direction: column;
+  justify-content: left;
+  width: 450px;
+  height: 370px;
+  background: linear-gradient(
+    to right top,
+    #8dd6f5,
+    #9dcae7,
+    #b6bcd3,
+    #d0b2c0,
+    #dfaab2,
+    #f8958a
+  );
+  color: white;
+  border-radius: 24px;
+  filter: drop-shadow(10px 10px 80px rgba(63, 39, 102, 0.1));
+  padding-left: 50px;
+  font-weight: bold;
+
+  &:hover {
+    cursor: pointer;
+    background-image: linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.05),
+        rgba(0, 0, 0, 0.05)
+      ),
+      linear-gradient(0deg, rgba(235, 0, 255, 0.35), rgba(235, 0, 255, 0.35));
+  }
+
+  img {
+    margin-left: -41px;
+    width: 130px;
+    height: 130px;
+  }
+
+  h3 {
+    font-size: 55px;
+    margin-bottom: 10px;
+  }
+
+  p {
+    font-size: 18px;
+    line-height: 25.2px;
+  }
+}
+
+.start-page__container {
+  display: flex;
+  justify-content: center;
+  position: relative;
+  background: linear-gradient(156.08deg, #cbdcee 0%, #dfd3dc 100%);
+  width: 100%;
+  height: 100vh;
+  font-weight: 700;
+
+  .start-page__content {
+    display: flex;
+    flex-direction: column;
+    width: 650px;
+    margin-right: 60px;
+  }
+
+  h2 {
+    text-align: center;
+    font-size: 85px;
+    margin-top: 90px;
+    margin-bottom: 45px;
+    margin-left: 40px;
+  }
+
+  p {
+    font-size: 28px;
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-left: 68px;
+  }
+
+  li {
+    text-align: left;
+    margin-top: 20px;
+    margin-left: 50px;
+  }
+
+  select {
+    font-size: 18px;
+    width: 160px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    @include centralize();
+    border: 2px solid #242730;
+    border-radius: 10px;
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+
+  button {
+    font-size: 18px;
+    background: #242730;
+    color: white;
+    width: 160px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    @include centralize();
+    border: 2px solid #242730;
+    border-radius: 25px;
+
+    &:hover {
+      background: black;
+      cursor: pointer;
+    }
+  }
+
+  .back__button {
+    position: absolute;
+    left: 0;
+  }
+}
