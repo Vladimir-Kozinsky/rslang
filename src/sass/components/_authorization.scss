@@ -244,6 +244,50 @@
       }
     }
   }
+
+  @media (max-width: 1599px) {
+    .auth-wrapper {
+      top: calc(50vh - 250px);
+      left: calc(50vw - 230px);
+  
+      width: 420px;
+      height: 500px;
+
+      .auth {
+        padding: 20px 40px;
+
+        .auth__icon-wrapper {
+          width: 90px;
+          height: 90px;
+        }
+
+        .auth-form {
+          gap: 12px;
+
+          .form-item {
+            gap: 4px;
+          }
+
+          .avatars {
+            gap: 40px;
+
+            .form-item__label {
+              width: 90px;
+              height: 90px;
+            }
+          }
+
+          .form__submit-button {
+            margin-top: 4px;
+          }
+        }
+
+        .auth__error-message {
+          margin-bottom: 10px
+        }
+      }
+    }
+  }
 }
 
 .fill {

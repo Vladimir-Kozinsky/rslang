@@ -29,4 +29,16 @@
     width: 140px;
     height: 50px;
   }
+
+  @media (max-width: 1919px) {
+    padding: 25px 80px;
+  }
+
+  @media (max-width: 1599px) {
+    padding: 25px 40px;
+  }
+
+  @media (max-width: 1359px) {
+    padding: 25px 20px;
+  }
 }

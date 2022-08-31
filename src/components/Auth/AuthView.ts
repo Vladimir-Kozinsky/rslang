@@ -90,6 +90,7 @@ export default class AuthView extends ElementCreator {
       type: 'text',
       class: 'form-item__text-input',
       required: 'required',
+      maxlength: '16',
     });
     const emailContainer = this.createElement('div', authForm, { class: 'form-item' });
     const emailLabel = this.createElement('label', emailContainer, { for: 'email', class: 'form-item__label' }, 'Электронная почта');

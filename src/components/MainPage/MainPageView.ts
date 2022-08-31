@@ -172,7 +172,7 @@ export default class MainPageView extends ElementCreator {
     );
 
     const sectionTeam = this.createElement('section', main, { class: 'section-team' });
-    const sectionTeamTitle = this.createElement('h2', sectionTeam, { id: 'team', lass: 'section-title' }, '< НАША КОМАНДА >');
+    const sectionTeamTitle = this.createElement('h2', sectionTeam, { id: 'team', class: 'section-title' }, '< НАША КОМАНДА >');
     const developersList = this.createElement('ul', sectionTeam, { class: 'developers-list' });
     developersList.insertAdjacentHTML(
       'afterbegin',

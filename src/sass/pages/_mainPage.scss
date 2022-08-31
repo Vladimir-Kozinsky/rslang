@@ -143,6 +143,8 @@
 
     .developers-list {
       display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
       gap: 50px;
 
       .developers-item {
@@ -150,9 +152,9 @@
         flex-direction: column;
         align-items: center;
 
-        width: 450px;
-        height: 650px;
-        padding: 40px;
+        width: 380px;
+        height: 480px;
+        padding: 40px 20px;
         border-radius: 40px;
 
         background: $color-list-item-bg;
@@ -190,6 +192,138 @@
           font-size: 20px;
         }
       }
+    }
+  }
+
+  @media (max-width: 1919px) {
+    .section-welcome {
+      padding: 0 80px 90px;
+
+      .section-welcome__description {
+        width: 700px;
+
+        .section-title {
+          font-size: 42px;
+        }
+        
+        .section-welcome__text {
+          font-size: 24px;
+        }
+      }
+
+      .section-welcome__image-wrapper {
+        width: 580px;
+        height: 440px;
+      }
+    }
+
+    .section-team {
+      padding: 25px 80px 100px;
+    }
+  }
+
+  @media (max-width: 1599px) {
+    .section-welcome {
+      padding: 0 40px 90px;
+
+      .section-welcome__description {
+        width: 600px;
+
+        .section-title {
+          font-size: 36px;
+        }
+        
+        .section-welcome__text {
+          font-size: 22px;
+        }
+
+        .section-welcome__start-button {
+          width: 180px;
+          height: 40px;
+
+          font-size: 18px;
+        }
+      }
+
+      .section-welcome__image-wrapper {
+        width: 580px;
+        height: 440px;
+      }
+    }
+  }
+
+  @media (max-width: 1359px) {
+    .section-welcome {
+      padding: 0 20px 90px;
+
+      .section-welcome__description {
+        width: 600px;
+
+        .section-title {
+          font-size: 30px;
+        }
+        
+        .section-welcome__text {
+          font-size: 18px;
+        }
+
+        .section-welcome__start-button {
+          width: 160px;
+          height: 40px;
+
+          font-size: 16px;
+        }
+      }
+
+      .section-welcome__image-wrapper {
+        width: 480px;
+        height: 368px;
+      }
+    }
+
+    .section-about-app {
+      padding: 0 20px 30px;
+
+      .descriptions-list {
+        width: 1100px;
+
+        .descriptions-item {
+          .descriptions-item__сontent-container {
+
+            .descriptions-item__title {
+              font-size: 18px;
+            }
+  
+            .descriptions-item__text {
+              font-size: 18px;
+            }
+          }
+        }
+      }
+
+      .section-about-app__additional-info {
+        font-size: 16px;
+      }
+    }
+
+    .section-team {
+      gap: 30px;
+
+      .developers-list {
+        .developers-item {
+          .developers-item__name {
+            font-size: 20px;
+          }
+
+          .developers-item__text {
+            font-size: 18px;
+          }
+        }
+      }
+    }
+
+    .section-title {
+      font-size: 20px;
     }
   }
 }
