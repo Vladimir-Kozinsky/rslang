@@ -73,15 +73,12 @@ class AudioCall {
 
       // check is user guest or registered
       if(id){
-        console.log(4);
          wordsArr = (await api.getUserAggregatedWords(id, token, difficulty, randomPage))[0].paginatedResults;
-         console.log(randomPage);
       }
       else wordsArr = await api.getWords(difficulty, randomPage);
 
       // create additional words if they are not enough
       if(wordsArr.length < 15 && +randomPage > 0) {
-        console.log(wordsArr.length);
         const additionalWords: Word[] = await api.getWords(difficulty, (+randomPage - 1).toString());
         for (let i = 0; i < 20 - wordsArr.length; i += 1) {
           wordsArr.push(additionalWords[i])
@@ -125,7 +122,6 @@ class AudioCall {
          guessedRight = wordsArr[i].userWord!.optional.wordData.guessedRight!;
       }
       else  guessedRight = 0;
-      console.log(guessedRight);
       let wrongTranslatesAmount: number = 4;
       const wordImage = wordsArr[i].image;
       const wordId = wordsArr[i]._id;
@@ -202,7 +198,6 @@ class AudioCall {
         case '2':
           createRandomIndexesorWords();
           if(optionsButton[1].innerHTML === getData[cartNum].wordTranslate) {
-            console.log(true);
             getData[cartNum].guessedRight! = getData[cartNum].guessedRight! + 1;
             this.appendResult(getData, cartNum, 'true', optionsButton[1]); 
             cartNum += 1;
@@ -320,7 +315,6 @@ class AudioCall {
           optionsButton.forEach((item: HTMLButtonElement, index: number) => {
             if(item.innerHTML !== 'Не Знаю') { 
               item.disabled = false;
-              console.log(randomIndexes);
               item.innerHTML = getData[cartNum].wordTranslates.flat()[randomIndexes[index]];
               item.style.background = '#38304f';
               item.removeAttribute('style');
@@ -347,14 +341,11 @@ class AudioCall {
         if(item !== options[5] && target.classList.contains('options__button')) item.disabled = true;
       });
       if(target.classList.contains('options__button') && getData[cartNum].wordTranslate === target.innerHTML) {
-        console.log(true);
         getData[cartNum].guessedRight! = getData[cartNum].guessedRight! + 1;
         this.appendResult(getData, cartNum, 'true', target); 
-        console.log(getData);   
         cartNum += 1;
       }
       else if (target.classList.contains('options__button') && target.innerHTML !== 'Не знаю' && target.innerHTML !== 'Дальше') {
-        console.log(false);
         this.appendResult(getData, cartNum, 'false', target);        
         cartNum += 1;
       }
@@ -363,8 +354,6 @@ class AudioCall {
         cartNum += 1;
       }
       else if(target.innerHTML === 'Дальше') {
-        console.log(target.innerHTML);
-        console.log('object');
         audioContainer!.innerHTML =`    
         <audio autoplay>
           <source src="${getData[cartNum].wordAudio}" type="">

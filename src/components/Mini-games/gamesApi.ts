@@ -68,7 +68,6 @@ class GamesApi {
     }
     const content = await rawResponse.json();
   
-    console.log(content);
   };
 
   // getUserWordById(userId: number, wordId:number) {
