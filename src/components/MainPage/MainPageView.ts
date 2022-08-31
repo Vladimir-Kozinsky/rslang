@@ -57,8 +57,12 @@ export default class MainPageView extends ElementCreator {
           `
     );
     const account = this.createElement('div', header, { class: 'account' });
+    const burgerMenuButton = this.createElement('button', header, { class: 'burger-menu-open-button' });
     Object.assign(this.elements.htmlElements, {
+      header,
+      menu,
       account,
+      burgerMenuButton,
     });
   }
 

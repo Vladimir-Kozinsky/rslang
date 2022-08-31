@@ -148,7 +148,12 @@ export default class AuthView extends ElementCreator {
 
   clearAuthContainer(): void {
     const { auth } = this.elements.htmlElements;
+    const body = document.body;
+
     auth.innerHTML = '';
-    document.body.classList.remove('body-scroll-block');
+
+    if (body.lastElementChild && !body.lastElementChild.classList.contains('burger-fill')) {
+      document.body.classList.remove('body-scroll-block');
+    }
   }
 }

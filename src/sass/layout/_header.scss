@@ -21,100 +21,55 @@
     }
   }
 
-  .menu {
-    .menu-list {
-      display: flex;
-      gap: 10px;
+  .burger-menu-open-button {
+    position: relative;
 
-      .menu-item {
-        .menu-item__link {
-          position: relative;
+    display: none;
 
-          padding: 10px 10px;
+    width: 30px;
+    height: 22px;
 
-          font-size: 20px;
-          color: $color-text-dark;
+    background: linear-gradient(to bottom, transparent 0px, transparent 10px, $color-text-dark 10px, $color-text-dark 12px, transparent 12px, transparent 36px);
 
-          transition: 0.2s;
+    cursor: pointer;
+        
+    &::before {
+      content: '';
 
-          &::after,
-          &::before {
-            content: "";
-            position: absolute;
-            left: 50%;
-            top: 36px;
+      position: absolute;
+      top: 0;
+      left: 0;
 
-            width: 0%;
-            height: 2px;
+      width: 100%;
+      height: 2px;
+      
+      background-color: $color-text-dark;
 
-            background-color: $color-active-link;
-            transition: 0.3s;
-          }
-
-          &:hover {
-            color: $color-active-link;
-
-            &::after {
-              width: 45%;
-
-              transform: translateX(-96%);
-            }
-
-            &::before {
-              width: 45%;
-            }
-          }
-        }
-      }
-    }
-  }
-
-  .account {
-    display: flex;
-    align-items: center;
-    gap: 25px;
-
-    .account__user-name {
-      font-size: 16px;
+      transition: .2s;
     }
 
-    .account__user-icon-wrapper {
-      width: 40px;
-      height: 40px;
+    &::after {
+      content: '';
+
+      position: absolute;
+      bottom: 0;
+      left: 0;
+
+      width: 100%;
+      height: 2px;
+      
+      background-color: $color-text-dark;
+
+      transition: .2s;
     }
 
-    .account__user-icon {
-      position: relative;
-      width: 40px;
-      height: 40px;
-      border: 2px solid #242730;
-      border-radius: 50%;
+    &:hover {
+      background: linear-gradient(to bottom, transparent 0px, transparent 10px, $color-active-link 10px, $color-active-link 12px, transparent 12px, transparent 36px);
     }
 
-    .account__signin-button,
-    .account__logout-button {
-      height: 40px;
-      padding: 0 30px;
-      border: 2px solid $color-text-dark;
-      border-radius: 20px;
-
-      font: 400 16px Ubuntu, Arial, Tahoma, sans-serif;
-
-      background: transparent;
-
-      cursor: pointer;
-      transition: 0.2s;
-
-      &:hover {
-        color: $color-text-light;
-
-        background: $color-text-dark;
-      }
-
-      &:active {
-        background-color: rgba(36, 39, 48, 0.7);
-        transition: none;
-      }
+    &:hover::after,
+    &:hover::before {
+      background: $color-active-link;
     }
   }
 
@@ -124,10 +79,6 @@
     .logo .logo__title {
       font-size: 34px;
     }
-
-    .menu .menu-list .menu-item .menu-item__link {
-      font-size: 18px;
-    }
   }
 
   @media (max-width: 1599px) {
@@ -136,29 +87,6 @@
     .logo .logo__title {
       font-size: 30px;
     }
-
-    .menu .menu-list .menu-item .menu-item__link {
-      font-size: 16px;
-    }
-
-    .account {
-      gap: 18px;
-
-      .account__user-icon-wrapper {
-        width: 36px;
-        height: 36px;
-      }
-
-      .account__user-icon {
-        width: 36px;
-        height: 36px;
-      }
-
-      .account__logout-button,
-      .account__signin-button {
-        height: 36px;
-      }
-    }
   }
 
   @media (max-width: 1359px) {
@@ -166,12 +94,6 @@
 
     .logo {
       gap: 15px;
-    }
-
-    .menu {
-      .menu-list {
-        gap: 0;
-      }
     }
   }
 
@@ -189,8 +111,8 @@
       }
     }
 
-    .menu {
-      display: none;
+    .burger-menu-open-button {
+      display: block;
     }
   }
 }
