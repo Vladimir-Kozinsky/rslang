@@ -1,5 +1,5 @@
-import { IObj } from "../types";
-import BurgerMenuView from "./burgerMenuView";
+import { IObj } from '../types';
+import BurgerMenuView from './burgerMenuView';
 
 export default class BurgerMenuController {
   view: BurgerMenuView;
@@ -40,7 +40,7 @@ export default class BurgerMenuController {
           header.append(burgerMenuElements.menu, burgerMenuElements.account);
         }
       }
-    } 
+    };
   }
 
   setOpenMenuListener(openButton: HTMLElement): void {
@@ -48,12 +48,12 @@ export default class BurgerMenuController {
     const { blackout, burgerMenu } = this.view.elements.htmlElements;
 
     openButton.onclick = () => {
-      body.classList.add('body-scroll-block');  
+      body.classList.add('body-scroll-block');
       blackout.classList.remove('burger-fade');
       burgerMenu.classList.remove('burger-slide-out');
       blackout.classList.add('burger-fill');
       burgerMenu.classList.add('burger-slide-in');
-    }
+    };
   }
 
   setCloseMenuListeners(): void {
@@ -69,6 +69,6 @@ export default class BurgerMenuController {
         burgerMenu.classList.add('burger-slide-out');
         body.classList.remove('body-scroll-block');
       }
-    }
+    };
   }
 }

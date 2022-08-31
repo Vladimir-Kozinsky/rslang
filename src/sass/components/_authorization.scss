@@ -216,6 +216,9 @@
         padding: 3px;
         border: 1px solid #E5313F;
         border-radius: 6px;
+
+        text-align: center;
+
         background: rgba(229, 49, 63, 0.15);
       }
 
@@ -224,10 +227,15 @@
         padding: 3px;
         border: 1px solid rgb(57, 214, 37);
         border-radius: 6px;
+
+        text-align: center;
+
         background: rgb(57, 214, 37, 0.15);
       }
 
       .auth-add-info {
+
+        text-align: center;
 
         .auth-add-info__link {
           padding-left: 5px;
@@ -248,7 +256,7 @@
   @media (max-width: 1599px) {
     .auth-wrapper {
       top: calc(50vh - 250px);
-      left: calc(50vw - 230px);
+      left: calc(50vw - 210px);
   
       width: 420px;
       height: 500px;
@@ -285,6 +293,87 @@
         .auth__error-message {
           margin-bottom: 10px
         }
+      }
+    }
+  }
+
+  @media (max-width: 425px) {
+    .auth-wrapper {
+      top: calc(50vh - 200px);
+      left: calc(50vw - 150px);
+
+      width: 300px;
+      height: auto;
+      border-radius: 30px;
+
+      .auth {
+        border-radius: inherit;
+        padding: 10px;
+
+        .auth__cancel-button {
+          right: 16px;
+          top: 16px;
+
+          width: 24px;
+          height: 24px;
+
+          &::after,
+          &::before {
+            top: 9px;
+            left: 2px;
+
+            width: 16px;
+          }
+        }
+
+        .auth__icon-wrapper {
+          width: 68px;
+          height: 68px;
+          margin-bottom: 10px;
+        }
+
+        .auth-form {
+          .form-item {
+
+            .form-item__label {
+              font-size: 16px;
+            }
+
+            .form-item__text-input {
+              width: 260px;
+              height: 36px;
+              border-radius: 18px;
+
+              font-size: 16px;
+            }
+          }
+
+          .avatars {
+            .form-item__label {
+              width: 68px;
+              height: 68px;
+              
+              &:nth-of-type(1),
+              &:nth-of-type(2) {
+                background-size: cover;  
+              }
+            } 
+          }
+
+          .form__submit-button {
+            padding: 6px 15px;
+          }
+        }
+      }
+
+      .auth__error-message,
+      .auth__succes-message {
+        margin-top: 10px;
+        margin-bottom: 0px;
+      }
+
+      .auth-add-info {
+        margin-top: 15px;
       }
     }
   }

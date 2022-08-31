@@ -32,7 +32,7 @@
     background: linear-gradient(to bottom, transparent 0px, transparent 10px, $color-text-dark 10px, $color-text-dark 12px, transparent 12px, transparent 36px);
 
     cursor: pointer;
-        
+
     &::before {
       content: '';
 
@@ -114,5 +114,9 @@
     .burger-menu-open-button {
       display: block;
     }
+  }
+
+  @media (max-width: 425px) {
+    padding: 20px 10px;
   }
 }
