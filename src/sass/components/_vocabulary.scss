@@ -1,0 +1,66 @@
+.vocabulary {
+    margin: 50px 20px 20px 20px;
+    border: 3px solid #3c365a;
+    height: 92vh;
+    position: relative;
+}
+.tabs-block {
+    width: 100%;
+    height: 50px;
+    display: flex;
+    gap: 5px;
+    position: absolute;
+    top: -52px;
+    left: -2.5px;
+}
+
+.learned-tab {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    height: 50px;
+    width: 180px;
+    background-color: rgb(60, 54, 90, 0.5);
+    border: 3px white solid;
+    border-radius: 35px 35px 0 0;
+    position: absolute;
+    left: 145px;
+    &:hover {
+        cursor: pointer;
+    }
+    &.active {
+        border: none;
+        background-color: rgb(60, 54, 90);
+        z-index: 10;
+    }
+}
+
+.difficult-tab {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 180px;
+    height: 50px;
+    color: white;
+    background-color: rgb(60, 54, 90, 0.5);
+    border: 3px white solid;
+    border-radius: 35px 35px 0 0;
+    position: absolute;
+    &:hover {
+        cursor: pointer;
+    }
+    &.active {
+        border: none;
+        background-color: rgb(60, 54, 90);
+        z-index: 10;
+    }
+}
+
+.vocabulary-pagenator {
+    width: 40px;
+    margin: 15px auto;
+    .vocabulary-pagenator__page {
+        color: #3c365a;
+    }
+}
