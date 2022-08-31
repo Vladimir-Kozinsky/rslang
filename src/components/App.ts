@@ -47,9 +47,6 @@ class App {
     nav?.addEventListener('click', (e: Event) => {
       const target = e.target as HTMLLinkElement;
       const link = target.parentNode?.parentNode as HTMLLIElement;
-      const content = document.querySelector(
-        '.container__content'
-      ) as HTMLDivElement;
       const content = document.querySelector('.container__content') as HTMLDivElement;
       switch (target.textContent) {
         case 'Личный кабинет':
