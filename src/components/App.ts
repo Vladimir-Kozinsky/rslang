@@ -1,6 +1,5 @@
 import Container from './Container/Container';
 import MiniGames from './Mini-games/MiniGames';
-import Sprint from './Mini-games/Sprint';
 import MainPageController from './MainPage/MainPageController';
 import AuthController from './Auth/AuthController';
 import ApiData from './Api/ApiData';
@@ -8,6 +7,7 @@ import Ebook from './Ebook/Ebook';
 
 class App {
   mainPageController: MainPageController;
+
   authController: AuthController;
   ebook: Ebook;
 
@@ -20,11 +20,11 @@ class App {
 
   startApp() {
     ApiData.setLocalStorageListener();
-    console.log('start app');
     this.authController.checkToken();
+
     this.drawMainPage();
     //this.drowContainer();
-
+    console.log(localStorage.getItem('userId'));
   }
 
   drowContainer() {
@@ -50,6 +50,7 @@ class App {
       const content = document.querySelector(
         '.container__content'
       ) as HTMLDivElement;
+      const content = document.querySelector('.container__content') as HTMLDivElement;
       switch (target.textContent) {
         case 'Личный кабинет':
           content.innerHTML = '';
@@ -71,12 +72,7 @@ class App {
             'Улучшите свои навыки прослушивания с помощью игры Аудиовызов. ',
             'audioChallenge'
           );
-          miniGames.createCarts(
-            'sneaker.png',
-            'Спринт',
-            'Тренируйте навыки быстрого перевода с игрой Спринт.',
-            'sprint'
-          );
+          miniGames.createCarts('sneaker.png', 'Спринт', 'Тренируйте навыки быстрого перевода с игрой Спринт.', 'sprint');
           miniGames.goToStartPage();
           break;
         case 'Учебник':
