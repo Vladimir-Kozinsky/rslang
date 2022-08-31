@@ -4,15 +4,18 @@ import Sprint from './Mini-games/Sprint';
 import MainPageController from './MainPage/MainPageController';
 import AuthController from './Auth/AuthController';
 import ApiData from './Api/ApiData';
+import Vocabulary from './Vocabulary/Vocabulary';
 
 class App {
   mainPageController: MainPageController;
   authController: AuthController;
+  vocabulary: Vocabulary;
 
   constructor() {
     ApiData.getDataFromLocalStorage();
     this.mainPageController = new MainPageController();
     this.authController = new AuthController();
+    this.vocabulary = new Vocabulary();
   }
 
   startApp() {
@@ -67,10 +70,10 @@ class App {
       }
     });
   }
-    
+
   drawMainPage(): void {
     this.mainPageController.getStartScreen();
-    }
+  }
 }
-    
+
 export default App;
