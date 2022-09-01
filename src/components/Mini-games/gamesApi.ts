@@ -20,7 +20,7 @@ class GamesApi {
 
   getUserAggregatedWords(userId: string, token: string, group:string = '1', page: string = '0', wordsPerPage: string = '20') {
       return (async (): Promise<Response & Aggregate[]> => {
-          const response  = await fetch(`${GamesApi.BASE_URL}/users/${userId}/aggregatedWords?group=${group}&page=${page}8&wordsPerPage=${wordsPerPage}`, {
+          const response  = await fetch(`${GamesApi.BASE_URL}/users/${userId}/aggregatedWords?group=${group}&page=${page}&wordsPerPage=${wordsPerPage}`, {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',
