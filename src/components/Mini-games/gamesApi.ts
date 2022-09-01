@@ -67,6 +67,7 @@ class GamesApi {
       }); 
     }
     const content = await rawResponse.json();
+
   };
 }
 

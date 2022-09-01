@@ -535,7 +535,8 @@ class Sprint {
           sprintNewWords,
           sprintLongestStreak 
       }
-    }
+}
+
     if(data.sprintCorrectAnswersPercentage) {
       const prevCorrectAnswersPercentage: number = +data.sprintCorrectAnswersPercentage.slice(0, -1);
       const prevNewWords: number = +data.sprintNewWords;
@@ -546,6 +547,7 @@ class Sprint {
          sprintLongestStreak = prevLongestStreak.toString()
       };
     }
+
       data.sprintCorrectAnswersPercentage = sprintCorrectAnswersPercentage;
       data.sprintNewWords = sprintNewWords;
       data.sprintLongestStreak = sprintLongestStreak;
@@ -553,7 +555,6 @@ class Sprint {
 
     // eslint-disable-next-line no-unsafe-optional-chaining
     const response = await userAccountApi.updateStatistics({learnedWords, optional: data});
-    console.log(response.json());
   }
 }
 

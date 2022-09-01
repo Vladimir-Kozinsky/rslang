@@ -94,6 +94,7 @@ export default class AuthController {
     this.view.drawSignIn();
     this.setSignInFormListener(drawGuestUserViewFunc, drawAuthUserViewFunc);
     const { blackout, cancelButton, link } = this.view.elements.htmlElements;
+    blackout.style.top = `${window.scrollY}px`;
     cancelButton.onclick = () => {
       blackout.classList.add('fade');
       blackout.classList.remove('fill');

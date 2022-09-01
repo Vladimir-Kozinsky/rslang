@@ -4,18 +4,23 @@ import MainPageController from './MainPage/MainPageController';
 import AuthController from './Auth/AuthController';
 import ApiData from './Api/ApiData';
 import Ebook from './Ebook/Ebook';
+import Statistics from './Statistics/Statistics';
 
 class App {
   mainPageController: MainPageController;
 
   authController: AuthController;
   ebook: Ebook;
+  miniGames: MiniGames;
+  statistics: Statistics;
 
   constructor() {
     ApiData.getDataFromLocalStorage();
     this.mainPageController = new MainPageController();
     this.authController = new AuthController();
     this.ebook = new Ebook();
+    this.miniGames = new MiniGames();
+    this.statistics = new Statistics(ApiData.userId);
   }
 
   startApp() {
@@ -35,7 +40,6 @@ class App {
 
   switchToAnotherPage() {
     const nav = document.querySelector('.nav');
-    const miniGames = new MiniGames();
 
     function clearActivLink() {
       const links = document.querySelectorAll('.nav__item');
@@ -53,6 +57,7 @@ class App {
           content.innerHTML = '';
           clearActivLink();
           link.classList.add('active');
+          this.drawStatistics();
           break;
         case 'Словарь':
           content.innerHTML = '';
@@ -63,20 +68,13 @@ class App {
           content.innerHTML = '';
           clearActivLink();
           link.classList.add('active');
-          miniGames.createCarts(
-            'headphones.png',
-            'Аудиовызов',
-            'Улучшите свои навыки прослушивания с помощью игры Аудиовызов. ',
-            'audioChallenge'
-          );
-          miniGames.createCarts('sneaker.png', 'Спринт', 'Тренируйте навыки быстрого перевода с игрой Спринт.', 'sprint');
-          miniGames.goToStartPage();
+          this.drawMiniGames();
           break;
         case 'Учебник':
           content.innerHTML = '';
           clearActivLink();
           link.classList.add('active');
-          this.ebook.drawEbook();
+          this.drawEbook();
           break;
         case 'Настройки':
           content.innerHTML = '';
@@ -93,8 +91,63 @@ class App {
     });
   }
 
+  setMainPageMenuSwitcher(): void {
+    const { menuList, sectionWelcomeStartButton} = this.mainPageController.view.elements.htmlElements;
+    const { book, vocabulary, games, statistics } = this.mainPageController.view.pageLinks;
+    
+    menuList.onclick = (event) => {
+      const target = event.target;
+
+      if (target) {
+        if (target === book || target === vocabulary || target === games || target === statistics) {
+          event.preventDefault();
+          document.body.innerHTML = '';
+          this.drowContainer();
+          this.switchToAnotherPage();
+
+          if (target === book) {
+            this.drawEbook();
+          } else if (target === vocabulary) {
+            // to do
+          } else if (target === games) {
+            this.drawMiniGames();
+          } else if (target === statistics) {
+            this.drawStatistics();
+          }
+        }
+      }
+    }
+
+    sectionWelcomeStartButton.onclick = () => {
+      document.body.innerHTML = '';
+      this.drowContainer();
+      this.drawStatistics();
+      this.switchToAnotherPage();
+    }
+  }
+
   drawMainPage(): void {
     this.mainPageController.getStartScreen();
+    this.setMainPageMenuSwitcher();
+  }
+
+  drawMiniGames(): void {
+    this.miniGames.createCarts(
+      'headphones.png',
+      'Аудиовызов',
+      'Улучшите свои навыки прослушивания с помощью игры Аудиовызов. ',
+      'audioChallenge'
+    );
+    this.miniGames.createCarts('sneaker.png', 'Спринт', 'Тренируйте навыки быстрого перевода с игрой Спринт.', 'sprint');
+    this.miniGames.goToStartPage();
+  }
+
+  drawEbook(): void {
+    this.ebook.drawEbook();
+  }
+
+  drawStatistics(): void {
+    this.statistics.drawStatistics();
   }
 }
 
