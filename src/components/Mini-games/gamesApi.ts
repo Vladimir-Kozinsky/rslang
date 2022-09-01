@@ -20,7 +20,7 @@ class GamesApi {
 
   getUserAggregatedWords(userId: string, token: string, group:string = '1', page: string = '0', wordsPerPage: string = '20') {
       return (async (): Promise<Response & Aggregate[]> => {
-          const response  = await fetch(`${GamesApi.BASE_URL}/users/${userId}/aggregatedWords?group=${group}&page=${page}&wordsPerPage=${wordsPerPage}`, {
+          const response  = await fetch(`${GamesApi.BASE_URL}/users/${userId}/aggregatedWords?group=${group}&page=${page}8&wordsPerPage=${wordsPerPage}`, {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',
@@ -67,27 +67,7 @@ class GamesApi {
       }); 
     }
     const content = await rawResponse.json();
-  
   };
-
-  // getUserWordById(userId: number, wordId:number) {
-  //     return (async () => {
-  //         const response = await fetch(`${GamesApi.BASE_URL}/users/${userId}/words/${wordId}`)
-  //         return response.json()
-  //     })
-  // }
-
-  // updateUserWord(userId: number, wordId:number) {
-  //     return (async () => {
-  //         (await fetch(`GamesApi.BASE_URL/users/${userId}/words/${wordId}`, {
-  //             method: 'PUT',
-  //             headers: {
-  //               'Content-Type': 'application/json',
-  //             },
-  //             body: JSON.stringify({userId, wordId}),
-  //           })).json();
-  //     })
-  // }
 }
 
 export default GamesApi;

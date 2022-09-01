@@ -4,6 +4,8 @@ import { AudioCallData } from './../interfaces/interfaces';
 import Word from "../interfaces/interfaces";
 import GamesApi from "./gamesApi";
 import MiniGames from './MiniGames';
+import UserAccountApi from '../Api/UserAccountApi';
+import { IObj, IStatisticsOptions } from '../types';
 
 
 class AudioCall {
@@ -512,54 +514,44 @@ class AudioCall {
   }
 
   async sendDataToStatistics(audioCallCorrectAnswersPercentage: string, audioCallNewWords: string, audioCallLongestStreak: string) {
-    const base: string = `https://react-learnwords-shahzod.herokuapp.com`;
-    const token: string = localStorage.getItem('token')!;
-    const id: string = localStorage.getItem('userId')!;
-    const getStatistics = await (await fetch(`${base}/users/${id}/statistics`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      }
-    }));
+    const userAccountApi = new UserAccountApi()
+    const RequestGetStatistics= await userAccountApi.getStatistics();
 
-    let data;
-    if(getStatistics.ok) {
-      data = await getStatistics.json();
+    let data: IObj<string>;
+    let learnedWords: number;
+    const getStatistics: IStatisticsOptions = await RequestGetStatistics.json() 
+    if(RequestGetStatistics.ok) {
+      // eslint-disable-next-line no-unsafe-optional-chaining
+      learnedWords = getStatistics.learnedWords + +document.querySelector('.audioCall-results-answers-block')?.children[0].children.length! - 1;
+      data = getStatistics.optional;
     }
     else {
+      // eslint-disable-next-line no-unsafe-optional-chaining
+      learnedWords = +document.querySelector('.audioCall-results-answers-block')?.children[0].children.length! - 1;
       data = {
-        optional: {
           audioCallCorrectAnswersPercentage,
           audioCallNewWords,
           audioCallLongestStreak 
         }
-      }
+      
     }
 
-    if(data.optional.audioCallCorrectAnswersPercentage) {
-      const prevCorrectAnswersPercentage: number = +data.optional.audioCallCorrectAnswersPercentage.slice(0, -1);
-      const prevNewWords: number = +data.optional.audioCallNewWords;
-      const prevLongestStreak: number = +data.optional.audioCallLongestStreak;
+    if(data.audioCallCorrectAnswersPercentage) {
+      const prevCorrectAnswersPercentage: number = +data.audioCallCorrectAnswersPercentage.slice(0, -1);
+      const prevNewWords: number = +data.audioCallNewWords;
+      const prevLongestStreak: number = +data.audioCallLongestStreak;
       audioCallCorrectAnswersPercentage = `${Math.round(((+audioCallCorrectAnswersPercentage.slice(0, -1) + prevCorrectAnswersPercentage) / 2)).toString()  }%`;
       audioCallNewWords = (+audioCallNewWords + prevNewWords).toString();
       if(prevLongestStreak > +audioCallLongestStreak) {
          audioCallLongestStreak = prevLongestStreak.toString()
       };
     }
-      data.optional.audioCallCorrectAnswersPercentage = audioCallCorrectAnswersPercentage;
-      data.optional.audioCallNewWords = audioCallNewWords;
-      data.optional.audioCallLongestStreak = audioCallLongestStreak;
-    
-
-    const response = await fetch(`${base}/users/${id}/statistics`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-      body: JSON.stringify({optional: data.optional})
-    });
+      data.audioCallCorrectAnswersPercentage = audioCallCorrectAnswersPercentage;
+      data.audioCallNewWords = audioCallNewWords;
+      data.audioCallLongestStreak = audioCallLongestStreak;
+    console.log(learnedWords);
+    const response = await userAccountApi.updateStatistics({learnedWords, optional: data});
+    console.log(response.json());
   }
 }
 
