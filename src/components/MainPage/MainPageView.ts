@@ -1,7 +1,14 @@
 import ElementCreator from '../Utils/ElementCreator';
-import { userPersonalData } from '../types';
+import { IObj, userPersonalData } from '../types';
 
 export default class MainPageView extends ElementCreator {
+  pageLinks: IObj<HTMLElement>;
+
+  constructor() {
+    super();
+    this.pageLinks = {};
+  }
+
   drawStartScreen(): void {
     this.drawBodyWrapper();
     this.drawHeader();
@@ -42,25 +49,43 @@ export default class MainPageView extends ElementCreator {
             <li class="menu-item">
               <a href="#team" class="menu-item__link">НАША КОМАНДА</a>
             </li>
-            <li class="menu-item">
-              <a href="" class="menu-item__link" data-page="book">УЧЕБНИК</a>
-            </li>
-            <li class="menu-item">
-              <a href="" class="menu-item__link" data-page="vocabulary">СЛОВАРЬ</a>
-            </li>
-            <li class="menu-item">
-              <a href="" class="menu-item__link" data-page="games">ИГРЫ</a>
-            </li>
-            <li class="menu-item">
-              <a href="" class="menu-item__link" data-page="statistics">СТАТИСТИКА</a>
-            </li>
-          `
+      `
     );
+    
+    const menuLinksOptionsArr = [
+      ['book', 'УЧЕБНИК'],
+      ['vocabulary', 'СЛОВАРЬ'],
+      ['games', 'ИГРЫ'],
+      ['statistics', 'СТАТИСТИКА'],
+    ]
+    
+    menuLinksOptionsArr.forEach((item) => {
+      const menuItem = this.createElement('li', menuList, { class: 'menu-item' });
+        const menuItemLink = this.createElement('a', menuItem, { href: '', class: 'menu-item__link' }, item[1]);
+        menuItemLink.dataset.page = item[0];
+      this.pageLinks[item[0]] = menuItemLink;
+    });
+
+            // <li class="menu-item">
+            //   <a href="" class="menu-item__link" data-page="book">УЧЕБНИК</a>
+            // </li>
+            // <li class="menu-item">
+            //   <a href="" class="menu-item__link" data-page="vocabulary">СЛОВАРЬ</a>
+            // </li>
+            // <li class="menu-item">
+            //   <a href="" class="menu-item__link" data-page="games">ИГРЫ</a>
+            // </li>
+            // <li class="menu-item">
+            //   <a href="" class="menu-item__link" data-page="statistics">СТАТИСТИКА</a>
+            // </li>
+          
+    
     const account = this.createElement('div', header, { class: 'account' });
     const burgerMenuButton = this.createElement('button', header, { class: 'burger-menu-open-button' });
     Object.assign(this.elements.htmlElements, {
       header,
       menu,
+      menuList,
       account,
       burgerMenuButton,
     });
@@ -206,6 +231,10 @@ export default class MainPageView extends ElementCreator {
             </li>
             `
     );
+
+    Object.assign(this.elements.htmlElements, {
+      sectionWelcomeStartButton,
+    })
   }
 
   drawFooter(): void {
