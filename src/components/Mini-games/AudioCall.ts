@@ -73,15 +73,12 @@ class AudioCall {
 
       // check is user guest or registered
       if(id){
-        console.log(4);
          wordsArr = (await api.getUserAggregatedWords(id, token, difficulty, randomPage))[0].paginatedResults;
-         console.log(randomPage);
       }
       else wordsArr = await api.getWords(difficulty, randomPage);
 
       // create additional words if they are not enough
       if(wordsArr.length < 15 && +randomPage > 0) {
-        console.log(wordsArr.length);
         const additionalWords: Word[] = await api.getWords(difficulty, (+randomPage - 1).toString());
         for (let i = 0; i < 20 - wordsArr.length; i += 1) {
           wordsArr.push(additionalWords[i])
@@ -125,7 +122,6 @@ class AudioCall {
          guessedRight = wordsArr[i].userWord!.optional.wordData.guessedRight!;
       }
       else  guessedRight = 0;
-      console.log(guessedRight);
       let wrongTranslatesAmount: number = 4;
       const wordImage = wordsArr[i].image;
       const wordId = wordsArr[i]._id;
@@ -157,6 +153,7 @@ class AudioCall {
     </audio>`;
     let randomIndexes: number[] = [];
     function createRandomIndexesorWords() {
+      randomIndexes = [];
       while(randomIndexes.length < 5){
         const randomIndex = Math.floor(Math.random() * 5);
         if(randomIndexes.indexOf(randomIndex) === -1) randomIndexes.push(randomIndex);
@@ -180,19 +177,105 @@ class AudioCall {
       audio.play();
     })
 
-    // create new Cart after click to options
-    optionsContainer?.addEventListener('click', (e: Event) => {
-      randomIndexes = [];
-      createRandomIndexesorWords();
-      const options: HTMLButtonElement[] = Array.from(document.querySelectorAll('.options__button'));
-      const target = e.target as HTMLButtonElement;
-      
+    // control from keyboard
+    const controlFromKeyboard = (e: KeyboardEvent) => {
+      const keyName = e.key;
+      const optionsButton = Array.from(document.querySelectorAll('.options__button')) as HTMLButtonElement[];
+      switch (keyName) {
+        case '1':
+          createRandomIndexesorWords();
+          if(optionsButton[0].innerHTML === getData[cartNum].wordTranslate) {
+            getData[cartNum].guessedRight! = getData[cartNum].guessedRight! + 1;
+            this.appendResult(getData, cartNum, 'true', optionsButton[0]); 
+            cartNum += 1;
+          }
+          else {
+            this.appendResult(getData, cartNum, 'false', optionsButton[0]);        
+            cartNum += 1;
+          }
+          document.removeEventListener('keydown', controlFromKeyboard);
+          break;
+        case '2':
+          createRandomIndexesorWords();
+          if(optionsButton[1].innerHTML === getData[cartNum].wordTranslate) {
+            getData[cartNum].guessedRight! = getData[cartNum].guessedRight! + 1;
+            this.appendResult(getData, cartNum, 'true', optionsButton[1]); 
+            cartNum += 1;
+          }
+          else {
+            this.appendResult(getData, cartNum, 'false', optionsButton[1]);        
+            cartNum += 1;
+          }
+          document.removeEventListener('keydown', controlFromKeyboard);
+          break;
+        case '3':
+          createRandomIndexesorWords();
+          if(optionsButton[2].innerHTML === getData[cartNum].wordTranslate) {
+            getData[cartNum].guessedRight! = getData[cartNum].guessedRight! + 1;
+            this.appendResult(getData, cartNum, 'true', optionsButton[2]); 
+            cartNum += 1;
+          }
+          else {
+            this.appendResult(getData, cartNum, 'false', optionsButton[2]);        
+            cartNum += 1;
+          }
+          document.removeEventListener('keydown', controlFromKeyboard);
+          break;
+        case '4':
+          createRandomIndexesorWords();
+          if(optionsButton[3].innerHTML === getData[cartNum].wordTranslate) {
+            getData[cartNum].guessedRight! = getData[cartNum].guessedRight! + 1;
+            this.appendResult(getData, cartNum, 'true', optionsButton[3]); 
+            cartNum += 1;
+          }
+          else {
+            this.appendResult(getData, cartNum, 'false', optionsButton[3]);        
+            cartNum += 1;
+          }
+          document.removeEventListener('keydown', controlFromKeyboard);
+          break;
+        case '5':
+          createRandomIndexesorWords();
+          if(optionsButton[4].innerHTML === getData[cartNum].wordTranslate) {
+            getData[cartNum].guessedRight! = getData[cartNum].guessedRight! + 1;
+            this.appendResult(getData, cartNum, 'true', optionsButton[4]); 
+            cartNum += 1;
+          }
+          else {
+            this.appendResult(getData, cartNum, 'false', optionsButton[4]);        
+            cartNum += 1;
+          }
+          document.removeEventListener('keydown', controlFromKeyboard);
+          break;
+        case 'Shift': 
+        createRandomIndexesorWords();
+        if(optionsButton[5].innerHTML === 'Не Знаю') {
+          this.appendResult(getData, cartNum, 'doNotKnow', optionsButton[5]);        
+          cartNum += 1;
+        }
+        document.removeEventListener('keydown', controlFromKeyboard);
+          break;
+        case ' ':
+          // if user clicks space repeat audio
+          const audio = document.querySelector('.audioCall-audio__container')!.children[0] as HTMLAudioElement;
+          audio.play();
+          break
+        default:
+          break;
+      }
+    }
+
+    const callResultsPage = () => {
       // create page with results if the cart is last
       if(cartNum > 19) {
         // send user words to user/words
         const api = new GamesApi();
         const id: string = localStorage.getItem('userId')!;
         const token: string = localStorage.getItem('token')!;
+
+        // disable key events
+        document.removeEventListener('keydown', controlFromKeyboard);
+        document.removeEventListener('keydown', switchToNextWord);
         for (let i = 0; i < getData.length; i += 1) {
           api.createUpdateUserWord(id, token, getData[i].wordId!, getData[i], 'hard')
         }
@@ -215,19 +298,54 @@ class AudioCall {
         }
 
       }
+}
+
+    function switchToNextWord(e: KeyboardEvent) {
+      const key = e.key;
+      const optionsButton = Array.from(document.querySelectorAll('.options__button')) as HTMLButtonElement[];
+      callResultsPage();
+      createRandomIndexesorWords();
+      if(key === 'Enter') { 
+        document.addEventListener('keydown', controlFromKeyboard); 
+        if(optionsButton[5].innerHTML === 'Дальше') {
+          audioContainer!.innerHTML =`    
+          <audio autoplay>
+            <source src="${getData[cartNum].wordAudio}" type="">
+          </audio>`;
+          optionsButton.forEach((item: HTMLButtonElement, index: number) => {
+            if(item.innerHTML !== 'Не Знаю') { 
+              item.disabled = false;
+              item.innerHTML = getData[cartNum].wordTranslates.flat()[randomIndexes[index]];
+              item.style.background = '#38304f';
+              item.removeAttribute('style');
+            };
+          }); 
+          optionsButton[5].innerHTML = 'Не Знаю';
+        }
+      }
+    }
+
+    document.addEventListener('keydown', controlFromKeyboard);
+    document.addEventListener('keydown', switchToNextWord);
+
+    // create new Cart after click to options
+    optionsContainer?.addEventListener('click', (e: Event) => {
+      randomIndexes = [];
+      createRandomIndexesorWords();
+      const options: HTMLButtonElement[] = Array.from(document.querySelectorAll('.options__button'));
+      const target = e.target as HTMLButtonElement;
+      
+      callResultsPage()
       // disable buttons after click
       options.forEach((item: HTMLButtonElement) => {
         if(item !== options[5] && target.classList.contains('options__button')) item.disabled = true;
       });
       if(target.classList.contains('options__button') && getData[cartNum].wordTranslate === target.innerHTML) {
-        console.log(true);
         getData[cartNum].guessedRight! = getData[cartNum].guessedRight! + 1;
         this.appendResult(getData, cartNum, 'true', target); 
-        console.log(getData);   
         cartNum += 1;
       }
       else if (target.classList.contains('options__button') && target.innerHTML !== 'Не знаю' && target.innerHTML !== 'Дальше') {
-        console.log(false);
         this.appendResult(getData, cartNum, 'false', target);        
         cartNum += 1;
       }
@@ -236,8 +354,6 @@ class AudioCall {
         cartNum += 1;
       }
       else if(target.innerHTML === 'Дальше') {
-        console.log(target.innerHTML);
-        console.log('object');
         audioContainer!.innerHTML =`    
         <audio autoplay>
           <source src="${getData[cartNum].wordAudio}" type="">
