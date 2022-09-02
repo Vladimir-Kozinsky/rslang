@@ -7,6 +7,7 @@ export default class ApiData {
   static userId: string = '';
   static userName: string = '';
   static userGender: string = '';
+  static userEmail: string = '';
 
   static getDataFromLocalStorage() {
     if (localStorage.length !== 0) {
@@ -17,6 +18,7 @@ export default class ApiData {
       const userId = localStorage.getItem('userId');
       const userName = localStorage.getItem('userName');
       const userGender = localStorage.getItem('userGender');
+      const userEmail = localStorage.getItem('userEmail');
 
       if (token) ApiData.token = token;
       if (refreshToken) ApiData.refreshToken = refreshToken;
@@ -25,6 +27,7 @@ export default class ApiData {
       if (userId) ApiData.userId = userId;
       if (userName) ApiData.userName = userName;
       if (userGender) ApiData.userGender = userGender;
+      if (userEmail) ApiData.userEmail = userEmail;
     }
   }
 
@@ -37,6 +40,7 @@ export default class ApiData {
       localStorage.setItem('userId', this.userId);
       localStorage.setItem('userName', this.userName);
       localStorage.setItem('userGender', this.userGender);
+      localStorage.setItem('userEmail', this.userEmail);
     };
   }
 
@@ -49,5 +53,6 @@ export default class ApiData {
     this.userId = '';
     this.userName = '';
     this.userGender = '';
+    this.userEmail = '';
   }
 }

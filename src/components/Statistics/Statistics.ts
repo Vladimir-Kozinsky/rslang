@@ -1,6 +1,11 @@
 /* eslint-disable class-methods-use-this */
 import StatsWidget from "./StatsWidget/StatsWidget";
 import userFemale from "../../assets/img/svg/user-female.svg"
+import userMale from "../../assets/img/svg/user-male.svg"
+import UserAccountApi from "../Api/UserAccountApi";
+import ApiData from "../Api/ApiData";
+import MiniGames from "../Mini-games/MiniGames";
+import Ebook from "../Ebook/Ebook";
 
 interface IWidgetsData {
     name: string;
@@ -10,7 +15,7 @@ interface IWidgetsData {
 
 const widgetsData: IWidgetsData[] = [
     {
-        name: 'Колличество изученных слов сегодня',
+        name: 'Колличество новых слов сегодня',
         unit: 'Слов',
     },
     {
@@ -18,62 +23,51 @@ const widgetsData: IWidgetsData[] = [
         unit: '%',
     },
     {
-        name: 'Колличество новых слов сегодня',
+        name: 'Самая длинная серия',
         unit: 'Слов',
     },
 ]
 
-interface IStats {
-    statsCorrectAnswersPercentage: number;
-    statsNewWords: number;
-    statsLongestStreak: number;
-}
-interface IAudiocall {
-    audioCallCorrectAnswersPercentage: number;
-    audioCallNewWords: number;
-    audioCallLongestStreak: number;
-}
-
-interface ISprint {
-    sprintCorrectAnswersPercentage: number;
-    sprintNewWords: number;
-    sprintLongestStreak: number;
-}
-
 interface IStatsData {
-    stats: IStats;
-    audiocall: IAudiocall;
-    sprint: ISprint;
+    statsCorrectAnswersPercentage: number | null,
+    statsNewWords: number | null,
+    statsLongestStreak: number | null,
+    audioCallCorrectAnswersPercentage: number | null,
+    audioCallNewWords: number | null,
+    audioCallLongestStreak: number | null,
+    sprintCorrectAnswersPercentage: number | null,
+    sprintNewWords: number | null,
+    sprintLongestStreak: number | null,
 }
 
 class Statistics {
     userId: string;
 
     statsData: IStatsData;
+    userAccountApi: UserAccountApi;
+    miniGames: MiniGames;
+    ebook: Ebook;
 
     constructor(userId: string) {
+        this.ebook = new Ebook();
+        this.miniGames = new MiniGames();
+        this.userAccountApi = new UserAccountApi();
         this.userId = userId;
         this.statsData = {
-            stats: {
-                statsCorrectAnswersPercentage: 1,
-                statsNewWords: 1,
-                statsLongestStreak: 1
-            },
-            audiocall: {
-                audioCallCorrectAnswersPercentage: 2,
-                audioCallNewWords: 2,
-                audioCallLongestStreak: 2
-            },
-            sprint: {
-                sprintCorrectAnswersPercentage: 3,
-                sprintNewWords: 3,
-                sprintLongestStreak: 3
-            }
+            statsCorrectAnswersPercentage: null,
+            statsNewWords: null,
+            statsLongestStreak: null,
+            audioCallCorrectAnswersPercentage: null,
+            audioCallNewWords: null,
+            audioCallLongestStreak: null,
+            sprintCorrectAnswersPercentage: null,
+            sprintNewWords: null,
+            sprintLongestStreak: null,
         }
     }
 
     async drawStatistics() {
-       // await this.setStatistics();
+        await this.setStatistics();
         const container = document.querySelector('.container__content') as HTMLDivElement;
         const statistics = document.createElement('div') as HTMLDivElement;
         statistics.className = 'stats';
@@ -108,19 +102,39 @@ class Statistics {
 
         switch (header) {
             case "Статистика":
-                widgetsData[0].value = this.statsData.stats.statsCorrectAnswersPercentage;
-                widgetsData[1].value = this.statsData.stats.statsLongestStreak;
-                widgetsData[2].value = this.statsData.stats.statsNewWords;
+                if (this.statsData.statsCorrectAnswersPercentage) {
+                    widgetsData[0].value = this.statsData.statsCorrectAnswersPercentage;
+                }
+
+                if (this.statsData.statsLongestStreak) {
+                    widgetsData[1].value = this.statsData.statsLongestStreak;
+                }
+                if (this.statsData.statsNewWords) {
+                    widgetsData[2].value = this.statsData.statsNewWords;
+                }
                 break;
             case "Aудиовызов":
-                widgetsData[0].value = this.statsData.audiocall.audioCallCorrectAnswersPercentage;
-                widgetsData[1].value = this.statsData.audiocall.audioCallLongestStreak;
-                widgetsData[2].value = this.statsData.audiocall.audioCallNewWords;
+                if (this.statsData.audioCallCorrectAnswersPercentage) {
+                    widgetsData[1].value = this.statsData.audioCallCorrectAnswersPercentage;
+                }
+                if (this.statsData.audioCallLongestStreak) {
+                    widgetsData[2].value = this.statsData.audioCallLongestStreak;
+                }
+                if (this.statsData.audioCallNewWords) {
+                    widgetsData[0].value = this.statsData.audioCallNewWords;
+                }
+
                 break;
             case "Спринт":
-                widgetsData[0].value = this.statsData.sprint.sprintCorrectAnswersPercentage;
-                widgetsData[1].value = this.statsData.sprint.sprintLongestStreak;
-                widgetsData[2].value = this.statsData.sprint.sprintNewWords;
+                if (this.statsData.sprintCorrectAnswersPercentage) {
+                    widgetsData[1].value = this.statsData.sprintCorrectAnswersPercentage;
+                }
+                if (this.statsData.sprintLongestStreak) {
+                    widgetsData[2].value = this.statsData.sprintLongestStreak;
+                }
+                if (this.statsData.sprintNewWords) {
+                    widgetsData[0].value = this.statsData.sprintNewWords;
+                }
                 break;
 
             default:
@@ -149,46 +163,62 @@ class Statistics {
 
         const userPhotoBlock = document.createElement('div') as HTMLDivElement;
         userPhotoBlock.className = 'user-block__photo';
+        if (!ApiData.userGender) {
+            userPhotoBlock.style.background = 'white';
+        }
 
         const userPhoto = document.createElement('img') as HTMLImageElement;
-        userPhoto.src = userFemale
+        userPhoto.src = ApiData.userGender ? ApiData.userGender === 'male' ? userMale : userFemale : '';
         userPhotoBlock.append(userPhoto);
 
         const userInfoBlock = document.createElement('div') as HTMLDivElement;
         userInfoBlock.className = 'user-block__info'
 
-        const userName = document.createElement('h4') as HTMLHeadingElement;
-        userName.className = 'info-block__name';
-        userName.textContent = 'Annie Leonchart'
-        userInfoBlock.append(userName);
+        if (ApiData.userId) {
+            const userName = document.createElement('h4') as HTMLHeadingElement;
+            userName.className = 'info-block__name';
+            userName.textContent = ApiData.userName ? ApiData.userName : '-';
+            userInfoBlock.append(userName);
 
-        const userEmail = document.createElement('h4') as HTMLHeadingElement;
-        userEmail.className = 'info-block__email';
-        userEmail.textContent = 'annie_leonchart@mail.com'
-        userInfoBlock.append(userEmail);
+            const userEmail = document.createElement('h4') as HTMLHeadingElement;
+            userEmail.className = 'info-block__email';
+            userEmail.textContent = ApiData.userEmail ? ApiData.userEmail : '-';
+            userInfoBlock.append(userEmail);
 
-        const userStatsCont = document.createElement('div') as HTMLDivElement;
-        userStatsCont.className = 'user-stats__container';
+            const userStatsCont = document.createElement('div') as HTMLDivElement;
+            userStatsCont.className = 'user-stats__container';
 
-        userStatsData.forEach(item => {
-            const userStats = document.createElement('div') as HTMLDivElement;
+            userStatsData.forEach(item => {
+                const userStats = document.createElement('div') as HTMLDivElement;
 
-            userStats.className = 'user-stats__block'
+                userStats.className = 'user-stats__block'
 
-            const userStatsHeader = document.createElement('span') as HTMLSpanElement;
-            userStatsHeader.className = 'user-stats__header';
-            userStatsHeader.textContent = item.text;
-            userStats.append(userStatsHeader);
+                const userStatsHeader = document.createElement('span') as HTMLSpanElement;
+                userStatsHeader.className = 'user-stats__header';
+                userStatsHeader.textContent = item.text;
+                userStats.append(userStatsHeader);
 
-            const userStatsValue = document.createElement('span') as HTMLSpanElement;
-            userStatsValue.className = 'user-stats__value'
-            userStatsValue.textContent = item.value;
-            userStats.append(userStatsValue);
+                const userStatsValue = document.createElement('span') as HTMLSpanElement;
+                userStatsValue.className = 'user-stats__value'
+                userStatsValue.textContent = ApiData.userId ? item.value : '-';
+                userStats.append(userStatsValue);
+                userStatsCont.append(userStats);
+                userInfoBlock.append(userStatsCont);
 
-            userStatsCont.append(userStats);
-        })
+            })
+        } else {
+            userInfoBlock.classList.add('disabled');
+            const muteBlock = document.createElement('div') as HTMLDivElement;
+            muteBlock.className = 'user-block__mute-block';
+            userInfoBlock.append(muteBlock);
+            const muteBlockImg = document.createElement('img') as HTMLImageElement;
+            muteBlockImg.src = '../../../assets/img/svg/lock.svg';
+            muteBlock.append(muteBlockImg);
+        }
 
-        userInfoBlock.append(userStatsCont);
+
+
+
         userBlock.append(userInfoBlock);
         userBlock.append(userPhotoBlock);
 
@@ -202,7 +232,7 @@ class Statistics {
         const links = [
             { title: 'Аудиовызов', image: 'headphone.svg' },
             { title: 'Спринт', image: 'sneaker.svg' },
-            { title: 'Словарь', image: 'book.svg' },
+            { title: 'Учебник', image: 'book.svg' },
         ]
 
         links.forEach(item => {
@@ -224,6 +254,38 @@ class Statistics {
             linkBlockTitle.textContent = item.title;
             linkBlock.append(linkBlockTitle);
 
+            linkBlock.addEventListener('click', () => {
+                const container = document.querySelector('.container__content') as HTMLDivElement;
+
+                function clearActivLink() {
+                    const links = document.querySelectorAll('.nav__item');
+                    links.forEach((link) => {
+                        link.classList.remove('active');
+                    });
+                }
+                const link = document.querySelector('#book') as HTMLLIElement;
+                const linkBlock = link.parentNode?.parentNode as HTMLLIElement;
+                switch (item.title) {
+                    case 'Аудиовызов':
+                        container.innerHTML = '';
+                        this.miniGames.createStartPage('Аудиовызов', 'Аудиовызов - Из 5 вариантой выберите правильный перевод озвученного слова.', 'Аудиовызов');
+                        break;
+                    case 'Спринт':
+                        container.innerHTML = '';
+                        this.miniGames.createStartPage('Спринт', 'Спринт - Выберите правильный ли перевод или нет.', 'Спринт');
+                        break;
+                    case 'Учебник':
+                        container.innerHTML = '';
+                        clearActivLink();
+                        linkBlock.classList.add('active');
+                        this.ebook.drawEbook();
+                        break;
+                    default:
+                        break;
+                }
+            })
+
+
             linksBlock.append(linkBlock);
         })
 
@@ -232,28 +294,23 @@ class Statistics {
         return linksBlock;
     }
 
-    // async setStatistics() {
-    //     const response = await API.getStatistics(this.userId);
-    //     if (response.ok) {
-    //         const statistics = response.json();
-    //         const audiocallStats = statistics.optional.audiocall;
-    //         const sprintStats = statistics.optional.sprint;
-    //         const mainStats = statistics.optional.stats;
-    //         this.statsData = {
-    //             audiocall: {
-    //                 audioCallCorrectAnswersPercentage: audiocallStats.audioCallCorrectAnswersPercentage,
-    //                 audioCallNewWords: audiocallStats.audioCallNewWords,
-    //                 audioCallLongestStreak: audiocallStats.audioCallLongestStreak
-    //             },
-    //             sprint: {
-    //                 sprintCorrectAnswersPercentage: sprintStats.sprintCorrectAnswersPercentage,
-    //                 sprintNewWords: sprintStats.sprintNewWords,
-    //                 sprintLongestStreak: sprintStats.sprintLongestStreak
-    //             }
-    //         }
-    //     }
-    // }
-
+    async setStatistics() {
+        const response = await this.userAccountApi.getStatistics();
+        if (response.ok) {
+            const statistics = await response.json();
+            this.statsData = {
+                statsCorrectAnswersPercentage: statistics.optional.statsCorrectAnswersPercentage ? statistics.optional.statsCorrectAnswersPercentage : null,
+                statsNewWords: statistics.optional.statsNewWords ? statistics.optional.statsNewWords : null,
+                statsLongestStreak: statistics.optional.statsLongestStreak ? statistics.optional.statsLongestStreak : null,
+                audioCallCorrectAnswersPercentage: statistics.optional.audioCallCorrectAnswersPercentage ? statistics.optional.audioCallCorrectAnswersPercentage : null,
+                audioCallLongestStreak: statistics.optional.audioCallLongestStreak ? statistics.optional.audioCallLongestStreak : null,
+                audioCallNewWords: statistics.optional.audioCallNewWords ? statistics.optional.audioCallNewWords : null,
+                sprintCorrectAnswersPercentage: statistics.optional.sprintCorrectAnswersPercentage ? statistics.optional.sprintCorrectAnswersPercentage : null,
+                sprintLongestStreak: statistics.optional.sprintLongestStreak ? statistics.optional.sprintLongestStreak : null,
+                sprintNewWords: statistics.optional.sprintNewWords ? statistics.optional.sprintNewWords : null,
+            }
+        }
+    }
 }
 
 export default Statistics;
