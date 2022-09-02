@@ -89,13 +89,15 @@ class Statistics {
         console.log(document.querySelector('.info-block__name'))
         container.append(statsWrap);
         
-        const drawGuestUserView = this.drawGuestUserView.bind(this);
-        const drawAuthUserView = this.drawAuthUserView.bind(this);
-
         Object.assign(this.elements, {
             statistics,
         })
 
+        const authWindow = document.querySelector('.auth-blackout');
+        if (authWindow) authWindow.remove();
+
+        const drawGuestUserView = this.drawGuestUserView.bind(this);
+        const drawAuthUserView = this.drawAuthUserView.bind(this);
         this.authController.getStartScreen(drawGuestUserView, drawAuthUserView);
     }
 
