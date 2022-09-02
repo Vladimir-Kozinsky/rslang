@@ -266,6 +266,8 @@ class Statistics {
         statistics.append(this.createStatsBlock("Aудиовызов", widgetsData));
         statistics.append(this.createStatsBlock("Спринт", widgetsData));
 
+        userPhotoBlock.style.background = 'white';
+
         const userIconWrapper = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         userIconWrapper.classList.add('user-icon-wrapper');
         const userIcon = document.createElementNS('http://www.w3.org/2000/svg', 'use');
@@ -314,6 +316,8 @@ class Statistics {
         statistics.append(this.createStatsBlock("Aудиовызов", widgetsData));
         statistics.append(this.createStatsBlock("Спринт", widgetsData));
 
+        userPhotoBlock.style.background = 'conic-gradient(#ff8cc3, #ffbda4, #8df0ff, #ff8cc3)';
+
         const userPhoto = document.createElement('img') as HTMLImageElement;
         if (userPersonalData.gender === 'male') {
             userPhoto.src = './assets/img/svg/user-male.svg';
@@ -325,10 +329,6 @@ class Statistics {
         const logoutNavItem = document.getElementById('logout');
         if (logoutNavItem) logoutNavItem.remove();
 
-        const userName = document.createElement('h4') as HTMLHeadingElement;
-        userName.className = 'info-block__name';
-        userName.textContent = userPersonalData.name;
-
         const navList = document.querySelector('.nav__list') as HTMLElement;
         const navItem = document.createElement('li') as HTMLLIElement;
         navItem.classList.add('nav__item');
@@ -336,10 +336,18 @@ class Statistics {
 
         const middle = document.createElement('div') as HTMLDivElement;
         middle.className = 'middleBlock';
-
+        
         const menuIcon = document.createElement('img') as HTMLImageElement;
         menuIcon.className = 'middleBlock__icon';
         menuIcon.src = `./assets/img/svg/exitIcon.svg`;
+
+        const userName = document.createElement('h4') as HTMLHeadingElement;
+        userName.className = 'info-block__name';
+        userName.textContent = userPersonalData.name;
+
+        const userEmail = document.createElement('h4') as HTMLHeadingElement;
+        userEmail.className = 'info-block__email';
+        userEmail.textContent = ApiData.userEmail ? ApiData.userEmail : '-';
 
         const logOutButton = document.createElement('button') as HTMLButtonElement;
         logOutButton.classList.add('middleBlock__logout-button');
@@ -367,6 +375,7 @@ class Statistics {
         })
 
         userInfoBlock.append(userName);
+        userInfoBlock.append(userEmail);
         userInfoBlock.append(userStatsCont);
          
         logOutButton.append(menuIcon);
