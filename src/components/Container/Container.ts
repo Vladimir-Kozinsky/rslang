@@ -51,7 +51,7 @@ class Container {
     ul.classList.add('nav__list');
     menuItems.forEach((item) => {
       const menuItem = document.createElement('li') as HTMLLIElement;
-
+      menuItem.className = 'nav__item';
       if (item.text !== 'Словарь') {
         menuItem.className = 'nav__item';
       } else {

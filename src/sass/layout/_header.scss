@@ -21,100 +21,102 @@
     }
   }
 
-  .menu {
-    .menu-list {
-      display: flex;
-      gap: 10px;
+  .burger-menu-open-button {
+    position: relative;
 
-      .menu-item {
-        .menu-item__link {
-          position: relative;
+    display: none;
 
-          padding: 10px 10px;
+    width: 30px;
+    height: 22px;
 
-          font-size: 20px;
-          color: $color-text-dark;
+    background: linear-gradient(to bottom, transparent 0px, transparent 10px, $color-text-dark 10px, $color-text-dark 12px, transparent 12px, transparent 36px);
 
-          transition: 0.2s;
+    cursor: pointer;
 
-          &::after,
-          &::before {
-            content: "";
-            position: absolute;
-            left: 50%;
-            top: 36px;
+    &::before {
+      content: '';
 
-            width: 0%;
-            height: 2px;
+      position: absolute;
+      top: 0;
+      left: 0;
 
-            background-color: $color-active-link;
-            transition: 0.3s;
-          }
+      width: 100%;
+      height: 2px;
+      
+      background-color: $color-text-dark;
 
-          &:hover {
-            color: $color-active-link;
+      transition: .2s;
+    }
 
-            &::after {
-              width: 45%;
+    &::after {
+      content: '';
 
-              transform: translateX(-96%);
-            }
+      position: absolute;
+      bottom: 0;
+      left: 0;
 
-            &::before {
-              width: 45%;
-            }
-          }
-        }
-      }
+      width: 100%;
+      height: 2px;
+      
+      background-color: $color-text-dark;
+
+      transition: .2s;
+    }
+
+    &:hover {
+      background: linear-gradient(to bottom, transparent 0px, transparent 10px, $color-active-link 10px, $color-active-link 12px, transparent 12px, transparent 36px);
+    }
+
+    &:hover::after,
+    &:hover::before {
+      background: $color-active-link;
     }
   }
 
-  .account {
-    display: flex;
-    align-items: center;
-    gap: 25px;
+  @media (max-width: 1919px) {
+    padding: 20px 80px;
 
-    .account__user-name {
-      font-size: 16px;
+    .logo .logo__title {
+      font-size: 34px;
     }
+  }
 
-    .account__user-icon-wrapper {
-      width: 40px;
-      height: 40px;
+  @media (max-width: 1599px) {
+    padding: 20px 40px;
+
+    .logo .logo__title {
+      font-size: 30px;
     }
+  }
 
-    .account__user-icon {
-      position: relative;
-      width: 40px;
-      height: 40px;
-      border: 2px solid #242730;
-      border-radius: 50%;
+  @media (max-width: 1359px) {
+    padding: 20px 25px;
+
+    .logo {
+      gap: 15px;
     }
+  }
 
-    .account__signin-button,
-    .account__logout-button {
-      height: 40px;
-      padding: 0 30px;
-      border: 2px solid $color-text-dark;
-      border-radius: 20px;
+  @media (max-width: 1179px) {
+    padding: 20px 25px;
 
-      font: 400 16px Ubuntu, Arial, Tahoma, sans-serif;
-
-      background: transparent;
-
-      cursor: pointer;
-      transition: 0.2s;
-
-      &:hover {
-        color: $color-text-light;
-
-        background: $color-text-dark;
+    .logo {
+      .logo__icon-wrapper {
+        width: 46px;
+        height: 38px;
       }
 
-      &:active {
-        background-color: rgba(36, 39, 48, 0.7);
-        transition: none;
+      .logo__title {
+        font-size: 26px;
       }
     }
+
+    .burger-menu-open-button {
+      display: block;
+    }
+  }
+
+  @media (max-width: 425px) {
+    padding: 20px 10px;
   }
 }

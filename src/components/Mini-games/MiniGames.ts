@@ -1,6 +1,7 @@
 import Sprint from './Sprint';
 import AudioCall from './AudioCall';
 import Container from '../Container/Container';
+import Spinner from '../Spinner/spinner';
 
 class MiniGames {
   createCarts(imgName: string, title: string, description: string, gameName: string) {
@@ -111,17 +112,21 @@ class MiniGames {
     startBtn.textContent = 'Начать';
     startBtn.dataset.gameName = gameName;
 
+    const spinner = new Spinner();
+
     startBtn.addEventListener('click', () => {
       switch (startBtn.dataset.gameName) {
         case 'Аудиовызов':
           content.innerHTML = '';
           audioCall.createPage();
           audioCall.appendDataToPage(selectDifficulty.value);
+          spinner.createPage();
           break;
         case 'Спринт':
           content.innerHTML = '';
           sprint.createPage();
           sprint.appendWordsToPage(selectDifficulty.value);
+          spinner.createPage();
           break;
 
         default:

@@ -67,28 +67,8 @@ class GamesApi {
       }); 
     }
     const content = await rawResponse.json();
-  
-    console.log(content);
+
   };
-
-  // getUserWordById(userId: number, wordId:number) {
-  //     return (async () => {
-  //         const response = await fetch(`${GamesApi.BASE_URL}/users/${userId}/words/${wordId}`)
-  //         return response.json()
-  //     })
-  // }
-
-  // updateUserWord(userId: number, wordId:number) {
-  //     return (async () => {
-  //         (await fetch(`GamesApi.BASE_URL/users/${userId}/words/${wordId}`, {
-  //             method: 'PUT',
-  //             headers: {
-  //               'Content-Type': 'application/json',
-  //             },
-  //             body: JSON.stringify({userId, wordId}),
-  //           })).json();
-  //     })
-  // }
 }
 
 export default GamesApi;

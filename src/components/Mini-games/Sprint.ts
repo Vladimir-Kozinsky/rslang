@@ -1,6 +1,8 @@
+import UserAccountApi from '../Api/UserAccountApi';
 import App from '../App';
 import Container from '../Container/Container';
 import Word from '../interfaces/interfaces';
+import { IObj, IStatisticsOptions } from '../types';
 import GamesApi from './gamesApi';
 import MiniGames from './MiniGames';
 
@@ -95,12 +97,20 @@ class Sprint {
 
   async createWordsForGame(difficulty: string, page: number = -1) {
     const api = new GamesApi();
+    const id: string = localStorage.getItem('userId')!;
+    const token: string = localStorage.getItem('token')!;
     let randomPage: string;
+
     // if game launched from menu choose random page
     if(page === -1) randomPage = Math.floor(Math.random() * 30).toString();
     else randomPage = page.toString();
 
-    const wordsArr: Word[] = await api.getWords(difficulty, randomPage);
+    let wordsArr: Word[];
+
+    // check is user guest or registered
+    if(id) wordsArr = (await api.getUserAggregatedWords(id, token, difficulty, randomPage))[0].paginatedResults;
+    else wordsArr = await api.getWords(difficulty, randomPage);
+
     // create additional words if they are not enough
     if(wordsArr.length < 15 && +randomPage > 0) {
       const additionalWords: Word[] = await api.getWords(difficulty, (+randomPage - 1).toString());
@@ -109,18 +119,32 @@ class Sprint {
       }
     }
 
-    // create counter which counts how many times user guessed right choice and delete words if it guessed right n times 
+    // create counter which counts how many times user guessed right choice
     for (let i = 0; i < wordsArr.length; i += 1) {
-      if(!wordsArr[i].guessedRight) {
+      if(wordsArr[i].userWord) {
+        if(!wordsArr[i].userWord!.optional.wordData.guessedRight) {
+          wordsArr[i].userWord!.optional.wordData.guessedRight = 0;
+        }
+
+      }
+      else {
         wordsArr[i].guessedRight = 0;
       }
-      else if(wordsArr[i].guessedRight! >= 3 && wordsArr[i].difficulty === 'easy') {
-        wordsArr.splice(i, 1);
-      }
-      else if(wordsArr[i].guessedRight! >= 5 && wordsArr[i].difficulty === 'hard') {
-        wordsArr.splice(i, 1);
-      }
+ 
     }
+
+    // create counter which counts how many times user guessed right choice and delete words if it guessed right n times 
+    // for (let i = 0; i < wordsArr.length; i += 1) {
+    //   if(!wordsArr[i].guessedRight) {
+    //     wordsArr[i].guessedRight = 0;
+    //   }
+    //   else if(wordsArr[i].guessedRight! >= 3 && wordsArr[i].difficulty === 'easy') {
+    //     wordsArr.splice(i, 1);
+    //   }
+    //   else if(wordsArr[i].guessedRight! >= 5 && wordsArr[i].difficulty === 'hard') {
+    //     wordsArr.splice(i, 1);
+    //   }
+    // }
 
     const wrongTranslatedWordsIndexes: number[] = [];
     function shuffleArr(array: Word[]) {
@@ -174,8 +198,8 @@ class Sprint {
     const createdWords = await this.createWordsForGame(difficulty);
     const { clonedArr } = createdWords;
     const { wordsArr } = createdWords;
-    const correctAnswers: { word: string; wordTranslate: string; wordAudio: string; }[] = [];
-    const inCorrectAnswers: { word: string; wordTranslate: string; wordAudio: string; }[] = [];
+    const correctAnswers: { word: string; wordTranslate: string; wordAudio: string; guessedRight?: number }[] = [];
+    const inCorrectAnswers: { word: string; wordTranslate: string; wordAudio: string; guessedRight?: number }[] = [];
     const wrongTranslatedWordIndexes: number[] = createdWords.wrongTranslatedWordsIndexes;
     let currentIndex: number = 0;
     const currentWord: string = clonedArr[currentIndex].word;
@@ -188,10 +212,19 @@ class Sprint {
     <source src="https://react-learnwords-shahzod.herokuapp.com/${clonedArr[currentIndex].audioExample}" type="audio/mpeg">
    `;
 
+   const api = new GamesApi();
+   const id: string = localStorage.getItem('userId')!;
+   const token: string = localStorage.getItem('token')!;
+
     const timeToStop = setInterval(() => {
       time.textContent = (+time.textContent! - 1).toString();
       if (time.textContent === '0') {
         clearInterval(timeToStop);
+        for (let i = 0; i < currentIndex; i += 1) {
+          clonedArr[i].guessedRight = clonedArr[i].userWord?.optional.wordData.guessedRight 
+          delete clonedArr[i].userWord;
+          api.createUpdateUserWord(id, token, clonedArr[i]._id!, clonedArr[i], 'hard');
+        }
         this.createResultsPage(+points.textContent!, correctAnswers, inCorrectAnswers);
       }
     }, 1000);
@@ -204,6 +237,87 @@ class Sprint {
         }
       }
     }
+
+    
+    // Control from keyboard
+    const controlFromKeyboard =  (e: KeyboardEvent) => {
+      const keyName = e.key;
+      if (currentIndex > 18) {
+        clearInterval(timeToStop);
+        callStatistics()
+        this.createResultsPage(+points.textContent!, correctAnswers, inCorrectAnswers);
+        for (let i = 0; i < clonedArr.length; i += 1) {
+          clonedArr[i].guessedRight = clonedArr[i].userWord?.optional.wordData.guessedRight 
+          delete clonedArr[i].userWord;
+          api.createUpdateUserWord(id, token, clonedArr[i]._id!, clonedArr[i], 'hard');
+        }
+      }
+      // eslint-disable-next-line default-case
+      switch (keyName) {
+        case 'ArrowRight':
+            if (wrongTranslatedWordIndexes.includes(currentIndex)) {
+              word.textContent = clonedArr[currentIndex].word;
+              translatedWord.textContent = clonedArr[currentIndex].wordTranslate;
+              inCorrectAnswers.push({
+                word: word.textContent!,
+                wordTranslate: findTranslate(word.textContent!)!,
+                wordAudio: clonedArr[currentIndex].audio,
+                guessedRight: clonedArr[currentIndex].guessedRight
+              });
+              clonedArr[currentIndex].isTrue = false;
+              currentIndex += 1;
+              word.textContent = clonedArr[currentIndex].word;
+              translatedWord.textContent = clonedArr[currentIndex].wordTranslate;
+            } else {
+              correctAnswers.push({
+                word: word.textContent!,
+                wordTranslate: translatedWord.textContent!,
+                wordAudio: clonedArr[currentIndex].audio,
+                guessedRight: clonedArr[currentIndex].guessedRight
+              });
+              clonedArr[currentIndex].isTrue = true;
+              if(clonedArr[currentIndex].userWord) {
+                clonedArr[currentIndex].userWord!.optional!.wordData!.guessedRight! += 1;
+              }
+              else clonedArr[currentIndex].guessedRight! += 1;
+              currentIndex += 1;
+              points.textContent = (+points.textContent! + 20).toString();
+              word.textContent = clonedArr[currentIndex].word;
+              translatedWord.textContent = clonedArr[currentIndex].wordTranslate;
+            }
+          break;
+        case 'ArrowLeft':
+          if (wrongTranslatedWordIndexes.includes(currentIndex)) {
+            correctAnswers.push({
+              word: word.textContent!,
+              wordTranslate: findTranslate(word.textContent!)!,
+              wordAudio: clonedArr[currentIndex].audio,
+              guessedRight: clonedArr[currentIndex].guessedRight
+            });
+            clonedArr[currentIndex].isTrue = true;
+            if(clonedArr[currentIndex].userWord) {
+              clonedArr[currentIndex].userWord!.optional!.wordData!.guessedRight! += 1;
+            }
+            else clonedArr[currentIndex].guessedRight! += 1;
+            currentIndex += 1;
+            points.textContent = (+points.textContent! + 20).toString();
+            word.textContent = clonedArr[currentIndex].word;
+            translatedWord.textContent = clonedArr[currentIndex].wordTranslate;
+          } else {
+            inCorrectAnswers.push({
+              word: word.textContent!,
+              wordTranslate: translatedWord.textContent!,
+              wordAudio: clonedArr[currentIndex].audio,
+              guessedRight: clonedArr[currentIndex].guessedRight
+            });
+            clonedArr[currentIndex].isTrue = false;
+            currentIndex += 1;
+            word.textContent = clonedArr[currentIndex].word;
+            translatedWord.textContent = clonedArr[currentIndex].wordTranslate;
+          }
+      }
+    };
+    document.addEventListener('keydown', controlFromKeyboard);
 
     const callStatistics = () => {
       const newWords: string  = (correctAnswers.length + inCorrectAnswers.length).toString();
@@ -218,8 +332,8 @@ class Sprint {
         else if(item.isTrue) streaksArr.push([1]);
       });
       const longestStreak: string = streaksArr.sort((a, b) => b[0] - a[0])[0][0].toString();
-
-      this.sendDataToStatistics(correctAnswerPercentage, newWords, longestStreak)
+      document.removeEventListener('keydown', controlFromKeyboard);
+      this.sendDataToStatistics(correctAnswerPercentage, newWords, longestStreak);
     }
 
     // Control from mouse
@@ -227,9 +341,14 @@ class Sprint {
       const target = e.target as HTMLButtonElement;
       if (currentIndex > 18) {
         clearInterval(timeToStop);
-        console.log(callStatistics());
-        console.log(wordsArr);
-        console.log(clonedArr);
+        // send user words to user/words
+        for (let i = 0; i < clonedArr.length; i += 1) {
+          clonedArr[i].guessedRight = clonedArr[i].userWord?.optional.wordData.guessedRight 
+          delete clonedArr[i].userWord;
+          api.createUpdateUserWord(id, token, clonedArr[i]._id!, clonedArr[i], 'hard');
+        }
+        callStatistics();
+        document.removeEventListener('keydown', controlFromKeyboard);
         this.createResultsPage(+points.textContent!, correctAnswers, inCorrectAnswers);
       }
       if (target.classList.contains('sprint-button__true')) {
@@ -240,6 +359,7 @@ class Sprint {
             word: word.textContent!,
             wordTranslate: findTranslate(word.textContent!)!,
             wordAudio: clonedArr[currentIndex].audio,
+            guessedRight: clonedArr[currentIndex].guessedRight
           });
           clonedArr[currentIndex].isTrue = false;
           currentIndex += 1;
@@ -250,9 +370,13 @@ class Sprint {
             word: word.textContent!,
             wordTranslate: translatedWord.textContent!,
             wordAudio: clonedArr[currentIndex].audio,
+            guessedRight: clonedArr[currentIndex].guessedRight
           });
           clonedArr[currentIndex].isTrue = true;
-          clonedArr[currentIndex].guessedRight! = clonedArr[currentIndex].guessedRight! + 1;
+          if(clonedArr[currentIndex].userWord) {
+            clonedArr[currentIndex].userWord!.optional!.wordData!.guessedRight! += 1;
+          }
+          else clonedArr[currentIndex].guessedRight! += 1;
           currentIndex += 1;
           points.textContent = (+points.textContent! + 20).toString();
           word.textContent = clonedArr[currentIndex].word;
@@ -264,9 +388,13 @@ class Sprint {
             word: word.textContent!,
             wordTranslate: findTranslate(word.textContent!)!,
             wordAudio: clonedArr[currentIndex].audio,
+            guessedRight: clonedArr[currentIndex].guessedRight
           });
           clonedArr[currentIndex].isTrue = true;
-          clonedArr[currentIndex].guessedRight! = clonedArr[currentIndex].guessedRight! + 1;
+          if(clonedArr[currentIndex].userWord) {
+            clonedArr[currentIndex].userWord!.optional!.wordData!.guessedRight! += 1;
+          }
+          else clonedArr[currentIndex].guessedRight! += 1;
           currentIndex += 1;
           points.textContent = (+points.textContent! + 20).toString();
           word.textContent = clonedArr[currentIndex].word;
@@ -276,68 +404,13 @@ class Sprint {
             word: word.textContent!,
             wordTranslate: translatedWord.textContent!,
             wordAudio: clonedArr[currentIndex].audio,
+            guessedRight: clonedArr[currentIndex].guessedRight
           });
           clonedArr[currentIndex].isTrue = false;
           currentIndex += 1;
           word.textContent = clonedArr[currentIndex].word;
           translatedWord.textContent = clonedArr[currentIndex].wordTranslate;
         }
-      }
-    });
-
-    // Control from keyboard
-    document.addEventListener('keydown', (e: KeyboardEvent) => {
-      const keyName = e.key;
-      if (currentIndex > 18) {
-        clearInterval(timeToStop);
-        callStatistics()
-        this.createResultsPage(+points.textContent!, correctAnswers, inCorrectAnswers);
-      }
-      // eslint-disable-next-line default-case
-      switch (keyName) {
-        case 'ArrowRight':
-          if (wrongTranslatedWordIndexes.includes(currentIndex)) {
-            inCorrectAnswers.push({
-              word: word.textContent!,
-              wordTranslate: findTranslate(word.textContent!)!,
-              wordAudio: clonedArr[currentIndex].audio,
-            });
-            currentIndex += 1;
-            word.textContent = clonedArr[currentIndex].word;
-            translatedWord.textContent = clonedArr[currentIndex].wordTranslate; 
-          } else {
-            correctAnswers.push({
-              word: word.textContent!,
-              wordTranslate: translatedWord.textContent!,
-              wordAudio: clonedArr[currentIndex].audio,
-            });
-            currentIndex += 1;
-            points.textContent = (+points.textContent! + 20).toString();
-            word.textContent = clonedArr[currentIndex].word;
-            translatedWord.textContent = clonedArr[currentIndex].wordTranslate;
-          }
-          break;
-        case 'ArrowLeft':
-          if (wrongTranslatedWordIndexes.includes(currentIndex)) {
-            correctAnswers.push({
-              word: word.textContent!,
-              wordTranslate: findTranslate(word.textContent!)!,
-              wordAudio: clonedArr[currentIndex].audio,
-            });
-            currentIndex += 1;
-            points.textContent = (+points.textContent! + 20).toString();
-            word.textContent = clonedArr[currentIndex].word;
-            translatedWord.textContent = clonedArr[currentIndex].wordTranslate;
-          } else {
-            inCorrectAnswers.push({
-              word: word.textContent!,
-              wordTranslate: translatedWord.textContent!,
-              wordAudio: clonedArr[currentIndex].audio,
-            });
-            currentIndex += 1;
-            word.textContent = clonedArr[currentIndex].word;
-            translatedWord.textContent = clonedArr[currentIndex].wordTranslate;
-          }
       }
     });
   }
@@ -347,7 +420,6 @@ class Sprint {
     correctAnswers: { word: string; wordTranslate: string; wordAudio: string }[],
     inCorrectAnswers: { word: string; wordTranslate: string; wordAudio: string }[]
   ) {
-    console.log(inCorrectAnswers);
     const content = document.querySelector('.container__content') as HTMLDivElement;
     const containerBlock = document.querySelector('.container') as HTMLDivElement;
     const app = new App();
@@ -444,42 +516,45 @@ class Sprint {
   }
 
   async sendDataToStatistics(sprintCorrectAnswersPercentage: string, sprintNewWords: string, sprintLongestStreak: string) {
-    const base: string = `https://react-learnwords-shahzod.herokuapp.com`;
-    const token: string = localStorage.getItem('token')!;
-    const id: string = localStorage.getItem('userId')!;
-    const getStatistics = await (await fetch(`${base}/users/${id}/statistics`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      }
-    })).json();
+    const userAccountApi = new UserAccountApi();
+    const RequestGetStatistics= await userAccountApi.getStatistics();
 
-    if(getStatistics.optional.sprintCorrectAnswersPercentage) {
-      const prevCorrectAnswersPercentage: number = +getStatistics.optional.sprintCorrectAnswersPercentage.slice(0, -1);
-      const prevNewWords: number = +getStatistics.optional.sprintNewWords;
-      const prevLongestStreak: number = +getStatistics.optional.sprintLongestStreak;
+    let data: IObj<string>;
+    let learnedWords: number;
+    const getStatistics: IStatisticsOptions = await RequestGetStatistics.json() 
+    if(RequestGetStatistics.ok) {
+      // eslint-disable-next-line no-unsafe-optional-chaining
+      learnedWords = getStatistics.learnedWords + +document.querySelector('.sprint-results-answers-block')?.children[0].children.length! - 1;
+      data = getStatistics.optional;
+    }
+    else {
+      // eslint-disable-next-line no-unsafe-optional-chaining
+      learnedWords = +document.querySelector('.sprint-results-answers-block')?.children[0].children.length! - 1;
+      data = {
+          sprintCorrectAnswersPercentage,
+          sprintNewWords,
+          sprintLongestStreak 
+      }
+}
+
+    if(data.sprintCorrectAnswersPercentage) {
+      const prevCorrectAnswersPercentage: number = +data.sprintCorrectAnswersPercentage.slice(0, -1);
+      const prevNewWords: number = +data.sprintNewWords;
+      const prevLongestStreak: number = +data.sprintLongestStreak;
       sprintCorrectAnswersPercentage = `${Math.round(((+sprintCorrectAnswersPercentage.slice(0, -1) + prevCorrectAnswersPercentage) / 2)).toString()}%`;
       sprintNewWords = (+sprintNewWords + prevNewWords).toString();
-      console.log(true);
       if(prevLongestStreak > +sprintLongestStreak) {
-        console.log(2);
          sprintLongestStreak = prevLongestStreak.toString()
       };
     }
 
-    const response = await fetch(`${base}/users/${id}/statistics`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-      body: JSON.stringify({ 
-        optional: {
-                   sprintCorrectAnswersPercentage,
-                   sprintNewWords,
-                   sprintLongestStreak} })
-    });
+      data.sprintCorrectAnswersPercentage = sprintCorrectAnswersPercentage;
+      data.sprintNewWords = sprintNewWords;
+      data.sprintLongestStreak = sprintLongestStreak;
+    
+
+    // eslint-disable-next-line no-unsafe-optional-chaining
+    const response = await userAccountApi.updateStatistics({learnedWords, optional: data});
   }
 }
 
