@@ -38,41 +38,53 @@
 
 .user-block {
     grid-area: user;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: end;
+    
     height: 330px;
     position: relative;
 }
 
 .user-block__photo {
+    position: absolute;
+    top: 8px;
+    left: calc(50% - 65px);
     width: 130px;
     height: 130px;
     border-radius: 100%;
     margin: 0 auto;
-    position: relative;
     border: 5px solid white;
     background: conic-gradient(#ff8cc3, #ffbda4, #8df0ff, #ff8cc3);
     display: flex;
     justify-content: center;
     align-items: center;
     transform: rotate(60deg);
+    box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.25);
 
-    img {
+    img,
+    svg {
         transform: rotate(-60deg);
     }
 }
 
 .user-block__info {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
     height: 235px;
     background-color: white;
     border-radius: 30px;
-    display: table-cell;
     width: 315px;
-    position: absolute;
     bottom: 0px;
     box-shadow: 0 0 30px rgb(136, 136, 136, 0.5);
 }
 
 .info-block__name {
-    margin-top: 50px;
+    margin-top: 65px;
+    font-size: 18px;
     text-align: center;
 }
 
@@ -82,8 +94,33 @@
     text-align: center;
 }
 
+.user-block__signin-button {
+    width: 120px;
+    height: 40px;
+    margin-top: 40px;
+    border: 2px solid $color-text-dark;
+    border-radius: 20px;
+
+    font: 400 18px Ubuntu, Arial, Tahoma, sans-serif;
+
+    background: transparent;
+    
+    cursor: pointer;
+    transition: .2s;
+
+    &:hover {
+        color: $color-hover-button;
+        background-color: $color-text-dark;
+    }
+
+    &:active {
+        background-color: rgba(36, 39, 48, 0.7);
+        transition: none;
+    }
+}
+
 .user-stats__container {
-    margin-top: 20px;
+    margin-top: 25px;
     display: flex;
     justify-content: center;
 }
