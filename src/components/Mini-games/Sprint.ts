@@ -1,6 +1,8 @@
+import UserAccountApi from '../Api/UserAccountApi';
 import App from '../App';
 import Container from '../Container/Container';
 import Word from '../interfaces/interfaces';
+import { IObj, IStatisticsOptions } from '../types';
 import GamesApi from './gamesApi';
 import MiniGames from './MiniGames';
 
@@ -514,57 +516,45 @@ class Sprint {
   }
 
   async sendDataToStatistics(sprintCorrectAnswersPercentage: string, sprintNewWords: string, sprintLongestStreak: string) {
-    const base: string = `https://react-learnwords-shahzod.herokuapp.com`;
-    const token: string = localStorage.getItem('token')!;
-    const id: string = localStorage.getItem('userId')!;
-    const getStatistics = await (await fetch(`${base}/users/${id}/statistics`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      }
-    }));
-    let data;
-    if(getStatistics.ok) {
-      data = await getStatistics.json();
+    const userAccountApi = new UserAccountApi();
+    const RequestGetStatistics= await userAccountApi.getStatistics();
+
+    let data: IObj<string>;
+    let learnedWords: number;
+    const getStatistics: IStatisticsOptions = await RequestGetStatistics.json() 
+    if(RequestGetStatistics.ok) {
+      // eslint-disable-next-line no-unsafe-optional-chaining
+      learnedWords = getStatistics.learnedWords + +document.querySelector('.sprint-results-answers-block')?.children[0].children.length! - 1;
+      data = getStatistics.optional;
     }
     else {
+      // eslint-disable-next-line no-unsafe-optional-chaining
+      learnedWords = +document.querySelector('.sprint-results-answers-block')?.children[0].children.length! - 1;
       data = {
-        optional: {
           sprintCorrectAnswersPercentage,
           sprintNewWords,
           sprintLongestStreak 
-        }
       }
-    }
-    if(data.optional.sprintCorrectAnswersPercentage) {
-      const prevCorrectAnswersPercentage: number = +data.optional.sprintCorrectAnswersPercentage.slice(0, -1);
-      const prevNewWords: number = +data.optional.sprintNewWords;
-      const prevLongestStreak: number = +data.optional.sprintLongestStreak;
+}
+
+    if(data.sprintCorrectAnswersPercentage) {
+      const prevCorrectAnswersPercentage: number = +data.sprintCorrectAnswersPercentage.slice(0, -1);
+      const prevNewWords: number = +data.sprintNewWords;
+      const prevLongestStreak: number = +data.sprintLongestStreak;
       sprintCorrectAnswersPercentage = `${Math.round(((+sprintCorrectAnswersPercentage.slice(0, -1) + prevCorrectAnswersPercentage) / 2)).toString()}%`;
       sprintNewWords = (+sprintNewWords + prevNewWords).toString();
       if(prevLongestStreak > +sprintLongestStreak) {
          sprintLongestStreak = prevLongestStreak.toString()
       };
     }
-      data.optional.sprintCorrectAnswersPercentage = sprintCorrectAnswersPercentage;
-      data.optional.sprintNewWords = sprintNewWords;
-      data.optional.sprintLongestStreak = sprintLongestStreak;
+
+      data.sprintCorrectAnswersPercentage = sprintCorrectAnswersPercentage;
+      data.sprintNewWords = sprintNewWords;
+      data.sprintLongestStreak = sprintLongestStreak;
     
 
-    // // get previous statistics from another game
-    // if(data.optional.audioCallCorrectAnswersPercentage) {
-
-    // }
-
-    const response = await fetch(`${base}/users/${id}/statistics`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-      body: JSON.stringify({optional: data.optional})
-    });
+    // eslint-disable-next-line no-unsafe-optional-chaining
+    const response = await userAccountApi.updateStatistics({learnedWords, optional: data});
   }
 }
 
