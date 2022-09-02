@@ -1,6 +1,7 @@
 /* eslint-disable class-methods-use-this */
 import StatsWidget from "./StatsWidget/StatsWidget";
 import userFemale from "../../assets/img/svg/user-female.svg"
+import userMale from "../../assets/img/svg/user-male.svg"
 import UserAccountApi from "../Api/UserAccountApi";
 import ApiData from "../Api/ApiData";
 import MiniGames from "../Mini-games/MiniGames";
@@ -56,12 +57,12 @@ class Statistics {
             statsCorrectAnswersPercentage: null,
             statsNewWords: null,
             statsLongestStreak: null,
-            audioCallCorrectAnswersPercentage: 2,
-            audioCallNewWords: 2,
-            audioCallLongestStreak: 2,
-            sprintCorrectAnswersPercentage: 3,
-            sprintNewWords: 3,
-            sprintLongestStreak: 3,
+            audioCallCorrectAnswersPercentage: null,
+            audioCallNewWords: null,
+            audioCallLongestStreak: null,
+            sprintCorrectAnswersPercentage: null,
+            sprintNewWords: null,
+            sprintLongestStreak: null,
         }
     }
 
@@ -162,46 +163,62 @@ class Statistics {
 
         const userPhotoBlock = document.createElement('div') as HTMLDivElement;
         userPhotoBlock.className = 'user-block__photo';
+        if (!ApiData.userGender) {
+            userPhotoBlock.style.background = 'white';
+        }
 
         const userPhoto = document.createElement('img') as HTMLImageElement;
-        userPhoto.src = userFemale
+        userPhoto.src = ApiData.userGender ? ApiData.userGender === 'male' ? userMale : userFemale : '';
         userPhotoBlock.append(userPhoto);
 
         const userInfoBlock = document.createElement('div') as HTMLDivElement;
         userInfoBlock.className = 'user-block__info'
 
-        const userName = document.createElement('h4') as HTMLHeadingElement;
-        userName.className = 'info-block__name';
-        userName.textContent = ApiData.userName ? ApiData.userName : '-';
-        userInfoBlock.append(userName);
+        if (ApiData.userId) {
+            const userName = document.createElement('h4') as HTMLHeadingElement;
+            userName.className = 'info-block__name';
+            userName.textContent = ApiData.userName ? ApiData.userName : '-';
+            userInfoBlock.append(userName);
 
-        const userEmail = document.createElement('h4') as HTMLHeadingElement;
-        userEmail.className = 'info-block__email';
-        userEmail.textContent = ApiData.userEmail ? ApiData.userEmail : '-';
-        userInfoBlock.append(userEmail);
+            const userEmail = document.createElement('h4') as HTMLHeadingElement;
+            userEmail.className = 'info-block__email';
+            userEmail.textContent = ApiData.userEmail ? ApiData.userEmail : '-';
+            userInfoBlock.append(userEmail);
 
-        const userStatsCont = document.createElement('div') as HTMLDivElement;
-        userStatsCont.className = 'user-stats__container';
+            const userStatsCont = document.createElement('div') as HTMLDivElement;
+            userStatsCont.className = 'user-stats__container';
 
-        userStatsData.forEach(item => {
-            const userStats = document.createElement('div') as HTMLDivElement;
+            userStatsData.forEach(item => {
+                const userStats = document.createElement('div') as HTMLDivElement;
 
-            userStats.className = 'user-stats__block'
+                userStats.className = 'user-stats__block'
 
-            const userStatsHeader = document.createElement('span') as HTMLSpanElement;
-            userStatsHeader.className = 'user-stats__header';
-            userStatsHeader.textContent = item.text;
-            userStats.append(userStatsHeader);
+                const userStatsHeader = document.createElement('span') as HTMLSpanElement;
+                userStatsHeader.className = 'user-stats__header';
+                userStatsHeader.textContent = item.text;
+                userStats.append(userStatsHeader);
 
-            const userStatsValue = document.createElement('span') as HTMLSpanElement;
-            userStatsValue.className = 'user-stats__value'
-            userStatsValue.textContent = item.value;
-            userStats.append(userStatsValue);
+                const userStatsValue = document.createElement('span') as HTMLSpanElement;
+                userStatsValue.className = 'user-stats__value'
+                userStatsValue.textContent = ApiData.userId ? item.value : '-';
+                userStats.append(userStatsValue);
+                userStatsCont.append(userStats);
+                userInfoBlock.append(userStatsCont);
 
-            userStatsCont.append(userStats);
-        })
+            })
+        } else {
+            userInfoBlock.classList.add('disabled');
+            const muteBlock = document.createElement('div') as HTMLDivElement;
+            muteBlock.className = 'user-block__mute-block';
+            userInfoBlock.append(muteBlock);
+            const muteBlockImg = document.createElement('img') as HTMLImageElement;
+            muteBlockImg.src = '../../../assets/img/svg/lock.svg';
+            muteBlock.append(muteBlockImg);
+        }
 
-        userInfoBlock.append(userStatsCont);
+
+
+
         userBlock.append(userInfoBlock);
         userBlock.append(userPhotoBlock);
 

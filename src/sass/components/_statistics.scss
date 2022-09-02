@@ -3,13 +3,14 @@
 .stats-wrap {
     margin: 50px;
     display: grid;
-    gap: 40px;
-    grid-template-columns: 1fr 350px;
+    gap: 50px;
+    grid-template-columns: 1fr 315px;
     grid-template-areas:
         "stats user"
         "stats links";
     overflow-y: auto;
     height: 85vh;
+    padding-right: 25px;
 }
 
 .stats {
@@ -54,11 +55,14 @@
     justify-content: center;
     align-items: center;
     transform: rotate(60deg);
+    z-index: 20;
 
     img {
         transform: rotate(-60deg);
     }
 }
+
+
 
 .user-block__info {
     height: 235px;
@@ -69,7 +73,34 @@
     position: absolute;
     bottom: 0px;
     box-shadow: 0 0 30px rgb(136, 136, 136, 0.5);
+
+    .user-block__mute-block {
+        position: absolute;
+        background-color: rgba(255, 255, 255, 0.95);
+        width: 100%;
+        height: 100%;
+        top: 0px;
+        left: 0px;
+        border-radius: 30px;
+        z-index: 10;
+        display: none;
+
+        img {
+            width: 100px;
+            position: relative;
+            top: 45px;
+            left: 107.5px;
+        }
+    }
+
+    &.disabled {
+        .user-block__mute-block {
+            display: block;
+        }
+    }
 }
+
+
 
 .info-block__name {
     margin-top: 50px;

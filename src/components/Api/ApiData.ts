@@ -1,5 +1,5 @@
 export default class ApiData {
-  static basePath: string = 'https://react-learnwords-shahzod.herokuapp.com';
+  static basePath: string = 'http://localhost:3000';
   static token: string = '';
   static refreshToken: string = '';
   static tokenExpirationDate: number = Date.now();
@@ -53,5 +53,6 @@ export default class ApiData {
     this.userId = '';
     this.userName = '';
     this.userGender = '';
+    this.userEmail = '';
   }
 }
