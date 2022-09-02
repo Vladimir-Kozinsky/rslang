@@ -401,6 +401,31 @@ class Statistics {
                 sprintLongestStreak: statistics.optional.sprintLongestStreak ? statistics.optional.sprintLongestStreak : null,
                 sprintNewWords: statistics.optional.sprintNewWords ? statistics.optional.sprintNewWords : null,
             }
+        } else {
+            this.statsData.statsCorrectAnswersPercentage = null;
+            this.statsData.statsNewWords = null;
+            this.statsData.statsLongestStreak = null;
+            this.statsData.audioCallCorrectAnswersPercentage = null;
+            this.statsData.audioCallNewWords = null;
+            this.statsData.audioCallLongestStreak = null;
+            this.statsData.sprintCorrectAnswersPercentage = null;
+            this.statsData.sprintNewWords = null;
+            this.statsData.sprintLongestStreak = null;
+            widgetsData.length = 0;
+            widgetsData.push(
+                {
+                    name: 'Колличество новых слов сегодня',
+                    unit: 'Слов',
+                },
+                {
+                    name: 'Процент  правильных ответов сегодня',
+                    unit: '%',
+                },
+                {
+                    name: 'Самая длинная серия',
+                    unit: 'Слов',
+                },
+            );
         }
     }
 }
