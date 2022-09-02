@@ -41,13 +41,14 @@ class Container {
       { id: 'games', text: 'Мини-игры', icon: 'gamesIcon.svg' },
       { id: 'book', text: 'Учебник', icon: 'bookIcon.svg' },
       { id: 'setting', text: 'Настройки', icon: 'settingIcon.svg' },
-      { id: 'exit', text: 'Выход', icon: 'exitIcon.svg' },
+      // { id: 'exit', text: 'Выход', icon: 'exitIcon.svg' },
     ];
 
     const nav = document.createElement('nav') as HTMLElement;
     nav.className = 'nav';
 
     const ul = document.createElement('ul') as HTMLUListElement;
+    ul.classList.add('nav__list');
     menuItems.forEach((item) => {
       const menuItem = document.createElement('li') as HTMLLIElement;
 

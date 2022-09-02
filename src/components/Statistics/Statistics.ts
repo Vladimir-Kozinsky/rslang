@@ -1,6 +1,8 @@
 /* eslint-disable class-methods-use-this */
 import StatsWidget from "./StatsWidget/StatsWidget";
+import AuthController from "../Auth/AuthController";
 import userFemale from "../../assets/img/svg/user-female.svg"
+import { IObj, userPersonalData } from '../types';
 
 interface IWidgetsData {
     name: string;
@@ -47,12 +49,18 @@ interface IStatsData {
 }
 
 class Statistics {
+    authController: AuthController;
+    
     userId: string;
+    elements: IObj<HTMLElement>;
 
     statsData: IStatsData;
 
+
     constructor(userId: string) {
+        this.authController = new AuthController();
         this.userId = userId;
+        this.elements = {};
         this.statsData = {
             stats: {
                 statsCorrectAnswersPercentage: 1,
@@ -88,8 +96,12 @@ class Statistics {
         statsWrap.append(statistics);
         statsWrap.append(this.createUserBlock());
         statsWrap.append(this.createLinksBlock());
-
+        console.log(document.querySelector('.info-block__name'))
         container.append(statsWrap);
+        
+        const drawGuestUserView = this.drawGuestUserView.bind(this);
+        const drawAuthUserView = this.drawAuthUserView.bind(this);
+        this.authController.getStartScreen(drawGuestUserView, drawAuthUserView);
     }
 
     // eslint-disable-next-line @typescript-eslint/no-shadow
@@ -137,61 +149,22 @@ class Statistics {
     }
 
     createUserBlock() {
-
-        const userStatsData = [
-            { text: 'Изученные слова', value: '146' },
-            { text: 'Попыток', value: '2' }
-        ]
-
         const userBlock = document.createElement('div') as HTMLDivElement;
         userBlock.className = 'user-block';
-
 
         const userPhotoBlock = document.createElement('div') as HTMLDivElement;
         userPhotoBlock.className = 'user-block__photo';
 
-        const userPhoto = document.createElement('img') as HTMLImageElement;
-        userPhoto.src = userFemale
-        userPhotoBlock.append(userPhoto);
-
         const userInfoBlock = document.createElement('div') as HTMLDivElement;
         userInfoBlock.className = 'user-block__info'
 
-        const userName = document.createElement('h4') as HTMLHeadingElement;
-        userName.className = 'info-block__name';
-        userName.textContent = 'Annie Leonchart'
-        userInfoBlock.append(userName);
-
-        const userEmail = document.createElement('h4') as HTMLHeadingElement;
-        userEmail.className = 'info-block__email';
-        userEmail.textContent = 'annie_leonchart@mail.com'
-        userInfoBlock.append(userEmail);
-
-        const userStatsCont = document.createElement('div') as HTMLDivElement;
-        userStatsCont.className = 'user-stats__container';
-
-        userStatsData.forEach(item => {
-            const userStats = document.createElement('div') as HTMLDivElement;
-
-            userStats.className = 'user-stats__block'
-
-            const userStatsHeader = document.createElement('span') as HTMLSpanElement;
-            userStatsHeader.className = 'user-stats__header';
-            userStatsHeader.textContent = item.text;
-            userStats.append(userStatsHeader);
-
-            const userStatsValue = document.createElement('span') as HTMLSpanElement;
-            userStatsValue.className = 'user-stats__value'
-            userStatsValue.textContent = item.value;
-            userStats.append(userStatsValue);
-
-            userStatsCont.append(userStats);
-        })
-
-        userInfoBlock.append(userStatsCont);
         userBlock.append(userInfoBlock);
         userBlock.append(userPhotoBlock);
 
+        Object.assign(this.elements, {
+            userPhotoBlock,
+            userInfoBlock,
+        });
         return userBlock;
     }
 
@@ -230,6 +203,115 @@ class Statistics {
 
 
         return linksBlock;
+    }
+
+    drawGuestUserView(): HTMLButtonElement {
+        const { userPhotoBlock, userInfoBlock } = this.elements;        
+
+        userPhotoBlock.innerHTML = '';
+        userInfoBlock.innerHTML = '';
+
+        const userIconWrapper = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        userIconWrapper.classList.add('user-icon-wrapper');
+        const userIcon = document.createElementNS('http://www.w3.org/2000/svg', 'use');
+        userIcon.classList.add('user-icon');
+        userIcon.setAttribute('href', './assets/img/svg/sprite.svg#guest-user');
+        userIconWrapper.append(userIcon);
+        userPhotoBlock.append(userIconWrapper);
+
+        const userName = document.createElement('h4') as HTMLHeadingElement;
+        userName.className = 'info-block__name';
+        userName.textContent = 'Гость';
+        userInfoBlock.append(userName);
+
+        const signInButton = document.createElement('button');
+        signInButton.classList.add('user-block__signin-button');
+        signInButton.textContent = 'Войти';
+        userInfoBlock.append(signInButton);
+
+        const logOutButton = document.querySelector('.middleBlock__logout-button');
+        if (logOutButton) {
+            logOutButton.remove();
+        }
+
+        Object.assign(this.elements, {
+            signInButton,
+        })
+
+        return signInButton;
+    }
+
+    drawAuthUserView(userPersonalData: userPersonalData): HTMLButtonElement {
+        const { userPhotoBlock, userInfoBlock } = this.elements;
+        const userStatsData = [
+            { text: 'Изученные слова', value: '146' },
+            { text: 'Попыток', value: '2' }
+        ]
+
+        userPhotoBlock.innerHTML = '';
+        userInfoBlock.innerHTML = '';
+
+        const userPhoto = document.createElement('img') as HTMLImageElement;
+        if (userPersonalData.gender === 'male') {
+            userPhoto.src = './assets/img/svg/user-male.svg';
+        } else {
+            userPhoto.src = './assets/img/svg/user-female.svg';
+        }
+        userPhotoBlock.append(userPhoto);
+
+        const logoutNavItem = document.getElementById('logout');
+        if (logoutNavItem) logoutNavItem.remove();
+
+        const userName = document.createElement('h4') as HTMLHeadingElement;
+        userName.className = 'info-block__name';
+        userName.textContent = userPersonalData.name;
+
+        const navList = document.querySelector('.nav__list') as HTMLElement;
+        const navItem = document.createElement('li') as HTMLLIElement;
+        navItem.classList.add('nav__item');
+        navItem.id = 'logout';
+
+        const middle = document.createElement('div') as HTMLDivElement;
+        middle.className = 'middleBlock';
+
+        const menuIcon = document.createElement('img') as HTMLImageElement;
+        menuIcon.className = 'middleBlock__icon';
+        menuIcon.src = `./assets/img/svg/exitIcon.svg`;
+
+        const logOutButton = document.createElement('button') as HTMLButtonElement;
+        logOutButton.classList.add('middleBlock__logout-button');
+        logOutButton.textContent = 'Выйти';
+
+        const userStatsCont = document.createElement('div') as HTMLDivElement;
+        userStatsCont.className = 'user-stats__container';
+
+        userStatsData.forEach(item => {
+            const userStats = document.createElement('div') as HTMLDivElement;
+
+            userStats.className = 'user-stats__block'
+
+            const userStatsHeader = document.createElement('span') as HTMLSpanElement;
+            userStatsHeader.className = 'user-stats__header';
+            userStatsHeader.textContent = item.text;
+            userStats.append(userStatsHeader);
+
+            const userStatsValue = document.createElement('span') as HTMLSpanElement;
+            userStatsValue.className = 'user-stats__value'
+            userStatsValue.textContent = item.value;
+            userStats.append(userStatsValue);
+
+            userStatsCont.append(userStats);
+        })
+
+        userInfoBlock.append(userName);
+        userInfoBlock.append(userStatsCont);
+         
+        logOutButton.append(menuIcon);
+        middle.append(logOutButton);
+        navItem.append(middle);
+        navList.append(navItem);
+
+        return logOutButton;
     }
 
     // async setStatistics() {

@@ -3,16 +3,19 @@ import MiniGames from './Mini-games/MiniGames';
 import MainPageController from './MainPage/MainPageController';
 import AuthController from './Auth/AuthController';
 import ApiData from './Api/ApiData';
+import Statistics from './Statistics/Statistics';
 
 class App {
   mainPageController: MainPageController;
 
   authController: AuthController;
+  statistics: Statistics;
 
   constructor() {
     ApiData.getDataFromLocalStorage();
     this.mainPageController = new MainPageController();
     this.authController = new AuthController();
+    this.statistics = new Statistics(ApiData.userId);
   }
 
   startApp() {
@@ -20,6 +23,7 @@ class App {
     this.authController.checkToken();
     console.log(localStorage.getItem('userId'));
     this.drowContainer();
+    this.statistics.drawStatistics();
   }
 
   drowContainer() {
