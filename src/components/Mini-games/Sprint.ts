@@ -238,7 +238,8 @@ class Sprint {
       }
     }
 
-    
+    const trueAnswerAudio = new Audio('../../assets/audio/correct-sound.mp3');
+    const falseAnswerAudio = new Audio('../../assets/audio/incorrect-sound.mp3');
     // Control from keyboard
     const controlFromKeyboard =  (e: KeyboardEvent) => {
       const keyName = e.key;
@@ -264,6 +265,7 @@ class Sprint {
                 wordAudio: clonedArr[currentIndex].audio,
                 guessedRight: clonedArr[currentIndex].guessedRight
               });
+              falseAnswerAudio.play();
               clonedArr[currentIndex].isTrue = false;
               currentIndex += 1;
               word.textContent = clonedArr[currentIndex].word;
@@ -275,6 +277,7 @@ class Sprint {
                 wordAudio: clonedArr[currentIndex].audio,
                 guessedRight: clonedArr[currentIndex].guessedRight
               });
+              trueAnswerAudio.play()
               clonedArr[currentIndex].isTrue = true;
               if(clonedArr[currentIndex].userWord) {
                 clonedArr[currentIndex].userWord!.optional!.wordData!.guessedRight! += 1;
@@ -294,6 +297,7 @@ class Sprint {
               wordAudio: clonedArr[currentIndex].audio,
               guessedRight: clonedArr[currentIndex].guessedRight
             });
+            trueAnswerAudio.play()
             clonedArr[currentIndex].isTrue = true;
             if(clonedArr[currentIndex].userWord) {
               clonedArr[currentIndex].userWord!.optional!.wordData!.guessedRight! += 1;
@@ -310,6 +314,7 @@ class Sprint {
               wordAudio: clonedArr[currentIndex].audio,
               guessedRight: clonedArr[currentIndex].guessedRight
             });
+            falseAnswerAudio.play();
             clonedArr[currentIndex].isTrue = false;
             currentIndex += 1;
             word.textContent = clonedArr[currentIndex].word;
