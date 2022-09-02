@@ -83,10 +83,6 @@ class Statistics {
         const statsWrap = document.createElement('div') as HTMLDivElement;
         statsWrap.className = 'stats-wrap';
 
-        statistics.append(this.createStatsBlock("Статистика", widgetsData));
-        statistics.append(this.createStatsBlock("Aудиовызов", widgetsData));
-        statistics.append(this.createStatsBlock("Спринт", widgetsData,));
-
         statsWrap.append(statistics);
         statsWrap.append(this.createUserBlock());
         statsWrap.append(this.createLinksBlock());
@@ -95,6 +91,11 @@ class Statistics {
         
         const drawGuestUserView = this.drawGuestUserView.bind(this);
         const drawAuthUserView = this.drawAuthUserView.bind(this);
+
+        Object.assign(this.elements, {
+            statistics,
+        })
+
         this.authController.getStartScreen(drawGuestUserView, drawAuthUserView);
     }
 
@@ -252,10 +253,18 @@ class Statistics {
     }
 
     drawGuestUserView(): HTMLButtonElement {
-        const { userPhotoBlock, userInfoBlock } = this.elements;        
+        const { userPhotoBlock, userInfoBlock, statistics } = this.elements;        
 
         userPhotoBlock.innerHTML = '';
         userInfoBlock.innerHTML = '';
+
+        if (statistics.hasChildNodes()) {
+            statistics.innerHTML = '';
+        }
+
+        statistics.append(this.createStatsBlock("Статистика", widgetsData));
+        statistics.append(this.createStatsBlock("Aудиовызов", widgetsData));
+        statistics.append(this.createStatsBlock("Спринт", widgetsData));
 
         const userIconWrapper = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         userIconWrapper.classList.add('user-icon-wrapper');
@@ -287,8 +296,9 @@ class Statistics {
         return signInButton;
     }
 
-    drawAuthUserView(userPersonalData: userPersonalData): HTMLButtonElement {
-        const { userPhotoBlock, userInfoBlock } = this.elements;
+    async drawAuthUserView(userPersonalData: userPersonalData): Promise<HTMLButtonElement> {
+        await this.setStatistics();
+        const { userPhotoBlock, userInfoBlock, statistics } = this.elements;
         const userStatsData = [
             { text: 'Изученные слова', value: '146' },
             { text: 'Попыток', value: '2' }
@@ -296,6 +306,13 @@ class Statistics {
 
         userPhotoBlock.innerHTML = '';
         userInfoBlock.innerHTML = '';
+        if (statistics.hasChildNodes()) {
+            statistics.innerHTML = '';
+        }
+
+        statistics.append(this.createStatsBlock("Статистика", widgetsData));
+        statistics.append(this.createStatsBlock("Aудиовызов", widgetsData));
+        statistics.append(this.createStatsBlock("Спринт", widgetsData));
 
         const userPhoto = document.createElement('img') as HTMLImageElement;
         if (userPersonalData.gender === 'male') {
