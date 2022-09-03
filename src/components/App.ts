@@ -3,36 +3,26 @@ import MiniGames from './Mini-games/MiniGames';
 import MainPageController from './MainPage/MainPageController';
 import AuthController from './Auth/AuthController';
 import ApiData from './Api/ApiData';
-<<<<<<< HEAD
 import Vocabulary from './Vocabulary/Vocabulary';
-=======
 import Ebook from './Ebook/Ebook';
 import Statistics from './Statistics/Statistics';
->>>>>>> develop
 
 class App {
   mainPageController: MainPageController;
-
   authController: AuthController;
-<<<<<<< HEAD
   vocabulary: Vocabulary;
-=======
   ebook: Ebook;
   miniGames: MiniGames;
   statistics: Statistics;
->>>>>>> develop
 
   constructor() {
     ApiData.getDataFromLocalStorage();
     this.mainPageController = new MainPageController();
     this.authController = new AuthController();
-<<<<<<< HEAD
     this.vocabulary = new Vocabulary();
-=======
     this.ebook = new Ebook();
     this.miniGames = new MiniGames();
     this.statistics = new Statistics(ApiData.userId);
->>>>>>> develop
   }
 
   startApp() {
@@ -75,6 +65,7 @@ class App {
           content.innerHTML = '';
           clearActivLink();
           link.classList.add('active');
+          this.vocabulary.drawVocabulary();
           break;
         case 'Мини-игры':
           content.innerHTML = '';
@@ -103,14 +94,10 @@ class App {
     });
   }
 
-<<<<<<< HEAD
-  drawMainPage(): void {
-    this.mainPageController.getStartScreen();
-=======
   setMainPageMenuSwitcher(): void {
     const { menuList, sectionWelcomeStartButton} = this.mainPageController.view.elements.htmlElements;
     const { book, vocabulary, games, statistics } = this.mainPageController.view.pageLinks;
-    
+
     menuList.onclick = (event) => {
       const target = event.target;
 
@@ -164,7 +151,6 @@ class App {
 
   drawStatistics(): void {
     this.statistics.drawStatistics();
->>>>>>> develop
   }
 }
 

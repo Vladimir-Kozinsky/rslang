@@ -1,5 +1,6 @@
 import ApiData from "../Api/ApiData";
 import WordsApi from "../Api/WordsApi";
+import { IObj } from "../Vocabulary/Vocabulary";
 
 
 export interface IWord {
@@ -67,14 +68,14 @@ class Ebook {
 
         if (responce.statusText === 'OK') {
             const words = await responce.json();
-            words.forEach((item: IWord) => {
+            words.forEach((item: IObj<string>) => {
                 ebookWords.append(this.createWordBlock(item));
             })
         }
         return ebookWords;
     }
 
-    createWordBlock(item: IWord) {
+    createWordBlock(item: IObj<string>) {
         const wordBlock = document.createElement('div') as HTMLDivElement;
         wordBlock.className = 'word-block';
         wordBlock.style.background = this.theme;
