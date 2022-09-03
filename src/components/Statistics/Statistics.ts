@@ -1,5 +1,7 @@
 /* eslint-disable class-methods-use-this */
+import { IObj, userPersonalData } from '../types';
 import StatsWidget from "./StatsWidget/StatsWidget";
+import AuthController from "../Auth/AuthController";
 import userFemale from "../../assets/img/svg/user-female.svg"
 import userMale from "../../assets/img/svg/user-male.svg"
 import UserAccountApi from "../Api/UserAccountApi";
@@ -41,18 +43,24 @@ interface IStatsData {
 }
 
 class Statistics {
+    authController: AuthController;
+    
     userId: string;
+    elements: IObj<HTMLElement>;
 
     statsData: IStatsData;
     userAccountApi: UserAccountApi;
     miniGames: MiniGames;
     ebook: Ebook;
 
+
     constructor(userId: string) {
+        this.authController = new AuthController();
         this.ebook = new Ebook();
         this.miniGames = new MiniGames();
         this.userAccountApi = new UserAccountApi();
         this.userId = userId;
+        this.elements = {};
         this.statsData = {
             statsCorrectAnswersPercentage: null,
             statsNewWords: null,
@@ -75,15 +83,22 @@ class Statistics {
         const statsWrap = document.createElement('div') as HTMLDivElement;
         statsWrap.className = 'stats-wrap';
 
-        statistics.append(this.createStatsBlock("Статистика", widgetsData));
-        statistics.append(this.createStatsBlock("Aудиовызов", widgetsData));
-        statistics.append(this.createStatsBlock("Спринт", widgetsData,));
-
         statsWrap.append(statistics);
         statsWrap.append(this.createUserBlock());
         statsWrap.append(this.createLinksBlock());
-
+        console.log(document.querySelector('.info-block__name'))
         container.append(statsWrap);
+        
+        Object.assign(this.elements, {
+            statistics,
+        })
+
+        const authWindow = document.querySelector('.auth-blackout');
+        if (authWindow) authWindow.remove();
+
+        const drawGuestUserView = this.drawGuestUserView.bind(this);
+        const drawAuthUserView = this.drawAuthUserView.bind(this);
+        this.authController.getStartScreen(drawGuestUserView, drawAuthUserView);
     }
 
     // eslint-disable-next-line @typescript-eslint/no-shadow
@@ -151,77 +166,22 @@ class Statistics {
     }
 
     createUserBlock() {
-
-        const userStatsData = [
-            { text: 'Изученные слова', value: '146' },
-            { text: 'Попыток', value: '2' }
-        ]
-
         const userBlock = document.createElement('div') as HTMLDivElement;
         userBlock.className = 'user-block';
 
-
         const userPhotoBlock = document.createElement('div') as HTMLDivElement;
         userPhotoBlock.className = 'user-block__photo';
-        if (!ApiData.userGender) {
-            userPhotoBlock.style.background = 'white';
-        }
-
-        const userPhoto = document.createElement('img') as HTMLImageElement;
-        userPhoto.src = ApiData.userGender ? ApiData.userGender === 'male' ? userMale : userFemale : '';
-        userPhotoBlock.append(userPhoto);
 
         const userInfoBlock = document.createElement('div') as HTMLDivElement;
         userInfoBlock.className = 'user-block__info'
 
-        if (ApiData.userId) {
-            const userName = document.createElement('h4') as HTMLHeadingElement;
-            userName.className = 'info-block__name';
-            userName.textContent = ApiData.userName ? ApiData.userName : '-';
-            userInfoBlock.append(userName);
-
-            const userEmail = document.createElement('h4') as HTMLHeadingElement;
-            userEmail.className = 'info-block__email';
-            userEmail.textContent = ApiData.userEmail ? ApiData.userEmail : '-';
-            userInfoBlock.append(userEmail);
-
-            const userStatsCont = document.createElement('div') as HTMLDivElement;
-            userStatsCont.className = 'user-stats__container';
-
-            userStatsData.forEach(item => {
-                const userStats = document.createElement('div') as HTMLDivElement;
-
-                userStats.className = 'user-stats__block'
-
-                const userStatsHeader = document.createElement('span') as HTMLSpanElement;
-                userStatsHeader.className = 'user-stats__header';
-                userStatsHeader.textContent = item.text;
-                userStats.append(userStatsHeader);
-
-                const userStatsValue = document.createElement('span') as HTMLSpanElement;
-                userStatsValue.className = 'user-stats__value'
-                userStatsValue.textContent = ApiData.userId ? item.value : '-';
-                userStats.append(userStatsValue);
-                userStatsCont.append(userStats);
-                userInfoBlock.append(userStatsCont);
-
-            })
-        } else {
-            userInfoBlock.classList.add('disabled');
-            const muteBlock = document.createElement('div') as HTMLDivElement;
-            muteBlock.className = 'user-block__mute-block';
-            userInfoBlock.append(muteBlock);
-            const muteBlockImg = document.createElement('img') as HTMLImageElement;
-            muteBlockImg.src = '../../../assets/img/svg/lock.svg';
-            muteBlock.append(muteBlockImg);
-        }
-
-
-
-
         userBlock.append(userInfoBlock);
         userBlock.append(userPhotoBlock);
 
+        Object.assign(this.elements, {
+            userPhotoBlock,
+            userInfoBlock,
+        });
         return userBlock;
     }
 
@@ -294,6 +254,140 @@ class Statistics {
         return linksBlock;
     }
 
+    drawGuestUserView(): HTMLButtonElement {
+        const { userPhotoBlock, userInfoBlock, statistics } = this.elements;        
+
+        userPhotoBlock.innerHTML = '';
+        userInfoBlock.innerHTML = '';
+
+        if (statistics.hasChildNodes()) {
+            statistics.innerHTML = '';
+        }
+
+        statistics.append(this.createStatsBlock("Статистика", widgetsData));
+        statistics.append(this.createStatsBlock("Aудиовызов", widgetsData));
+        statistics.append(this.createStatsBlock("Спринт", widgetsData));
+
+        userPhotoBlock.style.background = 'white';
+
+        const userIconWrapper = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        userIconWrapper.classList.add('user-icon-wrapper');
+        const userIcon = document.createElementNS('http://www.w3.org/2000/svg', 'use');
+        userIcon.classList.add('user-icon');
+        userIcon.setAttribute('href', './assets/img/svg/sprite.svg#guest-user');
+        userIconWrapper.append(userIcon);
+        userPhotoBlock.append(userIconWrapper);
+
+        const userName = document.createElement('h4') as HTMLHeadingElement;
+        userName.className = 'info-block__name';
+        userName.textContent = 'Гость';
+        userInfoBlock.append(userName);
+
+        const signInButton = document.createElement('button');
+        signInButton.classList.add('user-block__signin-button');
+        signInButton.textContent = 'Войти';
+        userInfoBlock.append(signInButton);
+
+        const logOutButton = document.querySelector('.middleBlock__logout-button');
+        if (logOutButton) {
+            logOutButton.remove();
+        }
+
+        Object.assign(this.elements, {
+            signInButton,
+        })
+
+        return signInButton;
+    }
+
+    async drawAuthUserView(userPersonalData: userPersonalData): Promise<HTMLButtonElement> {
+        await this.setStatistics();
+        const { userPhotoBlock, userInfoBlock, statistics } = this.elements;
+        const userStatsData = [
+            { text: 'Изученные слова', value: '146' },
+            { text: 'Попыток', value: '2' }
+        ]
+
+        userPhotoBlock.innerHTML = '';
+        userInfoBlock.innerHTML = '';
+        if (statistics.hasChildNodes()) {
+            statistics.innerHTML = '';
+        }
+
+        statistics.append(this.createStatsBlock("Статистика", widgetsData));
+        statistics.append(this.createStatsBlock("Aудиовызов", widgetsData));
+        statistics.append(this.createStatsBlock("Спринт", widgetsData));
+
+        userPhotoBlock.style.background = 'conic-gradient(#ff8cc3, #ffbda4, #8df0ff, #ff8cc3)';
+
+        const userPhoto = document.createElement('img') as HTMLImageElement;
+        if (userPersonalData.gender === 'male') {
+            userPhoto.src = './assets/img/svg/user-male.svg';
+        } else {
+            userPhoto.src = './assets/img/svg/user-female.svg';
+        }
+        userPhotoBlock.append(userPhoto);
+
+        const logoutNavItem = document.getElementById('logout');
+        if (logoutNavItem) logoutNavItem.remove();
+
+        const navList = document.querySelector('.nav__list') as HTMLElement;
+        const navItem = document.createElement('li') as HTMLLIElement;
+        navItem.classList.add('nav__item');
+        navItem.id = 'logout';
+
+        const middle = document.createElement('div') as HTMLDivElement;
+        middle.className = 'middleBlock';
+        
+        const menuIcon = document.createElement('img') as HTMLImageElement;
+        menuIcon.className = 'middleBlock__icon';
+        menuIcon.src = `./assets/img/svg/exitIcon.svg`;
+
+        const userName = document.createElement('h4') as HTMLHeadingElement;
+        userName.className = 'info-block__name';
+        userName.textContent = userPersonalData.name;
+
+        const userEmail = document.createElement('h4') as HTMLHeadingElement;
+        userEmail.className = 'info-block__email';
+        userEmail.textContent = ApiData.userEmail ? ApiData.userEmail : '-';
+
+        const logOutButton = document.createElement('button') as HTMLButtonElement;
+        logOutButton.classList.add('middleBlock__logout-button');
+        logOutButton.textContent = 'Выйти';
+
+        const userStatsCont = document.createElement('div') as HTMLDivElement;
+        userStatsCont.className = 'user-stats__container';
+
+        userStatsData.forEach(item => {
+            const userStats = document.createElement('div') as HTMLDivElement;
+
+            userStats.className = 'user-stats__block'
+
+            const userStatsHeader = document.createElement('span') as HTMLSpanElement;
+            userStatsHeader.className = 'user-stats__header';
+            userStatsHeader.textContent = item.text;
+            userStats.append(userStatsHeader);
+
+            const userStatsValue = document.createElement('span') as HTMLSpanElement;
+            userStatsValue.className = 'user-stats__value'
+            userStatsValue.textContent = item.value;
+            userStats.append(userStatsValue);
+
+            userStatsCont.append(userStats);
+        })
+
+        userInfoBlock.append(userName);
+        userInfoBlock.append(userEmail);
+        userInfoBlock.append(userStatsCont);
+         
+        logOutButton.append(menuIcon);
+        middle.append(logOutButton);
+        navItem.append(middle);
+        navList.append(navItem);
+
+        return logOutButton;
+    }
+    
     async setStatistics() {
         const response = await this.userAccountApi.getStatistics();
         if (response.ok) {
@@ -309,6 +403,31 @@ class Statistics {
                 sprintLongestStreak: statistics.optional.sprintLongestStreak ? statistics.optional.sprintLongestStreak : null,
                 sprintNewWords: statistics.optional.sprintNewWords ? statistics.optional.sprintNewWords : null,
             }
+        } else {
+            this.statsData.statsCorrectAnswersPercentage = null;
+            this.statsData.statsNewWords = null;
+            this.statsData.statsLongestStreak = null;
+            this.statsData.audioCallCorrectAnswersPercentage = null;
+            this.statsData.audioCallNewWords = null;
+            this.statsData.audioCallLongestStreak = null;
+            this.statsData.sprintCorrectAnswersPercentage = null;
+            this.statsData.sprintNewWords = null;
+            this.statsData.sprintLongestStreak = null;
+            widgetsData.length = 0;
+            widgetsData.push(
+                {
+                    name: 'Колличество новых слов сегодня',
+                    unit: 'Слов',
+                },
+                {
+                    name: 'Процент  правильных ответов сегодня',
+                    unit: '%',
+                },
+                {
+                    name: 'Самая длинная серия',
+                    unit: 'Слов',
+                },
+            );
         }
     }
 }

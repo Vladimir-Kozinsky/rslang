@@ -14,12 +14,12 @@ export default class MainPageController {
     this.burgerMenuController = new BurgerMenuController();
   }
 
-  getStartScreen(): void {
+  async getStartScreen(): Promise<void> {
     this.view.drawStartScreen();
 
     const drawGuestUserView = this.view.drawGuestUserView.bind(this.view);
     const drawAuthUserView = this.view.drawAuthUserView.bind(this.view);
-    this.authController.getStartScreen(drawGuestUserView, drawAuthUserView);
+    await this.authController.getStartScreen(drawGuestUserView, drawAuthUserView);
 
     const { menu, account, header, burgerMenuButton } = this.view.elements.htmlElements; 
     this.burgerMenuController.getStartScreen({menu, account}, header, burgerMenuButton);

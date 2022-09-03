@@ -23,12 +23,11 @@ class App {
     this.statistics = new Statistics(ApiData.userId);
   }
 
-  startApp() {
+  async startApp() {
     ApiData.setLocalStorageListener();
     this.authController.checkToken();
 
-    this.drawMainPage();
-    //this.drowContainer();
+    await this.drawMainPage();
     console.log(localStorage.getItem('userId'));
   }
 
@@ -126,8 +125,8 @@ class App {
     }
   }
 
-  drawMainPage(): void {
-    this.mainPageController.getStartScreen();
+  async drawMainPage(): Promise<void> {
+    await this.mainPageController.getStartScreen();
     this.setMainPageMenuSwitcher();
   }
 
