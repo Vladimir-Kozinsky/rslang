@@ -1,33 +1,27 @@
 import ApiData from '../Api/ApiData';
 import MainPageView from './MainPageView';
 import AuthController from '../Auth/AuthController';
+import BurgerMenuController from '../BurgerMenu/burgerMenuController';
 
 export default class MainPageController {
   view: MainPageView;
   authController: AuthController;
+  burgerMenuController: BurgerMenuController;
 
   constructor() {
     this.view = new MainPageView();
     this.authController = new AuthController();
+    this.burgerMenuController = new BurgerMenuController();
   }
 
   getStartScreen(): void {
     this.view.drawStartScreen();
-    this.authController.view.drawAuthContainer();
+
     const drawGuestUserView = this.view.drawGuestUserView.bind(this.view);
     const drawAuthUserView = this.view.drawAuthUserView.bind(this.view);
     this.authController.getStartScreen(drawGuestUserView, drawAuthUserView);
-  }
 
-  getGuestUserView(): void {
-    this.view.drawGuestUserView();
-  }
-
-  getAuthUserView(): void {
-    const userPersonalData = {
-      name: ApiData.userName,
-      gender: ApiData.userGender,
-    };
-    this.view.drawAuthUserView(userPersonalData);
+    const { menu, account, header, burgerMenuButton } = this.view.elements.htmlElements; 
+    this.burgerMenuController.getStartScreen({menu, account}, header, burgerMenuButton);
   }
 }
