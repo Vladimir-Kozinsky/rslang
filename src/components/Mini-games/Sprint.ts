@@ -2,8 +2,7 @@ import ApiData from '../Api/ApiData';
 import UserAccountApi from '../Api/UserAccountApi';
 import App from '../App';
 import Container from '../Container/Container';
-import Word from '../interfaces/interfaces';
-import { IObj, IStatisticsOptions } from '../types';
+import  { IObj, IStatisticsOptions, Word } from '../types';
 import GamesApi from './gamesApi';
 import MiniGames from './MiniGames';
 

@@ -1,11 +1,10 @@
 import App from '../App';
 import Container from '../Container/Container';
-import { AudioCallData } from './../interfaces/interfaces';
-import Word from "../interfaces/interfaces";
+import { AudioCallData , IObj, IStatisticsOptions, Word } from '../types';
 import GamesApi from "./gamesApi";
 import MiniGames from './MiniGames';
 import UserAccountApi from '../Api/UserAccountApi';
-import { IObj, IStatisticsOptions } from '../types';
+
 import ApiData from '../Api/ApiData';
 
 
