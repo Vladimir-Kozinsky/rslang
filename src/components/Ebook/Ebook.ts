@@ -1,5 +1,9 @@
 import ApiData from "../Api/ApiData";
 import WordsApi from "../Api/WordsApi";
+import AudioCall from "../Mini-games/AudioCall";
+import Sprint from "../Mini-games/Sprint";
+import Spinner from "../Spinner/spinner";
+import { IObj, IWordOptions } from "../types";
 
 
 export interface IWord {
@@ -19,6 +23,7 @@ export interface IWord {
     "wordTranslate": string;
 }
 
+
 class Ebook {
     group: number;
 
@@ -26,25 +31,38 @@ class Ebook {
 
     totalPages: string;
 
-    isAuth: boolean;
-
     theme: string;
 
     wordsApi: WordsApi;
+
+    userWords: IWordOptions[];
+
+    sprint: Sprint;
+
+    spinner: Spinner;
+
+    audioCall: AudioCall;
 
     constructor() {
         this.group = 0;
         this.page = 0;
         this.totalPages = '30';
-        this.isAuth = true;
         this.theme = '#3c365a';
         this.wordsApi = new WordsApi();
+        this.userWords = [];
+        this.sprint = new Sprint();
+        this.audioCall = new AudioCall();
+        this.spinner = new Spinner();
     }
 
     async drawEbook() {
         const container = document.querySelector('.container__content') as HTMLDivElement;
         const ebook = document.createElement('div') as HTMLDivElement;
         ebook.className = 'ebook';
+
+        if (ApiData.userIsAuth) {
+            await this.setUserWords();
+        }
 
         ebook.append(this.drawHeader());
         ebook.append(await this.drawWords());
@@ -65,16 +83,18 @@ class Ebook {
             }
         }
 
-        if (responce.statusText === 'OK') {
+        if (responce.ok) {
             const words = await responce.json();
-            words.forEach((item: IWord) => {
-                ebookWords.append(this.createWordBlock(item));
+            words.forEach((item: IObj<string>) => {
+                const isHard = this.userWords.find(word => word.optional.id === item.id && word.difficulty === 'hard');
+                const isEasy = this.userWords.find(word => word.optional.id === item.id && word.difficulty === 'easy');
+                ebookWords.append(this.createWordBlock(item, isHard, isEasy));
             })
         }
         return ebookWords;
     }
 
-    createWordBlock(item: IWord) {
+    createWordBlock(item: IObj<string>, isHard: IWordOptions | undefined, isEasy: IWordOptions | undefined) {
         const wordBlock = document.createElement('div') as HTMLDivElement;
         wordBlock.className = 'word-block';
         wordBlock.style.background = this.theme;
@@ -87,21 +107,61 @@ class Ebook {
 
         wordBlockImgWrap.append(wordBlockImg);
 
-
-
         const filterBlock = document.createElement('div') as HTMLDivElement;
         filterBlock.className = 'word-block__filter';
         filterBlock.style.background = `linear-gradient(transparent, ${this.theme})`;
-        if (this.isAuth) {
+        if (ApiData.userIsAuth) {
             const difficultBtn = document.createElement('button') as HTMLButtonElement;
             difficultBtn.className = 'word-block__difficult-btn';
-            difficultBtn.textContent = 'В сложные';
+            difficultBtn.textContent = isHard ? 'В сложных' : 'В сложные';
             difficultBtn.style.background = this.theme;
+            if (isHard) {
+                difficultBtn.style.borderColor = '#9cfc0d';
+                difficultBtn.style.color = '#9cfc0d';
+                difficultBtn.disabled = true;
+            }
+
+            difficultBtn.addEventListener('click', async () => {
+                const wordOptions = {
+                    difficulty: "hard",
+                    optional: item
+                }
+                const response = await this.wordsApi.createUserWord(item.id, wordOptions);
+                if (response.ok) {
+                    console.log('word succesfully added to hard')
+                } else {
+                    const response = await this.wordsApi.updateUserWord(item.id, wordOptions);
+                    if (response.ok) {
+                        console.log('word succesfully updated to hard');
+                    }
+                }
+            })
 
             const learnedtBtn = document.createElement('button') as HTMLButtonElement;
             learnedtBtn.className = 'word-block__learned-btn';
-            learnedtBtn.textContent = 'В изученные';
+            learnedtBtn.textContent = isEasy ? 'В изученных' : 'В изученные';
             learnedtBtn.style.background = this.theme;
+            if (isEasy) {
+                learnedtBtn.style.borderColor = '#9cfc0d';
+                learnedtBtn.style.color = '#9cfc0d';
+                learnedtBtn.disabled = true;
+            }
+            learnedtBtn.addEventListener('click', async () => {
+                const wordOptions = {
+                    difficulty: "easy",
+                    optional: item
+                }
+
+                const response = await this.wordsApi.createUserWord(item.id, wordOptions);
+                if (response.ok) {
+                    console.log('word succesfully added to easy');
+                } else {
+                    const response = await this.wordsApi.updateUserWord(item.id, wordOptions);
+                    if (response.ok) {
+                        console.log('word succesfully updated to easy');
+                    }
+                }
+            })
             filterBlock.append(difficultBtn);
             filterBlock.append(learnedtBtn);
         }
@@ -176,6 +236,13 @@ class Ebook {
 
         const sprint = document.createElement('div') as HTMLDivElement;
         sprint.className = 'sprint-game';
+        sprint.addEventListener('click', () => {
+            const content = document.querySelector('.container__content') as HTMLDivElement;
+            content.innerHTML = '';
+            this.sprint.createPage();
+            this.sprint.appendWordsToPage(this.group.toString());
+            this.spinner.createPage();
+        })
 
         const sprintImg = document.createElement('img') as HTMLImageElement;
         sprintImg.className = 'sprint-game__img';
@@ -189,6 +256,14 @@ class Ebook {
 
         const audioCall = document.createElement('div') as HTMLDivElement;
         audioCall.className = 'audioCall-game';
+        audioCall.addEventListener('click', () => {
+            const content = document.querySelector('.container__content') as HTMLDivElement;
+            content.innerHTML = '';
+            this.audioCall.createPage();
+            this.audioCall.appendDataToPage(this.group.toString());
+            this.spinner.createPage();
+
+        })
 
         const audioCallImg = document.createElement('img') as HTMLImageElement;
         audioCallImg.className = 'audioCall-game__img';
@@ -342,6 +417,15 @@ class Ebook {
         })
 
         return pagenator;
+    }
+
+    async setUserWords() {
+        const response = await this.wordsApi.getUserWords();
+        if (response.ok) {
+            this.userWords = await response.json();
+        } else {
+            console.log('user words have not recieved')
+        }
     }
 
 }
