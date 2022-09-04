@@ -1,6 +1,7 @@
+import ApiData from "../../Api/ApiData";
+import Statistics from "../Statistics";
 
 class StatsWidget {
-
     createWidget(header: string, unit: string, value?: number) {
         const widget = document.createElement('div') as HTMLDivElement;
         widget.className = 'widget';
@@ -19,10 +20,14 @@ class StatsWidget {
         const widgetDataValue = document.createElement('span') as HTMLSpanElement;
         widgetDataValue.className = 'widget-data__value'
 
-        if (value) {
-         widgetDataValue.textContent = value.toString();   
+        if (ApiData.userId) {
+            if (value) {
+                widgetDataValue.textContent = value.toString();
+            } else {
+                widgetDataValue.textContent = '-';
+            }
         } else {
-            widgetDataValue.textContent = 'unknow';
+            widgetDataValue.textContent = '';
             widget.classList.add('disabled');
             const muteBlock = document.createElement('div') as HTMLDivElement;
             muteBlock.className = 'mute-block';
@@ -31,7 +36,7 @@ class StatsWidget {
             muteBlockImg.src = '../../../assets/img/svg/lock.svg';
             muteBlock.append(muteBlockImg);
         }
-        
+
         widgetData.append(widgetDataUnit);
         widgetData.append(widgetDataValue);
         widget.append(widgetHeader);

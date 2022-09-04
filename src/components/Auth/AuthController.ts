@@ -212,6 +212,7 @@ export default class AuthController {
           ApiData.userName = data.name;
           ApiData.userGender = data.userGender;
           ApiData.tokenExpirationDate = Date.now() + 1000 * 60 * 60 * 4.5;
+          ApiData.userEmail = userData.email;
           blackout.classList.remove('fill');
           blackout.classList.add('fade');
           this.view.clearAuthContainer();
