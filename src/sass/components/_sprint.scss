@@ -119,10 +119,22 @@
   background: url("../assets/img/svg/word-audio.svg");
 }
 
+@media screen and (max-width:760px) {
+.sprint-statistics__container {
+  width: 90%;
+}
+}
+
 @media screen and (max-width:510px) {
   .sprint__container {
     h2 {
       font-size: 45px;
+    }
+    h3 {
+      font-size: 32px;
+    }
+    h4 {
+      font-size: 27px;
     }
     .sprint-statistics__container {
       margin-left: 0;
@@ -130,8 +142,8 @@
     }
     .sprint-cart { 
       width: 90%;
-      padding-left: 80px;
-      padding-right: 80px;
+      padding-left: 60px;
+      padding-right: 60px;
       .sprint-button__false {
       display: block;
       margin-left: auto;
@@ -143,16 +155,5 @@
 
 }
 @media screen and (max-width:510px) {
-  .sprint__container {
-  .sprint-cart {
-    padding-left: 60px;
-    padding-right: 60px;
-  }
-  h3 {
-    font-size: 32px;
-  }
-  h4 {
-    font-size: 27px;
-  }
-}
+
 }
