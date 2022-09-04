@@ -50,6 +50,7 @@ class App {
 
     nav?.addEventListener('click', (e: Event) => {
       const target = e.target as HTMLLinkElement;
+      if (target.tagName !== 'A') return
       const link = target.parentNode?.parentNode as HTMLLIElement;
       const content = document.querySelector('.container__content') as HTMLDivElement;
       switch (target.textContent) {
