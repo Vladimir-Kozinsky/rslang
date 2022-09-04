@@ -15,6 +15,7 @@
       padding-top: 10px;
       margin-top: 10px;
       text-align: center;
+      padding-bottom: 20px;
     }
     h3 {
       font-size: 40px;
@@ -29,7 +30,6 @@
       @include centralize();
       display: flex;
       justify-content: space-around;
-      margin-right: 295px;
       span {
         font-size: 40px;
         font-weight: 700;
@@ -117,4 +117,42 @@
 
 .word-audio {
   background: url("../assets/img/svg/word-audio.svg");
+}
+
+@media screen and (max-width:510px) {
+  .sprint__container {
+    h2 {
+      font-size: 45px;
+    }
+    .sprint-statistics__container {
+      margin-left: 0;
+      margin-right: 0;
+    }
+    .sprint-cart { 
+      width: 90%;
+      padding-left: 80px;
+      padding-right: 80px;
+      .sprint-button__false {
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+      margin-bottom: 15px;
+    }
+  }
+  }
+
+}
+@media screen and (max-width:510px) {
+  .sprint__container {
+  .sprint-cart {
+    padding-left: 60px;
+    padding-right: 60px;
+  }
+  h3 {
+    font-size: 32px;
+  }
+  h4 {
+    font-size: 27px;
+  }
+}
 }

@@ -19,10 +19,12 @@ class MiniGames {
 
     const cartDescription = document.createElement('p') as HTMLParagraphElement;
     cartDescription.textContent = description;
-
+    this.createTitle();
     cart.append(cartIcon);
     cart.append(cartTitle);
     cart.append(cartDescription);
+    console.log(document.querySelectorAll('.games__title') );
+
     if (document.querySelector('.games-cart__container') == null) {
       cartContainer = document.createElement('div');
       cartContainer.classList.add('games-cart__container');
@@ -38,10 +40,15 @@ class MiniGames {
   createTitle() {
     const content = document.querySelector('.container__content') as HTMLDivElement;
 
+    
     const title = document.createElement('h2');
     title.textContent = 'Мини-игры';
+    title.classList.add('games__title');
 
-    content.append(title);
+    if(document.querySelectorAll('.games__title').length < 1) {
+      content.append(title);
+    }
+
   }
 
   goToStartPage() {
