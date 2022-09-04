@@ -1,9 +1,11 @@
+/* eslint-disable no-underscore-dangle */
 import ApiData from "../Api/ApiData";
 import WordsApi from "../Api/WordsApi";
 import AudioCall from "../Mini-games/AudioCall";
 import Sprint from "../Mini-games/Sprint";
 import Spinner from "../Spinner/spinner";
 import { IObj, IWordOptions } from "../types";
+import Vocabulary from "../Vocabulary/Vocabulary";
 
 
 export interface IWord {
@@ -94,7 +96,7 @@ class Ebook {
         return ebookWords;
     }
 
-    createWordBlock(item: IObj<string>, isHard: IWordOptions | undefined, isEasy: IWordOptions | undefined) {
+    createWordBlock(item: IObj<string>, isHard: IWordOptions | undefined, isEasy: IWordOptions | undefined, type?: string) {
         const wordBlock = document.createElement('div') as HTMLDivElement;
         wordBlock.className = 'word-block';
         wordBlock.style.background = this.theme;
@@ -112,6 +114,7 @@ class Ebook {
         filterBlock.style.background = `linear-gradient(transparent, ${this.theme})`;
         if (ApiData.userIsAuth) {
             const difficultBtn = document.createElement('button') as HTMLButtonElement;
+            const vocabulary = new Vocabulary();
             difficultBtn.className = 'word-block__difficult-btn';
             difficultBtn.textContent = isHard ? 'В сложных' : 'В сложные';
             difficultBtn.style.background = this.theme;
@@ -120,22 +123,6 @@ class Ebook {
                 difficultBtn.style.color = '#9cfc0d';
                 difficultBtn.disabled = true;
             }
-
-            difficultBtn.addEventListener('click', async () => {
-                const wordOptions = {
-                    difficulty: "hard",
-                    optional: item
-                }
-                const response = await this.wordsApi.createUserWord(item.id, wordOptions);
-                if (response.ok) {
-                    console.log('word succesfully added to hard')
-                } else {
-                    const response = await this.wordsApi.updateUserWord(item.id, wordOptions);
-                    if (response.ok) {
-                        console.log('word succesfully updated to hard');
-                    }
-                }
-            })
 
             const learnedtBtn = document.createElement('button') as HTMLButtonElement;
             learnedtBtn.className = 'word-block__learned-btn';
@@ -146,6 +133,36 @@ class Ebook {
                 learnedtBtn.style.color = '#9cfc0d';
                 learnedtBtn.disabled = true;
             }
+
+            difficultBtn.addEventListener('click', async () => {
+                const wordOptions = {
+                    difficulty: "hard",
+                    optional: item
+                }
+                console.log(wordOptions.optional.id)
+                const response = await this.wordsApi.createUserWord(item.id, wordOptions);
+                if (response.ok) {
+                    difficultBtn.style.borderColor = '#9cfc0d';
+                    difficultBtn.style.color = '#9cfc0d';
+                    difficultBtn.disabled = true;
+                    learnedtBtn.style.borderColor = 'white';
+                    learnedtBtn.style.color = 'white';
+                    learnedtBtn.disabled = false;
+                    console.log('word succesfully added to hard')
+                } else {
+                    const response = await this.wordsApi.updateUserWord(item.id, wordOptions);
+                    if (response.ok) {
+                        difficultBtn.style.borderColor = '#9cfc0d';
+                        difficultBtn.style.color = '#9cfc0d';
+                        difficultBtn.disabled = true;
+                        learnedtBtn.style.borderColor = 'white';
+                        learnedtBtn.style.color = 'white';
+                        learnedtBtn.disabled = false;
+                        console.log('word succesfully updated to hard');
+                    }
+                }
+            })
+
             learnedtBtn.addEventListener('click', async () => {
                 const wordOptions = {
                     difficulty: "easy",
@@ -154,16 +171,76 @@ class Ebook {
 
                 const response = await this.wordsApi.createUserWord(item.id, wordOptions);
                 if (response.ok) {
+                    learnedtBtn.style.borderColor = '#9cfc0d';
+                    learnedtBtn.style.color = '#9cfc0d';
+                    learnedtBtn.disabled = true;
+                    difficultBtn.disabled = false;
+                    difficultBtn.style.borderColor = 'white';
+                    difficultBtn.style.color = 'white';
                     console.log('word succesfully added to easy');
                 } else {
                     const response = await this.wordsApi.updateUserWord(item.id, wordOptions);
                     if (response.ok) {
+                        learnedtBtn.style.borderColor = '#9cfc0d';
+                        learnedtBtn.style.color = '#9cfc0d';
+                        learnedtBtn.disabled = true;
+                        difficultBtn.disabled = false;
+                        difficultBtn.style.borderColor = 'white';
+                        difficultBtn.style.color = 'white';
                         console.log('word succesfully updated to easy');
                     }
                 }
             })
-            filterBlock.append(difficultBtn);
-            filterBlock.append(learnedtBtn);
+            if (type === 'hard') {
+                const deleteFromHardBtn = document.createElement('button') as HTMLButtonElement;
+                deleteFromHardBtn.className = 'word-block__difficult-btn';
+                deleteFromHardBtn.textContent = 'Удалить';
+                deleteFromHardBtn.style.background = this.theme;
+                deleteFromHardBtn.addEventListener('click', async () => {
+                    await this.wordsApi.deleteUserWord(item.id);
+                    const difficultWordsContainer = document.querySelector('.difficult-page__words-block') as HTMLDivElement;
+                    difficultWordsContainer.outerHTML = '';
+                    await vocabulary.setWords();
+                    vocabulary.activeTab = 'difficultTab';
+                    const pagenator = document.querySelector('.vocabulary-pagenator__difficult-page');
+                    let padeNumber;
+                    if (pagenator?.textContent) {
+                        padeNumber = pagenator.textContent;
+                        vocabulary.drawDifficultWords(+padeNumber);
+                    }
+
+                })
+                filterBlock.append(deleteFromHardBtn);
+            }
+
+            if (type === 'easy') {
+                const deleteFromLearnedBtn = document.createElement('button') as HTMLButtonElement;
+                deleteFromLearnedBtn.className = 'word-block__difficult-btn';
+                deleteFromLearnedBtn.textContent = 'Удалить';
+                deleteFromLearnedBtn.style.background = this.theme;
+                deleteFromLearnedBtn.addEventListener('click', async () => {
+                    await this.wordsApi.deleteUserWord(item.id);
+                    const learnedWordsContainer = document.querySelector('.learned-page__words-block') as HTMLDivElement;
+                    learnedWordsContainer.outerHTML = '';
+                    await vocabulary.setWords();
+                    vocabulary.activeTab = 'learnedTab';
+                    const pagenator = document.querySelector('.vocabulary-pagenator__learned-page');
+                    let padeNumber;
+                    if (pagenator?.textContent) {
+                        padeNumber = pagenator.textContent;
+                        vocabulary.drawLearnedWords(+padeNumber);
+                    }
+                })
+                filterBlock.append(deleteFromLearnedBtn);
+            }
+
+            if (!type) {
+                filterBlock.append(difficultBtn);
+                filterBlock.append(learnedtBtn);
+            }
+
+
+
         }
         wordBlock.append(filterBlock);
         wordBlock.append(wordBlockImgWrap);

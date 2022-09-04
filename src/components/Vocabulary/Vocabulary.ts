@@ -1,16 +1,17 @@
 import WordsApi from "../Api/WordsApi";
 import Ebook from "../Ebook/Ebook";
+import { IWordOptions } from "../types";
 
-export interface IObj<T> {
-    [key: string]: T;
-}
+// export interface IObj<T> {
+//     [key: string]: T;
+// }
 
-export interface IWordOptions {
-    difficulty: string;
-    optional: {
-        wordData: IObj<string>
-    };
-}
+// export interface IWordOptions {
+//     difficulty: string;
+//     optional: {
+//         wordData: IObj<string>
+//     };
+// }
 
 
 class Vocabulary {
@@ -39,11 +40,11 @@ class Vocabulary {
         vocabulary.append(this.createTabsBtns());
         await this.setWords();
         container.append(vocabulary);
-        this.drawDifficultWords();
-        this.drawLearnedWords();
+        this.createDifficultPage();
+        this.createLearnedPage();
     }
 
-    drawDifficultWords() {
+    createDifficultPage() {
         const vocabulary = document.querySelector('.vocabulary') as HTMLDivElement;
         const difficultPage = document.createElement('div') as HTMLDivElement;
         difficultPage.className = "difficult-page";
@@ -53,20 +54,30 @@ class Vocabulary {
             difficultPage.classList.add('active');
         }
 
+        vocabulary.append(difficultPage);
+        this.drawDifficultWords();
+    }
+
+    drawDifficultWords(padeNumber?: number) {
+        const difficultPage = document.querySelector('.difficult-page') as HTMLDivElement;
         const wordsContainer = document.createElement('div') as HTMLDivElement;
         wordsContainer.className = 'difficult-page__words-block';
-        const wordsToDraw = this.difficultWords.slice(this.difficultPage * 22 - 22, this.difficultPage * 22);
+        const difficultPageNumber = padeNumber || this.difficultPage;
+
+        const wordsToDraw = this.difficultWords.slice(difficultPageNumber * 22 - 22, difficultPageNumber * 22);
+
 
         wordsToDraw.forEach((word: IWordOptions) => {
-            if (word.optional.wordData) {
-                wordsContainer.append(this.ebook.createWordBlock(word.optional.wordData))
+            if (word.optional.id) {
+                console.log('with id');
+                wordsContainer.append(this.ebook.createWordBlock(word.optional, undefined, undefined, 'hard'));
             }
         })
 
-        difficultPage.append(wordsContainer);
-        vocabulary.append(difficultPage);
+        difficultPage.append(wordsContainer)
     }
-    async drawLearnedWords() {
+
+    createLearnedPage() {
         const vocabulary = document.querySelector('.vocabulary') as HTMLDivElement;
         const learnedPage = document.createElement('div') as HTMLDivElement;
         learnedPage.className = "learned-page";
@@ -76,22 +87,28 @@ class Vocabulary {
             learnedPage.classList.add('active');
         }
 
+        vocabulary.append(learnedPage);
+        this.drawLearnedWords();
+    }
+
+    async drawLearnedWords(padeNumber?: number) {
+        const learnedPage = document.querySelector('.learned-page') as HTMLDivElement;
         const wordsContainer = document.createElement('div') as HTMLDivElement;
         wordsContainer.className = 'learned-page__words-block';
-        const wordsToDraw = this.learnedWords.slice(this.learnedPage * 22 - 22, this.learnedPage * 22);
+        const learnedPageNumber = padeNumber || this.learnedPage;
+        const wordsToDraw = this.learnedWords.slice(learnedPageNumber * 22 - 22, learnedPageNumber * 22);
 
         if (wordsToDraw.length < 1) {
             wordsContainer.textContent = 'Изученных слов нет.'
         }
 
         wordsToDraw.forEach((word: IWordOptions) => {
-            if (word.optional.wordData) {
-                wordsContainer.append(this.ebook.createWordBlock(word.optional.wordData))
+            if (word.optional.id) {
+                wordsContainer.append(this.ebook.createWordBlock(word.optional, undefined, undefined, 'easy'))
             }
         })
 
         learnedPage.append(wordsContainer);
-        vocabulary.append(learnedPage);
     }
 
     async setWords() {
@@ -100,8 +117,8 @@ class Vocabulary {
         if (response.ok) {
             const words = await response.json();
             if (words.length > 0) {
-                const difficultWords = words.filter((word: IWordOptions) => word.difficulty === 'hard' && word.optional.wordData)
-                const learnedWords = words.filter((word: IWordOptions) => word.difficulty === 'easy' && word.optional.wordData)
+                const difficultWords = words.filter((word: IWordOptions) => word.difficulty === 'hard')
+                const learnedWords = words.filter((word: IWordOptions) => word.difficulty === 'easy')
                 this.difficultWords = difficultWords;
                 this.learnedWords = learnedWords;
             }
@@ -179,10 +196,12 @@ class Vocabulary {
 
         if (type === 'diff') {
             page.textContent = `${this.difficultPage}`;
+            page.classList.add('vocabulary-pagenator__difficult-page');
         }
 
         if (type === 'learned') {
             page.textContent = `${this.learnedPage}`;
+            page.classList.add('vocabulary-pagenator__learned-page');
         }
 
         pagenator.append(page);
@@ -198,90 +217,88 @@ class Vocabulary {
         pagenator.append(lastPageBtn);
 
         const totalPages = Math.floor(words.length / 22) + 1;
-        console.log(totalPages);
-
 
         firstPageBtn.addEventListener('click', () => {
-            const difficultPage = document.querySelector('.difficult-page') as HTMLDivElement;
+            const difficultWordsContainer = document.querySelector('.difficult-page__words-block') as HTMLDivElement;
             if (type === 'diff') {
                 if (this.difficultPage !== 1) {
                     this.difficultPage = 1;
                     page.textContent = `${this.difficultPage}`;
-                    difficultPage.outerHTML = '';
+                    difficultWordsContainer.outerHTML = '';
                     this.drawDifficultWords();
                 }
             }
-            const learnedPage = document.querySelector('.learned-page') as HTMLDivElement;
+            const learnedWordsContainer = document.querySelector('.learned-page__words-block') as HTMLDivElement;
             if (type === 'learned') {
                 if (this.learnedPage !== 1) {
                     this.learnedPage = 1;
                     page.textContent = `${this.learnedPage}`;
-                    learnedPage.outerHTML = '';
+                    learnedWordsContainer.outerHTML = '';
                     this.drawLearnedWords();
                 }
             }
         })
 
         prevPageBtn.addEventListener('click', () => {
-            const difficultPage = document.querySelector('.difficult-page') as HTMLDivElement;
+            const difficultWordsContainer = document.querySelector('.difficult-page__words-block') as HTMLDivElement;
             if (type === 'diff') {
                 if (this.difficultPage !== 1) {
                     this.difficultPage -= 1;
                     page.textContent = `${this.difficultPage}`;
-                    difficultPage.outerHTML = '';
+                    difficultWordsContainer.outerHTML = '';
                     this.drawDifficultWords();
                 }
             }
 
-            const learnedPage = document.querySelector('.learned-page') as HTMLDivElement;
+            const learnedWordsContainer = document.querySelector('.learned-page__words-block') as HTMLDivElement;
             if (type === 'learned') {
                 if (this.learnedPage !== 1) {
                     this.learnedPage -= 1;
                     page.textContent = `${this.learnedPage}`;
-                    learnedPage.outerHTML = '';
+                    learnedWordsContainer.outerHTML = '';
                     this.drawLearnedWords();
                 }
             }
         })
 
         nextPageBtn.addEventListener('click', () => {
-            const difficultPage = document.querySelector('.difficult-page') as HTMLDivElement;
+            const difficultWordsContainer = document.querySelector('.difficult-page__words-block') as HTMLDivElement;
             if (type === 'diff') {
                 if (this.difficultPage !== totalPages) {
                     this.difficultPage += 1;
                     page.textContent = `${this.difficultPage}`;
-                    difficultPage.outerHTML = '';
+                    difficultWordsContainer.outerHTML = '';
                     this.drawDifficultWords();
                 }
             }
 
-            const learnedPage = document.querySelector('.learned-page') as HTMLDivElement;
+            const learnedWordsContainer = document.querySelector('.learned-page__words-block') as HTMLDivElement;
             if (type === 'learned') {
                 if (this.learnedPage !== totalPages) {
                     this.learnedPage += 1;
                     page.textContent = `${this.learnedPage}`;
-                    learnedPage.outerHTML = '';
+                    learnedWordsContainer.outerHTML = '';
                     this.drawLearnedWords();
                 }
             }
         })
 
         lastPageBtn.addEventListener('click', () => {
-            const difficultPage = document.querySelector('.difficult-page') as HTMLDivElement;
+            const difficultWordsContainer = document.querySelector('.difficult-page__words-block') as HTMLDivElement;
             if (type === 'diff') {
                 if (this.difficultPage !== totalPages) {
                     this.difficultPage = totalPages;
                     page.textContent = `${this.difficultPage}`;
-                    difficultPage.outerHTML = '';
+                    difficultWordsContainer.outerHTML = '';
                     this.drawDifficultWords();
                 }
             }
-            const learnedPage = document.querySelector('.learned-page') as HTMLDivElement;
+            const learnedWordsContainer = document.querySelector('.learned-page__words-block') as HTMLDivElement;
             if (type === 'learned') {
                 if (this.learnedPage !== totalPages) {
                     this.learnedPage = totalPages;
                     page.textContent = `${this.learnedPage}`;
-                    learnedPage.outerHTML = '';
+                    learnedWordsContainer.outerHTML = '';
                     this.drawLearnedWords();
                 }
             }
