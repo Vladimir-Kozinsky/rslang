@@ -413,6 +413,14 @@ class AudioCall {
 
     const containerBlock = document.querySelector('.container') as HTMLDivElement;
     containerBlock.prepend(container.createMenu());
+
+    // remove class actve from nav__items and add class active to games link
+    const links = document.querySelectorAll('.nav__item');
+    links.forEach((link) => {
+      link.classList.remove('active');
+    });
+    const link = document.querySelector('#games') as HTMLLIElement;
+    link.parentElement!.parentElement!.classList.add('active');
     content.innerHTML = '';
 
     const resultsCartContainer = document.createElement('div');
