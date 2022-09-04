@@ -6,6 +6,7 @@ import GamesApi from "./gamesApi";
 import MiniGames from './MiniGames';
 import UserAccountApi from '../Api/UserAccountApi';
 import { IObj, IStatisticsOptions } from '../types';
+import ApiData from '../Api/ApiData';
 
 
 class AudioCall {
@@ -64,7 +65,6 @@ class AudioCall {
     async createWordsForGame(difficulty: string, page: number = -1) {
       const api = new GamesApi();
       let randomPage: string;
-      const id: string = localStorage.getItem('userId')!;
       const token: string = localStorage.getItem('token')!;
 
       // if game launched from menu choose random page
@@ -74,8 +74,8 @@ class AudioCall {
       let wordsArr: Word[];
 
       // check is user guest or registered
-      if(id){
-         wordsArr = (await api.getUserAggregatedWords(id, token, difficulty, randomPage))[0].paginatedResults;
+      if(ApiData.userIsAuth){
+         wordsArr = (await api.getUserAggregatedWords(ApiData.userId, token, difficulty, randomPage))[0].paginatedResults;
       }
       else wordsArr = await api.getWords(difficulty, randomPage);
 
@@ -145,8 +145,8 @@ class AudioCall {
      return dataForCart
   }
 
-  async appendDataToPage(difficulty: string) {
-    const getData: AudioCallData[] = await this.createWordsForGame(difficulty);
+  async appendDataToPage(difficulty: string, page: number = -1) {
+    const getData: AudioCallData[] = await this.createWordsForGame(difficulty, page);
     const audioContainer = document.querySelector('.audioCall-audio__container') as HTMLDivElement;
     let cartNum: number = 0;
     audioContainer!.innerHTML =`    
@@ -272,14 +272,13 @@ class AudioCall {
       if(cartNum > 19) {
         // send user words to user/words
         const api = new GamesApi();
-        const id: string = localStorage.getItem('userId')!;
         const token: string = localStorage.getItem('token')!;
 
         // disable key events
         document.removeEventListener('keydown', controlFromKeyboard);
         document.removeEventListener('keydown', switchToNextWord);
         for (let i = 0; i < getData.length; i += 1) {
-          api.createUpdateUserWord(id, token, getData[i].wordId!, getData[i], 'hard')
+          api.createUpdateUserWord(ApiData.userId, token, getData[i].wordId!, getData[i], 'hard')
         }
 
         let streaksArr: number[][] = [];

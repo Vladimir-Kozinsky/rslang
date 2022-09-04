@@ -1,3 +1,4 @@
+import ApiData from '../Api/ApiData';
 import UserAccountApi from '../Api/UserAccountApi';
 import App from '../App';
 import Container from '../Container/Container';
@@ -97,7 +98,6 @@ class Sprint {
 
   async createWordsForGame(difficulty: string, page: number = -1) {
     const api = new GamesApi();
-    const id: string = localStorage.getItem('userId')!;
     const token: string = localStorage.getItem('token')!;
     let randomPage: string;
 
@@ -108,7 +108,7 @@ class Sprint {
     let wordsArr: Word[];
 
     // check is user guest or registered
-    if(id) wordsArr = (await api.getUserAggregatedWords(id, token, difficulty, randomPage))[0].paginatedResults;
+    if(ApiData.userIsAuth) wordsArr = (await api.getUserAggregatedWords(ApiData.userId, token, difficulty, randomPage))[0].paginatedResults;
     else wordsArr = await api.getWords(difficulty, randomPage);
 
     // create additional words if they are not enough
@@ -187,7 +187,7 @@ class Sprint {
     return { wordsArr, clonedArr, wrongTranslatedWordsIndexes };
   }
 
-  async appendWordsToPage(difficulty: string) {
+  async appendWordsToPage(difficulty: string, page: number = -1) {
     const wordContainer = document.querySelector('.sprint-current-word__container');
     const word = document.querySelector('.sprint-word') as HTMLHeadingElement;
     const translatedWord = document.querySelector('.sprint-translated-word') as HTMLHeadingElement;
@@ -195,7 +195,7 @@ class Sprint {
     const wordAudioExample = document.querySelector('.word-audio-example');
     const points = document.querySelector('.sprint-statistics-point') as HTMLSpanElement;
     const time = document.querySelector('.sprint-statistics-time') as HTMLSpanElement;
-    const createdWords = await this.createWordsForGame(difficulty);
+    const createdWords = await this.createWordsForGame(difficulty, page);
     const { clonedArr } = createdWords;
     const { wordsArr } = createdWords;
     const correctAnswers: { word: string; wordTranslate: string; wordAudio: string; guessedRight?: number }[] = [];
@@ -213,7 +213,6 @@ class Sprint {
    `;
 
    const api = new GamesApi();
-   const id: string = localStorage.getItem('userId')!;
    const token: string = localStorage.getItem('token')!;
 
     const timeToStop = setInterval(() => {
@@ -223,7 +222,7 @@ class Sprint {
         for (let i = 0; i < currentIndex; i += 1) {
           clonedArr[i].guessedRight = clonedArr[i].userWord?.optional.wordData.guessedRight 
           delete clonedArr[i].userWord;
-          api.createUpdateUserWord(id, token, clonedArr[i]._id!, clonedArr[i], 'hard');
+          api.createUpdateUserWord(ApiData.userId, token, clonedArr[i]._id!, clonedArr[i], 'hard');
         }
         this.createResultsPage(+points.textContent!, correctAnswers, inCorrectAnswers);
       }
@@ -238,7 +237,8 @@ class Sprint {
       }
     }
 
-    
+    const trueAnswerAudio = new Audio('../../assets/audio/correct-sound.mp3');
+    const falseAnswerAudio = new Audio('../../assets/audio/incorrect-sound.mp3');
     // Control from keyboard
     const controlFromKeyboard =  (e: KeyboardEvent) => {
       const keyName = e.key;
@@ -249,7 +249,7 @@ class Sprint {
         for (let i = 0; i < clonedArr.length; i += 1) {
           clonedArr[i].guessedRight = clonedArr[i].userWord?.optional.wordData.guessedRight 
           delete clonedArr[i].userWord;
-          api.createUpdateUserWord(id, token, clonedArr[i]._id!, clonedArr[i], 'hard');
+          api.createUpdateUserWord(ApiData.userId, token, clonedArr[i]._id!, clonedArr[i], 'hard');
         }
       }
       // eslint-disable-next-line default-case
@@ -264,6 +264,7 @@ class Sprint {
                 wordAudio: clonedArr[currentIndex].audio,
                 guessedRight: clonedArr[currentIndex].guessedRight
               });
+              falseAnswerAudio.play();
               clonedArr[currentIndex].isTrue = false;
               currentIndex += 1;
               word.textContent = clonedArr[currentIndex].word;
@@ -275,6 +276,7 @@ class Sprint {
                 wordAudio: clonedArr[currentIndex].audio,
                 guessedRight: clonedArr[currentIndex].guessedRight
               });
+              trueAnswerAudio.play()
               clonedArr[currentIndex].isTrue = true;
               if(clonedArr[currentIndex].userWord) {
                 clonedArr[currentIndex].userWord!.optional!.wordData!.guessedRight! += 1;
@@ -294,6 +296,7 @@ class Sprint {
               wordAudio: clonedArr[currentIndex].audio,
               guessedRight: clonedArr[currentIndex].guessedRight
             });
+            trueAnswerAudio.play()
             clonedArr[currentIndex].isTrue = true;
             if(clonedArr[currentIndex].userWord) {
               clonedArr[currentIndex].userWord!.optional!.wordData!.guessedRight! += 1;
@@ -310,6 +313,7 @@ class Sprint {
               wordAudio: clonedArr[currentIndex].audio,
               guessedRight: clonedArr[currentIndex].guessedRight
             });
+            falseAnswerAudio.play();
             clonedArr[currentIndex].isTrue = false;
             currentIndex += 1;
             word.textContent = clonedArr[currentIndex].word;
@@ -345,7 +349,7 @@ class Sprint {
         for (let i = 0; i < clonedArr.length; i += 1) {
           clonedArr[i].guessedRight = clonedArr[i].userWord?.optional.wordData.guessedRight 
           delete clonedArr[i].userWord;
-          api.createUpdateUserWord(id, token, clonedArr[i]._id!, clonedArr[i], 'hard');
+          api.createUpdateUserWord(ApiData.userId, token, clonedArr[i]._id!, clonedArr[i], 'hard');
         }
         callStatistics();
         document.removeEventListener('keydown', controlFromKeyboard);

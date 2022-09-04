@@ -87,15 +87,29 @@ class MiniGames {
     const description = document.createElement('p') as HTMLParagraphElement;
     description.textContent = desc;
 
+    const startBtn = document.createElement('button') as HTMLButtonElement;
+    startBtn.textContent = 'Начать';
+    startBtn.dataset.gameName = gameName;
+
     const list = document.createElement('ul') as HTMLUListElement;
-    const listElementText: string[] = [
-      'Используйте мышку или клавиатуру чтобы выбрать',
-      'Используйте цыфровые клавиши от 1 до 5 чтобы выбрать ответы',
-      'Используйте пробел чтобы повторить перевод',
-      'Используйте Enter для перехода к следующему слову',
-      'Используйте Shift если не знаете ответ',
-    ];
-    for (let i = 0; i < 5; i += 1) {
+    let listElementText: string[] = [];
+    if(startBtn.dataset.gameName === 'Аудиовызов') {
+      listElementText = [
+        'Используйте мышку или клавиатуру чтобы выбрать',
+        'Используйте цыфровые клавиши от 1 до 5 чтобы выбрать ответы',
+        'Используйте пробел чтобы повторить перевод',
+        'Используйте Enter для перехода к следующему слову',
+        'Используйте Shift если не знаете ответ',
+      ];
+    }
+    else if(startBtn.dataset.gameName === 'Спринт') {
+      listElementText = [
+        'Используйте мышку или клавиатуру чтобы выбрать',
+        'Используйте клавиши стрелка влево и стрелка вправо для выбора ответа',
+      ];
+    }
+
+    for (let i = 0; i < listElementText.length; i += 1) {
       const listElement = document.createElement('li') as HTMLLIElement;
       listElement.textContent = listElementText[i];
       list.append(listElement);
@@ -108,9 +122,6 @@ class MiniGames {
       selectDifficulty.append(options);
     }
 
-    const startBtn = document.createElement('button') as HTMLButtonElement;
-    startBtn.textContent = 'Начать';
-    startBtn.dataset.gameName = gameName;
 
     const spinner = new Spinner();
 
