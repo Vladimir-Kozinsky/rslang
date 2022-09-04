@@ -81,7 +81,7 @@ class AudioCall {
 
       // create additional words if they are not enough
       if(wordsArr.length < 15 && +randomPage > 0) {
-        const additionalWords: Word[] = await api.getWords(difficulty, (+randomPage - 1).toString());
+        const additionalWords: Word[] = (await api.getUserAggregatedWords(ApiData.userId, token, difficulty, (+randomPage - 1).toString()))[0].paginatedResults;
         for (let i = 0; i < 20 - wordsArr.length; i += 1) {
           wordsArr.push(additionalWords[i])
         }
@@ -278,6 +278,7 @@ class AudioCall {
         document.removeEventListener('keydown', controlFromKeyboard);
         document.removeEventListener('keydown', switchToNextWord);
         for (let i = 0; i < getData.length; i += 1) {
+          if(getData[i].guessedRight! >= 3) getData[i].difficulty = 'easy';
           api.createUpdateUserWord(ApiData.userId, token, getData[i].wordId!, getData[i], 'hard')
         }
 

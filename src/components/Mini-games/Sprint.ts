@@ -113,7 +113,7 @@ class Sprint {
 
     // create additional words if they are not enough
     if(wordsArr.length < 15 && +randomPage > 0) {
-      const additionalWords: Word[] = await api.getWords(difficulty, (+randomPage - 1).toString());
+      const additionalWords: Word[] = (await api.getUserAggregatedWords(ApiData.userId, token, difficulty, (+randomPage - 1).toString()))[0].paginatedResults;
       for (let i = 0; i < 20 - wordsArr.length; i += 1) {
         wordsArr.push(additionalWords[i])
       }
@@ -220,7 +220,8 @@ class Sprint {
       if (time.textContent === '0') {
         clearInterval(timeToStop);
         for (let i = 0; i < currentIndex; i += 1) {
-          clonedArr[i].guessedRight = clonedArr[i].userWord?.optional.wordData.guessedRight 
+          clonedArr[i].guessedRight = clonedArr[i].userWord?.optional.wordData.guessedRight; 
+          if(clonedArr[i].guessedRight! >= 3) clonedArr[i].difficulty = 'easy';
           delete clonedArr[i].userWord;
           api.createUpdateUserWord(ApiData.userId, token, clonedArr[i]._id!, clonedArr[i], 'hard');
         }
@@ -248,6 +249,7 @@ class Sprint {
         this.createResultsPage(+points.textContent!, correctAnswers, inCorrectAnswers);
         for (let i = 0; i < clonedArr.length; i += 1) {
           clonedArr[i].guessedRight = clonedArr[i].userWord?.optional.wordData.guessedRight 
+          if(clonedArr[i].guessedRight! >= 3) clonedArr[i].difficulty = 'easy'
           delete clonedArr[i].userWord;
           api.createUpdateUserWord(ApiData.userId, token, clonedArr[i]._id!, clonedArr[i], 'hard');
         }
@@ -348,6 +350,7 @@ class Sprint {
         // send user words to user/words
         for (let i = 0; i < clonedArr.length; i += 1) {
           clonedArr[i].guessedRight = clonedArr[i].userWord?.optional.wordData.guessedRight 
+          if(clonedArr[i].guessedRight! >= 3) clonedArr[i].difficulty = 'easy';
           delete clonedArr[i].userWord;
           api.createUpdateUserWord(ApiData.userId, token, clonedArr[i]._id!, clonedArr[i], 'hard');
         }
