@@ -18,7 +18,7 @@
     flex-grow: 1;
 }
 
-.logo {
+.container .logo {
     margin-top: 40px;
     margin-left: 40px;
 }
@@ -87,6 +87,33 @@
 
         &:hover {
             cursor: pointer;
+            color: hsl(250, 25%, 80%);
+            .middleBlock__icon {
+                height: 26px;
+                width: 26px;
+                left: 21px;
+                top: 18px;
+            }
+        }
+    }
+
+    .middleBlock__logout-button {
+        
+        width: 190px;
+        height: 20px;
+        margin-left: 15px;
+        padding-left: 20px;
+
+        font: 700 16px Ubuntu, Arial, Tahoma, sans-serif;
+        text-align: start;
+        color: white;
+
+        background: transparent;
+
+        cursor: pointer;
+        transition: all 0.2s;
+
+        &:hover {
             color: hsl(250, 25%, 80%);
             .middleBlock__icon {
                 height: 26px;

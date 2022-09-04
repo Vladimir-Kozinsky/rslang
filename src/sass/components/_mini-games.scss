@@ -64,7 +64,8 @@
   width: 100%;
   height: 100vh;
   font-weight: 700;
-
+  padding-bottom: 200px;
+  
   .start-page__content {
     display: flex;
     flex-direction: column;
@@ -85,6 +86,10 @@
     margin-top: 0;
     margin-bottom: 0;
     margin-left: 68px;
+  }
+  ul {
+    margin-right: auto;
+    margin-left: auto;
   }
 
   li {
@@ -212,5 +217,103 @@
   height: 50px;
   &:hover {
     cursor:pointer
+  }
+}
+
+@media screen and (max-width: 1250px) { 
+  .container__menu {
+    display: none;
+  }
+  .games-cart__container {
+    flex-direction: column;
+    align-items: center;
+    background: white;
+    padding-top: 80px;
+    margin-top: 0;
+    .games__cart {
+      margin-bottom: 25px;
+    }
+  }
+}
+
+@media screen and (max-width: 1024px) {
+  .start-page {
+    &__container {
+      padding-bottom: 50px;
+    }
+  }
+  .results-cart__container {
+    height: -webkit-fill-available;
+    }
+    .games-cart__container {
+      .games__cart {
+        margin-bottom: 25px;
+        h3 {
+          font-size: 30px;
+        }
+        p {
+          font-size: 16px;
+        }
+      }
+    }
+}
+@media screen and (max-width: 767px) {
+  .start-page__container > .start-page__content {
+      width: 100%;
+      h2 {
+        font-size: 65px;
+      }
+      p {
+        font-size: 22px;
+      }
+  }
+  .results-cart {
+    width: 90%;
+  }
+}
+@media screen and (max-width: 655px) {
+  .start-page__container > .start-page__content {
+    margin-right: 20px;
+      h2 {
+        font-size: 35px;
+      }
+      p {
+        font-size: 18px;
+        margin-left: 40px;
+      }
+  }
+  .results-cart {
+    padding-left: 25px;
+    padding-right: 25px;
+    h2 {
+      font-size: 28px;
+    }
+    .total-points {
+      font-size: 23px;
+    }
+  }
+  .results-answers-block {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    span {
+      font-size: 14px;
+    }
+    .results-incorrect-answers-total {
+      margin-top: 15px;
+    }
+  }
+}
+@media screen and (max-width: 491px) {
+  .games__cart {
+    width: 350px;
+    height: 320px;
+  }
+}
+@media screen and (max-width: 360px) {
+  .games__cart {
+    width: 310px;
+    height: 295px;
   }
 }

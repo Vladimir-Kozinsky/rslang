@@ -16,6 +16,9 @@ export default class AuthView extends ElementCreator {
   drawSignIn(): void {
     const { auth } = this.elements.htmlElements;
     auth.innerHTML = '';
+
+    document.body.classList.add('body-scroll-block');
+
     const cancelButton = this.createElement('button', auth, { class: 'auth__cancel-button' });
     const authIcon = this.createElementSVG(
       auth,
@@ -56,6 +59,8 @@ export default class AuthView extends ElementCreator {
     const { auth } = this.elements.htmlElements;
     auth.innerHTML = '';
 
+    document.body.classList.add('body-scroll-block');
+
     const cancelButton = this.createElement('button', auth, { class: 'auth__cancel-button' });
     const authForm = this.createElement('form', auth, { class: 'auth-form' });
     const genderContainer = this.createElement('div', authForm, { class: 'form-item avatars' });
@@ -85,6 +90,7 @@ export default class AuthView extends ElementCreator {
       type: 'text',
       class: 'form-item__text-input',
       required: 'required',
+      maxlength: '16',
     });
     const emailContainer = this.createElement('div', authForm, { class: 'form-item' });
     const emailLabel = this.createElement('label', emailContainer, { for: 'email', class: 'form-item__label' }, 'Электронная почта');
@@ -142,6 +148,12 @@ export default class AuthView extends ElementCreator {
 
   clearAuthContainer(): void {
     const { auth } = this.elements.htmlElements;
+    const body = document.body;
+
     auth.innerHTML = '';
+
+    if (body.lastElementChild && !body.lastElementChild.classList.contains('burger-fill')) {
+      document.body.classList.remove('body-scroll-block');
+    }
   }
 }

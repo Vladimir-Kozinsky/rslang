@@ -1,0 +1,238 @@
+@import "./../components/widget";
+
+.stats-wrap {
+    margin: 50px;
+    display: grid;
+    gap: 50px;
+    grid-template-columns: 1fr 315px;
+    grid-template-areas:
+        "stats user"
+        "stats links";
+    overflow-y: auto;
+    height: 85vh;
+    padding-right: 25px;
+}
+
+.stats {
+    grid-area: stats;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-width: 680px;
+}
+
+.stats-block {
+    width: 100%;
+}
+
+.stats-block__header {
+    text-align: center;
+}
+
+.widgets-container {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.user-block {
+    grid-area: user;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: end;
+    
+    height: 330px;
+    position: relative;
+}
+
+.user-block__photo {
+    position: absolute;
+    top: 8px;
+    left: calc(50% - 65px);
+    width: 130px;
+    height: 130px;
+    border-radius: 100%;
+    margin: 0 auto;
+    border: 5px solid white;
+    background: conic-gradient(#ff8cc3, #ffbda4, #8df0ff, #ff8cc3);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transform: rotate(60deg);
+    box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.25);
+
+    img,
+    svg {
+        transform: rotate(-60deg);
+    }
+}
+
+
+
+.user-block__info {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    height: 235px;
+    background-color: white;
+    border-radius: 30px;
+    width: 315px;
+    bottom: 0px;
+    box-shadow: 0 0 30px rgb(136, 136, 136, 0.5);
+
+    .user-block__mute-block {
+        position: absolute;
+        background-color: rgba(255, 255, 255, 0.95);
+        width: 100%;
+        height: 100%;
+        top: 0px;
+        left: 0px;
+        border-radius: 30px;
+        z-index: 10;
+        display: none;
+
+        img {
+            width: 100px;
+            position: relative;
+            top: 45px;
+            left: 107.5px;
+        }
+    }
+
+    &.disabled {
+        .user-block__mute-block {
+            display: block;
+        }
+    }
+}
+
+
+
+.info-block__name {
+    margin-top: 55px;
+    font-size: 18px;
+    text-align: center;
+}
+
+.info-block__email {
+    margin-top: 10px;
+    color: #959ba5;
+    text-align: center;
+}
+
+.user-block__signin-button {
+    width: 120px;
+    height: 40px;
+    margin-top: 40px;
+    border: 2px solid $color-text-dark;
+    border-radius: 20px;
+
+    font: 400 18px Ubuntu, Arial, Tahoma, sans-serif;
+
+    background: transparent;
+    
+    cursor: pointer;
+    transition: .2s;
+
+    &:hover {
+        color: $color-hover-button;
+        background-color: $color-text-dark;
+    }
+
+    &:active {
+        background-color: rgba(36, 39, 48, 0.7);
+        transition: none;
+    }
+}
+
+.user-stats__container {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.user-stats__block {
+    width: 130px;
+    height: 90px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.user-stats__header {
+    text-align: center;
+    color: #959ba5;
+}
+
+.user-stats__value {
+    color: black;
+    font-size: 32px;
+}
+
+.links-block {
+    grid-area: links;
+    width: 315px;
+    height: 400px;
+}
+
+.link-block {
+    margin: 0 auto;
+    align-items: center;
+    background-color: #fff;
+    width: 240px;
+    height: 100px;
+    border-radius: 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 0 30px rgb(136, 136, 136, 0.5);
+    position: relative;
+
+    &:hover {
+        cursor: pointer;
+
+        .link-block-wrap {
+            width: 66px;
+            height: 66px;
+            top: 17px;
+            left: 19px
+        }
+
+        .link-block__img {
+            width: 66px;
+            height: 66px;
+        }
+
+        .link-block__title {
+            color: hsl(250, 25%, 80%);
+        }
+    }
+}
+
+.link-block-wrap {
+    width: 64px;
+    height: 64px;
+    background: conic-gradient(#ff8cc3, #ffbda4, #8df0ff, #ff8cc3);
+    border-radius: 16px;
+    position: absolute;
+    top: 18px;
+    left: 20px;
+    transition: all 0.2s;
+}
+
+.link-block__img {
+    width: 64px;
+    height: 64px;
+    transition: all 0.2s;
+}
+
+.link-block__title {
+    width: 100px;
+    text-align: center;
+    position: absolute;
+    right: 30px;
+    top: 40px;
+}

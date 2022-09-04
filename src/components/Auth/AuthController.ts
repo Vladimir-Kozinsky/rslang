@@ -44,28 +44,28 @@ export default class AuthController {
     }
   }
 
-  getStartScreen(
-    drawGuestUserViewFunc: () => HTMLButtonElement,
-    drawAuthUserViewFunc: (userPersonalData: userPersonalData) => HTMLButtonElement
-  ): void {
+  async getStartScreen(
+    drawGuestUserViewFunc: () => HTMLButtonElement | Promise<HTMLButtonElement>,
+    drawAuthUserViewFunc: (userPersonalData: userPersonalData) => HTMLButtonElement | Promise<HTMLButtonElement>
+  ): Promise<void> {
     this.view.drawAuthContainer();
     if (ApiData.userIsAuth) {
       const userPersonalData = {
         name: ApiData.userName,
         gender: ApiData.userGender,
       };
-      const logOutButton: HTMLButtonElement = drawAuthUserViewFunc(userPersonalData);
+      const logOutButton: HTMLButtonElement = await drawAuthUserViewFunc(userPersonalData);
       this.setLogOutListener(logOutButton, drawGuestUserViewFunc, drawAuthUserViewFunc);
     } else {
-      const signInButton: HTMLButtonElement = drawGuestUserViewFunc();
+      const signInButton: HTMLButtonElement = await drawGuestUserViewFunc();
       this.setSignInListener(signInButton, drawGuestUserViewFunc, drawAuthUserViewFunc);
     }
   }
 
   setSignInListener(
     signInButton: HTMLButtonElement,
-    drawGuestUserViewFunc: () => HTMLButtonElement,
-    drawAuthUserViewFunc: (userPersonalData: userPersonalData) => HTMLButtonElement
+    drawGuestUserViewFunc: () => HTMLButtonElement | Promise<HTMLButtonElement>,
+    drawAuthUserViewFunc: (userPersonalData: userPersonalData) => HTMLButtonElement | Promise<HTMLButtonElement>
   ): void {
     signInButton.onclick = (event) => {
       this.getSignInScreen(drawGuestUserViewFunc, drawAuthUserViewFunc);
@@ -77,23 +77,24 @@ export default class AuthController {
 
   setLogOutListener(
     logOutButton: HTMLButtonElement,
-    drawGuestUserViewFunc: () => HTMLButtonElement,
-    drawAuthUserViewFunc: (userPersonalData: userPersonalData) => HTMLButtonElement
+    drawGuestUserViewFunc: () => HTMLButtonElement | Promise<HTMLButtonElement>,
+    drawAuthUserViewFunc: (userPersonalData: userPersonalData) => HTMLButtonElement | Promise<HTMLButtonElement>
   ): void {
-    logOutButton.onclick = (event) => {
+    logOutButton.onclick = async (event) => {
       ApiData.clear();
-      const signInButton: HTMLButtonElement = drawGuestUserViewFunc();
+      const signInButton: HTMLButtonElement = await drawGuestUserViewFunc();
       this.setSignInListener(signInButton, drawGuestUserViewFunc, drawAuthUserViewFunc);
     };
   }
 
   getSignInScreen(
-    drawGuestUserViewFunc: () => HTMLButtonElement,
-    drawAuthUserViewFunc: (userPersonalData: userPersonalData) => HTMLButtonElement
+    drawGuestUserViewFunc: () => HTMLButtonElement | Promise<HTMLButtonElement>,
+    drawAuthUserViewFunc: (userPersonalData: userPersonalData) => HTMLButtonElement | Promise<HTMLButtonElement>
   ): void {
     this.view.drawSignIn();
     this.setSignInFormListener(drawGuestUserViewFunc, drawAuthUserViewFunc);
     const { blackout, cancelButton, link } = this.view.elements.htmlElements;
+    blackout.style.top = `${window.scrollY}px`;
     cancelButton.onclick = () => {
       blackout.classList.add('fade');
       blackout.classList.remove('fill');
@@ -106,8 +107,8 @@ export default class AuthController {
   }
 
   getSignUpScreen(
-    drawGuestUserViewFunc: () => HTMLButtonElement,
-    drawAuthUserViewFunc: (userPersonalData: userPersonalData) => HTMLButtonElement
+    drawGuestUserViewFunc: () => HTMLButtonElement | Promise<HTMLButtonElement>,
+    drawAuthUserViewFunc: (userPersonalData: userPersonalData) => HTMLButtonElement | Promise<HTMLButtonElement>
   ): void {
     this.view.drawSignUp();
     this.setSignUpFormListener(drawGuestUserViewFunc, drawAuthUserViewFunc);
@@ -124,8 +125,8 @@ export default class AuthController {
   }
 
   setSignUpFormListener(
-    drawGuestUserViewFunc: () => HTMLButtonElement,
-    drawAuthUserViewFunc: (userPersonalData: userPersonalData) => HTMLButtonElement
+    drawGuestUserViewFunc: () => HTMLButtonElement | Promise<HTMLButtonElement>,
+    drawAuthUserViewFunc: (userPersonalData: userPersonalData) => HTMLButtonElement | Promise<HTMLButtonElement>
   ): void {
     const form = this.view.elements.htmlElements.authForm as HTMLFormElement;
     const maleInput = this.view.elements.htmlElements.maleInput as HTMLInputElement;
@@ -171,8 +172,8 @@ export default class AuthController {
   }
 
   setSignInFormListener(
-    drawGuestUserViewFunc: () => HTMLButtonElement,
-    drawAuthUserViewFunc: (userPersonalData: userPersonalData) => HTMLButtonElement
+    drawGuestUserViewFunc: () => HTMLButtonElement | Promise<HTMLButtonElement>,
+    drawAuthUserViewFunc: (userPersonalData: userPersonalData) => HTMLButtonElement | Promise<HTMLButtonElement>
   ): void {
     const { blackout } = this.view.elements.htmlElements;
     const form = this.view.elements.htmlElements.authForm as HTMLFormElement;
@@ -211,6 +212,7 @@ export default class AuthController {
           ApiData.userName = data.name;
           ApiData.userGender = data.userGender;
           ApiData.tokenExpirationDate = Date.now() + 1000 * 60 * 60 * 4.5;
+          ApiData.userEmail = userData.email;
           blackout.classList.remove('fill');
           blackout.classList.add('fade');
           this.view.clearAuthContainer();
@@ -218,7 +220,7 @@ export default class AuthController {
             name: ApiData.userName,
             gender: ApiData.userGender,
           };
-          const logOutButton: HTMLButtonElement = drawAuthUserViewFunc(userPersonalData);
+          const logOutButton: HTMLButtonElement = await drawAuthUserViewFunc(userPersonalData);
           this.setLogOutListener(logOutButton, drawGuestUserViewFunc, drawAuthUserViewFunc);
         }
       } catch (error) {
