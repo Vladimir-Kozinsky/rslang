@@ -1,5 +1,8 @@
 import ApiData from "../Api/ApiData";
 import WordsApi from "../Api/WordsApi";
+import AudioCall from "../Mini-games/AudioCall";
+import Sprint from "../Mini-games/Sprint";
+import Spinner from "../Spinner/spinner";
 import { IObj, IWordOptions } from "../types";
 
 
@@ -34,6 +37,12 @@ class Ebook {
 
     userWords: IWordOptions[];
 
+    sprint: Sprint;
+
+    spinner: Spinner;
+
+    audioCall: AudioCall;
+
     constructor() {
         this.group = 0;
         this.page = 0;
@@ -41,6 +50,9 @@ class Ebook {
         this.theme = '#3c365a';
         this.wordsApi = new WordsApi();
         this.userWords = [];
+        this.sprint = new Sprint();
+        this.audioCall = new AudioCall();
+        this.spinner = new Spinner();
     }
 
     async drawEbook() {
@@ -224,6 +236,13 @@ class Ebook {
 
         const sprint = document.createElement('div') as HTMLDivElement;
         sprint.className = 'sprint-game';
+        sprint.addEventListener('click', () => {
+            const content = document.querySelector('.container__content') as HTMLDivElement;
+            content.innerHTML = '';
+            this.sprint.createPage();
+            this.sprint.appendWordsToPage(this.group.toString());
+            this.spinner.createPage();
+        })
 
         const sprintImg = document.createElement('img') as HTMLImageElement;
         sprintImg.className = 'sprint-game__img';
@@ -237,6 +256,14 @@ class Ebook {
 
         const audioCall = document.createElement('div') as HTMLDivElement;
         audioCall.className = 'audioCall-game';
+        audioCall.addEventListener('click', () => {
+            const content = document.querySelector('.container__content') as HTMLDivElement;
+            content.innerHTML = '';
+            this.audioCall.createPage();
+            this.audioCall.appendDataToPage(this.group.toString());
+            this.spinner.createPage();
+
+        })
 
         const audioCallImg = document.createElement('img') as HTMLImageElement;
         audioCallImg.className = 'audioCall-game__img';
