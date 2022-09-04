@@ -66,6 +66,7 @@ class Ebook {
             await this.setUserWords();
         }
 
+        console.log(this.userWords)
         ebook.append(this.drawHeader());
         ebook.append(await this.drawWords());
 
@@ -88,8 +89,8 @@ class Ebook {
         if (responce.ok) {
             const words = await responce.json();
             words.forEach((item: IObj<string>) => {
-                const isHard = this.userWords.find(word => word.optional.id === item.id && word.difficulty === 'hard');
-                const isEasy = this.userWords.find(word => word.optional.id === item.id && word.difficulty === 'easy');
+                const isHard = this.userWords.find(word => word.optional.wordData ? word.optional.wordData.id === item.id && word.difficulty === 'hard' : false);
+                const isEasy = this.userWords.find(word => word.optional.wordData ? word.optional.wordData.id === item.id && word.difficulty === 'easy' : false);
                 ebookWords.append(this.createWordBlock(item, isHard, isEasy));
             })
         }
@@ -137,9 +138,10 @@ class Ebook {
             difficultBtn.addEventListener('click', async () => {
                 const wordOptions = {
                     difficulty: "hard",
-                    optional: item
+                    optional: {
+                        wordData: item
+                    }
                 }
-                console.log(wordOptions.optional.id)
                 const response = await this.wordsApi.createUserWord(item.id, wordOptions);
                 if (response.ok) {
                     difficultBtn.style.borderColor = '#9cfc0d';
@@ -166,7 +168,9 @@ class Ebook {
             learnedtBtn.addEventListener('click', async () => {
                 const wordOptions = {
                     difficulty: "easy",
-                    optional: item
+                    optional: {
+                        wordData: item
+                    }
                 }
 
                 const response = await this.wordsApi.createUserWord(item.id, wordOptions);
@@ -200,7 +204,7 @@ class Ebook {
                     await this.wordsApi.deleteUserWord(item.id);
                     const difficultWordsContainer = document.querySelector('.difficult-page__words-block') as HTMLDivElement;
                     difficultWordsContainer.outerHTML = '';
-                    await vocabulary.setWords();
+                    await Vocabulary.setWords();
                     vocabulary.activeTab = 'difficultTab';
                     const pagenator = document.querySelector('.vocabulary-pagenator__difficult-page');
                     let padeNumber;
@@ -222,7 +226,7 @@ class Ebook {
                     await this.wordsApi.deleteUserWord(item.id);
                     const learnedWordsContainer = document.querySelector('.learned-page__words-block') as HTMLDivElement;
                     learnedWordsContainer.outerHTML = '';
-                    await vocabulary.setWords();
+                    await Vocabulary.setWords();
                     vocabulary.activeTab = 'learnedTab';
                     const pagenator = document.querySelector('.vocabulary-pagenator__learned-page');
                     let padeNumber;

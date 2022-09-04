@@ -1,3 +1,4 @@
+import ApiData from "../Api/ApiData";
 import WordsApi from "../Api/WordsApi";
 import Ebook from "../Ebook/Ebook";
 import { IWordOptions } from "../types";
@@ -16,39 +17,62 @@ import { IWordOptions } from "../types";
 
 class Vocabulary {
     activeTab: string;
+
     ebook: Ebook;
+
     wordsApi: WordsApi;
-    difficultWords: IWordOptions[];
-    learnedWords: IWordOptions[];
+
     difficultPage: number;
+
     learnedPage: number;
+
+    static difficultWords = [];
+
+    static learnedWords = [];
 
     constructor() {
         this.activeTab = 'difficultTab';
         this.ebook = new Ebook();
         this.wordsApi = new WordsApi();
-        this.difficultWords = [];
-        this.learnedWords = [];
         this.difficultPage = 1;
         this.learnedPage = 1;
     }
 
     async drawVocabulary() {
         const container = document.querySelector('.container__content') as HTMLDivElement;
-        const vocabulary = document.createElement('div') as HTMLDivElement;
-        vocabulary.className = 'vocabulary';
-        vocabulary.append(this.createTabsBtns());
-        await this.setWords();
-        container.append(vocabulary);
-        this.createDifficultPage();
-        this.createLearnedPage();
+        if (ApiData.userIsAuth) {
+            const vocabulary = document.createElement('div') as HTMLDivElement;
+            vocabulary.className = 'vocabulary';
+            vocabulary.append(this.createTabsBtns());
+            await Vocabulary.setWords();
+            container.append(vocabulary);
+            this.createDifficultPage();
+            this.createLearnedPage();
+        } else {
+            container.style.display = 'flex';
+            container.style.justifyContent = 'center';
+            container.style.alignItems = 'center';
+
+            const messageBlock = document.createElement('div') as HTMLDivElement;
+            messageBlock.className = 'vocabulary__message';
+            const textMessage = document.createElement('h4') as HTMLHeadElement;
+            textMessage.className = 'vocabulary__message__text';
+            textMessage.textContent = 'Авторизируйтесь';
+            messageBlock.append(textMessage);
+            const img = document.createElement('img') as HTMLImageElement;
+            img.className = 'vocabulary__message__img';
+            img.src = "../../assets/img/svg/lock.svg";
+            messageBlock.append(img);
+            container.append(messageBlock)
+        }
+
     }
 
     createDifficultPage() {
         const vocabulary = document.querySelector('.vocabulary') as HTMLDivElement;
         const difficultPage = document.createElement('div') as HTMLDivElement;
         difficultPage.className = "difficult-page";
-        difficultPage.append(this.createPagenator(this.difficultWords, 'diff'));
+        difficultPage.append(this.createPagenator(Vocabulary.difficultWords, 'diff'));
 
         if (this.activeTab === 'difficultTab') {
             difficultPage.classList.add('active');
@@ -64,13 +88,12 @@ class Vocabulary {
         wordsContainer.className = 'difficult-page__words-block';
         const difficultPageNumber = padeNumber || this.difficultPage;
 
-        const wordsToDraw = this.difficultWords.slice(difficultPageNumber * 22 - 22, difficultPageNumber * 22);
+        const wordsToDraw = Vocabulary.difficultWords.slice(difficultPageNumber * 22 - 22, difficultPageNumber * 22);
 
 
         wordsToDraw.forEach((word: IWordOptions) => {
-            if (word.optional.id) {
-                console.log('with id');
-                wordsContainer.append(this.ebook.createWordBlock(word.optional, undefined, undefined, 'hard'));
+            if (word.optional.wordData) {
+                wordsContainer.append(this.ebook.createWordBlock(word.optional.wordData, undefined, undefined, 'hard'));
             }
         })
 
@@ -81,7 +104,7 @@ class Vocabulary {
         const vocabulary = document.querySelector('.vocabulary') as HTMLDivElement;
         const learnedPage = document.createElement('div') as HTMLDivElement;
         learnedPage.className = "learned-page";
-        learnedPage.append(this.createPagenator(this.learnedWords, 'learned'));
+        learnedPage.append(this.createPagenator(Vocabulary.learnedWords, 'learned'));
 
         if (this.activeTab === 'learnedTab') {
             learnedPage.classList.add('active');
@@ -96,23 +119,24 @@ class Vocabulary {
         const wordsContainer = document.createElement('div') as HTMLDivElement;
         wordsContainer.className = 'learned-page__words-block';
         const learnedPageNumber = padeNumber || this.learnedPage;
-        const wordsToDraw = this.learnedWords.slice(learnedPageNumber * 22 - 22, learnedPageNumber * 22);
+        const wordsToDraw = Vocabulary.learnedWords.slice(learnedPageNumber * 22 - 22, learnedPageNumber * 22);
 
         if (wordsToDraw.length < 1) {
             wordsContainer.textContent = 'Изученных слов нет.'
         }
 
         wordsToDraw.forEach((word: IWordOptions) => {
-            if (word.optional.id) {
-                wordsContainer.append(this.ebook.createWordBlock(word.optional, undefined, undefined, 'easy'))
+            if (word.optional.wordData) {
+                wordsContainer.append(this.ebook.createWordBlock(word.optional.wordData, undefined, undefined, 'easy'))
             }
         })
 
         learnedPage.append(wordsContainer);
     }
 
-    async setWords() {
-        const response = await this.wordsApi.getUserWords();
+    static async setWords() {
+        const wordsApi = new WordsApi()
+        const response = await wordsApi.getUserWords();
 
         if (response.ok) {
             const words = await response.json();
