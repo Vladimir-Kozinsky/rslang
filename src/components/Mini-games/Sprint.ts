@@ -221,9 +221,11 @@ class Sprint {
         clearInterval(timeToStop);
         for (let i = 0; i < currentIndex; i += 1) {
           clonedArr[i].guessedRight = clonedArr[i].userWord?.optional.wordData.guessedRight; 
-          if(clonedArr[i].guessedRight! >= 3) clonedArr[i].difficulty = 'easy';
           delete clonedArr[i].userWord;
-          api.createUpdateUserWord(ApiData.userId, token, clonedArr[i]._id!, clonedArr[i], 'hard');
+          // if user made mistake in word change guessedRight to 0
+          if(!clonedArr[i].isTrue) clonedArr[i].guessedRight = 0;
+          if(clonedArr[i].guessedRight! >= 3) api.createUpdateUserWord(ApiData.userId, token, clonedArr[i]._id!, clonedArr[i], 'easy')
+          else api.createUpdateUserWord(ApiData.userId, token, clonedArr[i]._id!, clonedArr[i], 'hard');
         }
         this.createResultsPage(+points.textContent!, correctAnswers, inCorrectAnswers);
       }
@@ -249,10 +251,11 @@ class Sprint {
         this.createResultsPage(+points.textContent!, correctAnswers, inCorrectAnswers);
         for (let i = 0; i < clonedArr.length; i += 1) {
           clonedArr[i].guessedRight = clonedArr[i].userWord?.optional.wordData.guessedRight 
-          if(clonedArr[i].guessedRight! >= 3) clonedArr[i].difficulty = 'easy'
           delete clonedArr[i].userWord;
-          api.createUpdateUserWord(ApiData.userId, token, clonedArr[i]._id!, clonedArr[i], 'hard');
-        }
+          // if user made mistake in word change guessedRight to 0
+          if(!clonedArr[i].isTrue) clonedArr[i].guessedRight = 0;
+          if(clonedArr[i].guessedRight! >= 3) api.createUpdateUserWord(ApiData.userId, token, clonedArr[i]._id!, clonedArr[i], 'easy')
+          else api.createUpdateUserWord(ApiData.userId, token, clonedArr[i]._id!, clonedArr[i], 'hard');        }
       }
       // eslint-disable-next-line default-case
       switch (keyName) {
@@ -350,9 +353,11 @@ class Sprint {
         // send user words to user/words
         for (let i = 0; i < clonedArr.length; i += 1) {
           clonedArr[i].guessedRight = clonedArr[i].userWord?.optional.wordData.guessedRight 
-          if(clonedArr[i].guessedRight! >= 3) clonedArr[i].difficulty = 'easy';
           delete clonedArr[i].userWord;
-          api.createUpdateUserWord(ApiData.userId, token, clonedArr[i]._id!, clonedArr[i], 'hard');
+          // if user made mistake in word change guessedRight to 0
+          if(!clonedArr[i].isTrue) clonedArr[i].guessedRight = 0;
+          if(clonedArr[i].guessedRight! >= 3) api.createUpdateUserWord(ApiData.userId, token, clonedArr[i]._id!, clonedArr[i], 'easy')
+          else api.createUpdateUserWord(ApiData.userId, token, clonedArr[i]._id!, clonedArr[i], 'hard');
         }
         callStatistics();
         document.removeEventListener('keydown', controlFromKeyboard);

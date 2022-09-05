@@ -278,8 +278,9 @@ class AudioCall {
         document.removeEventListener('keydown', controlFromKeyboard);
         document.removeEventListener('keydown', switchToNextWord);
         for (let i = 0; i < getData.length; i += 1) {
-          if(getData[i].guessedRight! >= 3) getData[i].difficulty = 'easy';
-          api.createUpdateUserWord(ApiData.userId, token, getData[i].wordId!, getData[i], 'hard')
+          if(!getData[i].isTrue) getData[i].guessedRight = 0;
+          if(getData[i].guessedRight! >= 3) api.createUpdateUserWord(ApiData.userId, token, getData[i].wordId!, getData[i], 'easy')
+          else api.createUpdateUserWord(ApiData.userId, token, getData[i].wordId!, getData[i], 'hard');
         }
 
         let streaksArr: number[][] = [];

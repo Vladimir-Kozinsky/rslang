@@ -50,7 +50,10 @@ class BurgerMenuForNav {
                             app.drawStatistics();
                             break;
                         case 'Словарь':
-
+                            content.innerHTML = '';
+                            clearActivLink();
+                            target.classList.add('menu-items__active')
+                            app.vocabulary.drawVocabulary();
                             break;
                         case 'Мини-игры':
                             content.innerHTML = '';
