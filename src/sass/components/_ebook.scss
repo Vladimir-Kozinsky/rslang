@@ -175,8 +175,8 @@
 }
 
 .ebook__words {
-    height: 85vh;
-    padding: 40px 20px;
+    height: calc(100vh - 153px);
+    padding: 40px 20px 0;
     display: flex;
     gap: 15px;
     flex-wrap: wrap;
@@ -294,6 +294,10 @@
             top: 0px;
         }
     }
+
+    .ebook__words {
+        height: calc(100vh - 233px);
+    }
 }
 
 @media only screen and (max-width: 480px) {
@@ -308,6 +312,7 @@
     }
 
     .ebook__words {
+        height: calc(100vh - 238px);
         padding: 20px 0px;
     }
 
