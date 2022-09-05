@@ -547,8 +547,8 @@ class Sprint {
 
     let data: IObj<string>;
     let learnedWords: number;
-    const getStatistics: IStatisticsOptions = await RequestGetStatistics.json() 
     if(RequestGetStatistics.ok) {
+      const getStatistics  = await RequestGetStatistics.json(); 
       // eslint-disable-next-line no-unsafe-optional-chaining
       learnedWords = getStatistics.learnedWords + +document.querySelector('.sprint-results-answers-block')?.children[0].children.length! - 1;
       data = getStatistics.optional;
