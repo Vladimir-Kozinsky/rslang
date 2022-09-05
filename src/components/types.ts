@@ -30,7 +30,9 @@ type userPersonalData = Pick<IUserData, 'name' | 'gender'>;
 
 interface IWordOptions {
   difficulty: string;
-  optional: IObj<string>;
+  optional: {
+    wordData: IObj<string>;
+  }
 }
 
 interface IStatisticsOptions {

@@ -3,13 +3,14 @@ import MiniGames from './Mini-games/MiniGames';
 import MainPageController from './MainPage/MainPageController';
 import AuthController from './Auth/AuthController';
 import ApiData from './Api/ApiData';
+import Vocabulary from './Vocabulary/Vocabulary';
 import Ebook from './Ebook/Ebook';
 import Statistics from './Statistics/Statistics';
 
 class App {
   mainPageController: MainPageController;
-
   authController: AuthController;
+  vocabulary: Vocabulary;
   ebook: Ebook;
   miniGames: MiniGames;
   statistics: Statistics;
@@ -18,6 +19,7 @@ class App {
     ApiData.getDataFromLocalStorage();
     this.mainPageController = new MainPageController();
     this.authController = new AuthController();
+    this.vocabulary = new Vocabulary();
     this.ebook = new Ebook();
     this.miniGames = new MiniGames();
     this.statistics = new Statistics(ApiData.userId);
@@ -63,6 +65,7 @@ class App {
           content.innerHTML = '';
           clearActivLink();
           link.classList.add('active');
+          this.vocabulary.drawVocabulary();
           break;
         case 'Мини-игры':
           content.innerHTML = '';
@@ -94,7 +97,7 @@ class App {
   setMainPageMenuSwitcher(): void {
     const { menuList, sectionWelcomeStartButton} = this.mainPageController.view.elements.htmlElements;
     const { book, vocabulary, games, statistics } = this.mainPageController.view.pageLinks;
-    
+
     menuList.onclick = (event) => {
       const target = event.target;
 
