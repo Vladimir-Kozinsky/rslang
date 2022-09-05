@@ -1,3 +1,5 @@
+import ApiData from "../Api/ApiData";
+
 class Container {
   createContainer() {
     const container = document.createElement('main') as HTMLElement;
@@ -36,12 +38,11 @@ class Container {
 
   createNav() {
     const menuItems = [
+      { id: 'main-page', text: 'Главная страница', icon: 'arrow-back.svg' },
       { id: 'home', text: 'Личный кабинет', icon: 'homeIcon.svg' },
       { id: 'vocabulary', text: 'Словарь', icon: 'vacIcon.svg' },
       { id: 'games', text: 'Мини-игры', icon: 'gamesIcon.svg' },
       { id: 'book', text: 'Учебник', icon: 'bookIcon.svg' },
-      { id: 'setting', text: 'Настройки', icon: 'settingIcon.svg' },
-      // { id: 'exit', text: 'Выход', icon: 'exitIcon.svg' },
     ];
 
     const nav = document.createElement('nav') as HTMLElement;
@@ -92,6 +93,33 @@ class Container {
       menuItem.append(afterBg);
       ul.append(menuItem);
     });
+
+    if (ApiData.userIsAuth) {
+      const navItem = document.createElement('li') as HTMLLIElement;
+      navItem.classList.add('nav__item');
+      navItem.id = 'logout';
+
+      const middle = document.createElement('div') as HTMLDivElement;
+      middle.className = 'middleBlock';
+
+      const menuIcon = document.createElement('img') as HTMLImageElement;
+      menuIcon.className = 'middleBlock__icon';
+      menuIcon.src = `./assets/img/svg/exitIcon.svg`;
+
+      const logOutButton = document.createElement('button') as HTMLButtonElement;
+      logOutButton.classList.add('middleBlock__logout-button');
+      logOutButton.textContent = 'Выйти';
+
+      logOutButton.onclick = () => {
+        ApiData.clear();
+        navItem.remove();
+      };
+
+      logOutButton.append(menuIcon);
+      middle.append(logOutButton);
+      navItem.append(middle)
+      ul.append(navItem);
+    }
 
     nav.append(ul);
     return nav;
