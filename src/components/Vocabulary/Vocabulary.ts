@@ -49,10 +49,6 @@ class Vocabulary {
             this.createDifficultPage();
             this.createLearnedPage();
         } else {
-            container.style.display = 'flex';
-            container.style.justifyContent = 'center';
-            container.style.alignItems = 'center';
-
             const messageBlock = document.createElement('div') as HTMLDivElement;
             messageBlock.className = 'vocabulary__message';
             const textMessage = document.createElement('h4') as HTMLHeadElement;

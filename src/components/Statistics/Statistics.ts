@@ -44,7 +44,7 @@ interface IStatsData {
 
 class Statistics {
     authController: AuthController;
-    
+
     userId: string;
     elements: IObj<HTMLElement>;
 
@@ -88,7 +88,7 @@ class Statistics {
         statsWrap.append(this.createLinksBlock());
         console.log(document.querySelector('.info-block__name'))
         container.append(statsWrap);
-        
+
         Object.assign(this.elements, {
             statistics,
         })
@@ -118,14 +118,14 @@ class Statistics {
         switch (header) {
             case "Статистика":
                 if (this.statsData.statsCorrectAnswersPercentage) {
-                    widgetsData[0].value = this.statsData.statsCorrectAnswersPercentage;
+                    widgetsData[1].value = this.statsData.statsCorrectAnswersPercentage;
                 }
 
                 if (this.statsData.statsLongestStreak) {
-                    widgetsData[1].value = this.statsData.statsLongestStreak;
+                    widgetsData[2].value = this.statsData.statsLongestStreak;
                 }
                 if (this.statsData.statsNewWords) {
-                    widgetsData[2].value = this.statsData.statsNewWords;
+                    widgetsData[0].value = this.statsData.statsNewWords;
                 }
                 break;
             case "Aудиовызов":
@@ -255,7 +255,7 @@ class Statistics {
     }
 
     drawGuestUserView(): HTMLButtonElement {
-        const { userPhotoBlock, userInfoBlock, statistics } = this.elements;        
+        const { userPhotoBlock, userInfoBlock, statistics } = this.elements;
 
         userPhotoBlock.innerHTML = '';
         userInfoBlock.innerHTML = '';
@@ -338,7 +338,7 @@ class Statistics {
 
         const middle = document.createElement('div') as HTMLDivElement;
         middle.className = 'middleBlock';
-        
+
         const menuIcon = document.createElement('img') as HTMLImageElement;
         menuIcon.className = 'middleBlock__icon';
         menuIcon.src = `./assets/img/svg/exitIcon.svg`;
@@ -379,7 +379,7 @@ class Statistics {
         userInfoBlock.append(userName);
         userInfoBlock.append(userEmail);
         userInfoBlock.append(userStatsCont);
-         
+
         logOutButton.append(menuIcon);
         middle.append(logOutButton);
         navItem.append(middle);
@@ -387,22 +387,87 @@ class Statistics {
 
         return logOutButton;
     }
-    
+
     async setStatistics() {
         const response = await this.userAccountApi.getStatistics();
         if (response.ok) {
             const statistics = await response.json();
-            this.statsData = {
-                statsCorrectAnswersPercentage: statistics.optional.statsCorrectAnswersPercentage ? statistics.optional.statsCorrectAnswersPercentage : null,
-                statsNewWords: statistics.optional.statsNewWords ? statistics.optional.statsNewWords : null,
-                statsLongestStreak: statistics.optional.statsLongestStreak ? statistics.optional.statsLongestStreak : null,
-                audioCallCorrectAnswersPercentage: statistics.optional.audioCallCorrectAnswersPercentage ? statistics.optional.audioCallCorrectAnswersPercentage : null,
-                audioCallLongestStreak: statistics.optional.audioCallLongestStreak ? statistics.optional.audioCallLongestStreak : null,
-                audioCallNewWords: statistics.optional.audioCallNewWords ? statistics.optional.audioCallNewWords : null,
-                sprintCorrectAnswersPercentage: statistics.optional.sprintCorrectAnswersPercentage ? statistics.optional.sprintCorrectAnswersPercentage : null,
-                sprintLongestStreak: statistics.optional.sprintLongestStreak ? statistics.optional.sprintLongestStreak : null,
-                sprintNewWords: statistics.optional.sprintNewWords ? statistics.optional.sprintNewWords : null,
+            console.log(statistics);
+            function correctAnswersCalculate(audioCall: string | undefined, sprint: string | undefined): number | null {
+                if (audioCall && sprint) {
+                    console.log(parseInt(audioCall), parseInt(sprint));
+                    return (parseInt(audioCall) + parseInt(sprint)) / 2;
+                } else if (audioCall && !sprint) {
+                    return +audioCall;
+                } else if (!audioCall && sprint) {
+                    return +sprint;
+                } else {
+                    return null;
+                }
             }
+
+            function newWordsCalculate(audioCall: string | undefined, sprint: string | undefined): number {
+                let audioCallNewWords, sprintNewWords;
+                if (!audioCall) {
+                    audioCallNewWords = 0;
+                } else {
+                    audioCallNewWords = +audioCall;
+                }
+                if (!sprint) {
+                    sprintNewWords = 0;
+                } else {
+                    sprintNewWords = +sprint;
+                }
+                return audioCallNewWords + sprintNewWords;
+            }
+
+            function longSreakCalculate(audioCall: string | undefined, sprint: string | undefined): number {
+                let sprintLongestStreak, audioCallLongestStreak;
+                if (!audioCall) {
+                    audioCallLongestStreak = 0;
+                } else {
+                    audioCallLongestStreak = +audioCall;
+                }
+                if (!sprint) {
+                    sprintLongestStreak = 0;
+                } else {
+                    sprintLongestStreak = +sprint;
+                }
+                return sprintLongestStreak > audioCallLongestStreak ? sprintLongestStreak : audioCallLongestStreak;
+            }
+
+            this.statsData = {
+                statsCorrectAnswersPercentage: correctAnswersCalculate(statistics.optional.audioCallCorrectAnswersPercentage, statistics.optional.sprintCorrectAnswersPercentage),
+
+                statsNewWords: newWordsCalculate(statistics.optional.audioCallNewWords, statistics.optional.sprintNewWords),
+
+                statsLongestStreak: longSreakCalculate(statistics.optional.audioCallLongestStreak, statistics.optional.sprintLongestStreak),
+
+                audioCallCorrectAnswersPercentage: statistics.optional.audioCallCorrectAnswersPercentage
+                    ? statistics.optional.audioCallCorrectAnswersPercentage
+                    : null,
+
+                audioCallLongestStreak: statistics.optional.audioCallLongestStreak
+                    ? statistics.optional.audioCallLongestStreak
+                    : null,
+
+                audioCallNewWords: statistics.optional.audioCallNewWords
+                    ? statistics.optional.audioCallNewWords
+                    : null,
+
+                sprintCorrectAnswersPercentage: statistics.optional.sprintCorrectAnswersPercentage
+                    ? statistics.optional.sprintCorrectAnswersPercentage
+                    : null,
+
+                sprintLongestStreak: statistics.optional.sprintLongestStreak
+                    ? statistics.optional.sprintLongestStreak
+                    : null,
+
+                sprintNewWords: statistics.optional.sprintNewWords
+                    ? statistics.optional.sprintNewWords
+                    : null,
+            }
+
         } else {
             this.statsData.statsCorrectAnswersPercentage = null;
             this.statsData.statsNewWords = null;

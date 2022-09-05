@@ -45,6 +45,8 @@ class Ebook {
 
     audioCall: AudioCall;
 
+    difficultWords: IWordOptions[];
+
     constructor() {
         this.group = 0;
         this.page = 0;
@@ -52,6 +54,7 @@ class Ebook {
         this.theme = '#3c365a';
         this.wordsApi = new WordsApi();
         this.userWords = [];
+        this.difficultWords = [];
         this.sprint = new Sprint();
         this.audioCall = new AudioCall();
         this.spinner = new Spinner();
@@ -66,7 +69,6 @@ class Ebook {
             await this.setUserWords();
         }
 
-        console.log(this.userWords)
         ebook.append(this.drawHeader());
         ebook.append(await this.drawWords());
 
@@ -81,9 +83,7 @@ class Ebook {
             ebookWords = document.createElement('div') as HTMLDivElement;
             ebookWords.className = 'ebook__words'
         } else {
-            while (ebookWords.firstChild) {
-                ebookWords.removeChild(ebookWords.firstChild);
-            }
+            ebookWords.innerHTML = '';
         }
 
         if (responce.ok) {
@@ -97,6 +97,30 @@ class Ebook {
         return ebookWords;
     }
 
+    async drawDifficultWords(page = 1) {
+        let ebookWords = document.querySelector('.ebook__words') as HTMLDivElement;
+
+        if (!ebookWords) {
+            ebookWords = document.createElement('div') as HTMLDivElement;
+            ebookWords.className = 'ebook__words'
+        } else {
+            ebookWords.innerHTML = '';
+        }
+
+        const difficultWords = this.userWords.filter(word => word.difficulty === 'hard');
+        if (difficultWords.length > 0) {
+            this.difficultWords = difficultWords;
+            const wordsToDraw = this.difficultWords.slice(page * 22 - 22, page * 22);
+            wordsToDraw.forEach(word => {
+                word.optional.wordData.id = word.optional.wordData._id;
+                ebookWords.append(this.createWordBlock(word.optional.wordData, word, undefined));
+            })
+        } else {
+            ebookWords.textContent = 'Слова отмеченные как сложные отсутствуют';
+        }
+
+    }
+
     createWordBlock(item: IObj<string>, isHard: IWordOptions | undefined, isEasy: IWordOptions | undefined, type?: string) {
         const wordBlock = document.createElement('div') as HTMLDivElement;
         wordBlock.className = 'word-block';
@@ -106,6 +130,7 @@ class Ebook {
         wordBlockImgWrap.className = 'word-block__img-wrap';
 
         const wordBlockImg = document.createElement('img') as HTMLImageElement;
+
         wordBlockImg.src = `${ApiData.basePath}/${item.image}`;
 
         wordBlockImgWrap.append(wordBlockImg);
@@ -417,7 +442,13 @@ class Ebook {
                     this.group = group;
                     this.theme = bg;
                     menuItem.classList.add('active');
-                    await this.drawWords(group, this.page);
+                    if (currentMenuItem.firstChild?.textContent === '7 Секция') {
+                        this.drawDifficultWords();
+                    } else {
+                        await this.drawWords(group, this.page);
+                    }
+
+
                 }
             }
         })
@@ -465,9 +496,15 @@ class Ebook {
         lastPageBtn.src = '../../assets/img/svg/pagenatorBtnDoubleRight.svg';
         pagenator.append(lastPageBtn);
 
+
+
         firstPageBtn.addEventListener('click', () => {
             if (this.page !== 0) {
-                this.drawWords(this.group, 0);
+                if (this.group === 6) {
+                    this.drawDifficultWords(1);
+                } else {
+                    this.drawWords(this.group, 0);
+                }
                 page.textContent = '1';
                 this.page = 0;
             }
@@ -475,25 +512,47 @@ class Ebook {
 
         prevPageBtn.addEventListener('click', () => {
             if (this.page !== 0) {
-                this.drawWords(this.group, this.page - 1);
+                if (this.group === 6) {
+                    this.drawDifficultWords(this.page);
+                } else {
+                    this.drawWords(this.group, this.page - 1);
+                }
                 page.textContent = this.page.toString();
                 this.page -= 1;
             }
         })
 
         nextPageBtn.addEventListener('click', () => {
-            if (this.page !== 29) {
-                this.drawWords(this.group, this.page + 1);
-                page.textContent = `${this.page + 2}`;
-                this.page += 1;
+            if (this.group === 6) {
+                const totalPages = Math.floor(this.difficultWords.length / 22) + 1;
+                if (this.page !== totalPages - 1) {
+                    this.drawDifficultWords(this.page + 2);
+                    page.textContent = `${this.page + 2}`;
+                    this.page += 1;
+                }
+            } else {
+                if (this.page !== 29) {
+                    this.drawWords(this.group, this.page + 1);
+                    page.textContent = `${this.page + 2}`;
+                    this.page += 1;
+                }
             }
         })
 
         lastPageBtn.addEventListener('click', () => {
-            if (this.page !== 29) {
-                this.drawWords(this.group, 29);
-                page.textContent = '30';
-                this.page = 29;
+            if (this.group === 6) {
+                const totalPages = Math.floor(this.difficultWords.length / 22) + 1;
+                if (this.page !== totalPages - 1 ) {
+                    this.drawDifficultWords(totalPages);
+                    page.textContent = totalPages.toString();
+                    this.page = totalPages - 1;
+                }
+            } else {
+                if (this.page !== 29) {
+                    this.drawWords(this.group, 29);
+                    page.textContent = '30';
+                    this.page = 29;
+                }
             }
         })
 
