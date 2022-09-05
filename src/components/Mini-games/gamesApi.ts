@@ -1,4 +1,4 @@
-import Word, { Aggregate, AudioCallData } from './../interfaces/interfaces';
+import { Aggregate, AudioCallData, Word } from '../types';
 class GamesApi {
   static BASE_URL = 'https://react-learnwords-shahzod.herokuapp.com';
 

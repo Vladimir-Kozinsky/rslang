@@ -346,7 +346,7 @@ class Ebook {
             const content = document.querySelector('.container__content') as HTMLDivElement;
             content.innerHTML = '';
             this.sprint.createPage();
-            this.sprint.appendWordsToPage(this.group.toString());
+            this.sprint.appendWordsToPage(this.group.toString(), this.page);
             this.spinner.createPage();
         })
 
@@ -366,7 +366,7 @@ class Ebook {
             const content = document.querySelector('.container__content') as HTMLDivElement;
             content.innerHTML = '';
             this.audioCall.createPage();
-            this.audioCall.appendDataToPage(this.group.toString());
+            this.audioCall.appendDataToPage(this.group.toString(), this.page);
             this.spinner.createPage();
 
         })

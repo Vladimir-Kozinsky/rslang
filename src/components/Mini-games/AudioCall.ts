@@ -1,12 +1,12 @@
 import App from '../App';
 import Container from '../Container/Container';
-import { AudioCallData } from './../interfaces/interfaces';
-import Word from "../interfaces/interfaces";
+import { AudioCallData , IObj, IStatisticsOptions, Word } from '../types';
 import GamesApi from "./gamesApi";
 import MiniGames from './MiniGames';
 import UserAccountApi from '../Api/UserAccountApi';
-import { IObj, IStatisticsOptions } from '../types';
+
 import ApiData from '../Api/ApiData';
+import BurgerMenuForNav from '../BurgerMenu/burgerMenuForNav';
 
 
 class AudioCall {
@@ -81,7 +81,7 @@ class AudioCall {
 
       // create additional words if they are not enough
       if(wordsArr.length < 15 && +randomPage > 0) {
-        const additionalWords: Word[] = await api.getWords(difficulty, (+randomPage - 1).toString());
+        const additionalWords: Word[] = (await api.getUserAggregatedWords(ApiData.userId, token, difficulty, (+randomPage - 1).toString()))[0].paginatedResults;
         for (let i = 0; i < 20 - wordsArr.length; i += 1) {
           wordsArr.push(additionalWords[i])
         }
@@ -278,7 +278,9 @@ class AudioCall {
         document.removeEventListener('keydown', controlFromKeyboard);
         document.removeEventListener('keydown', switchToNextWord);
         for (let i = 0; i < getData.length; i += 1) {
-          api.createUpdateUserWord(ApiData.userId, token, getData[i].wordId!, getData[i], 'hard')
+          if(!getData[i].isTrue) getData[i].guessedRight = 0;
+          if(getData[i].guessedRight! >= 3) api.createUpdateUserWord(ApiData.userId, token, getData[i].wordId!, getData[i], 'easy')
+          else api.createUpdateUserWord(ApiData.userId, token, getData[i].wordId!, getData[i], 'hard');
         }
 
         let streaksArr: number[][] = [];
@@ -410,6 +412,8 @@ class AudioCall {
     ) as HTMLDivElement;
     const app = new App();
     const container = new Container();
+    const burgerMenu = new BurgerMenuForNav();
+    burgerMenu.createBurgerMenu();
 
     const containerBlock = document.querySelector('.container') as HTMLDivElement;
     containerBlock.prepend(container.createMenu());

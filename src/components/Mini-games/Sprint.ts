@@ -1,9 +1,9 @@
 import ApiData from '../Api/ApiData';
 import UserAccountApi from '../Api/UserAccountApi';
 import App from '../App';
+import BurgerMenuForNav from '../BurgerMenu/burgerMenuForNav';
 import Container from '../Container/Container';
-import Word from '../interfaces/interfaces';
-import { IObj, IStatisticsOptions } from '../types';
+import  { IObj, IStatisticsOptions, Word } from '../types';
 import GamesApi from './gamesApi';
 import MiniGames from './MiniGames';
 
@@ -113,7 +113,7 @@ class Sprint {
 
     // create additional words if they are not enough
     if(wordsArr.length < 15 && +randomPage > 0) {
-      const additionalWords: Word[] = await api.getWords(difficulty, (+randomPage - 1).toString());
+      const additionalWords: Word[] = (await api.getUserAggregatedWords(ApiData.userId, token, difficulty, (+randomPage - 1).toString()))[0].paginatedResults;
       for (let i = 0; i < 20 - wordsArr.length; i += 1) {
         wordsArr.push(additionalWords[i])
       }
@@ -220,9 +220,12 @@ class Sprint {
       if (time.textContent === '0') {
         clearInterval(timeToStop);
         for (let i = 0; i < currentIndex; i += 1) {
-          clonedArr[i].guessedRight = clonedArr[i].userWord?.optional.wordData.guessedRight 
+          clonedArr[i].guessedRight = clonedArr[i].userWord?.optional.wordData.guessedRight; 
           delete clonedArr[i].userWord;
-          api.createUpdateUserWord(ApiData.userId, token, clonedArr[i]._id!, clonedArr[i], 'hard');
+          // if user made mistake in word change guessedRight to 0
+          if(!clonedArr[i].isTrue) clonedArr[i].guessedRight = 0;
+          if(clonedArr[i].guessedRight! >= 3) api.createUpdateUserWord(ApiData.userId, token, clonedArr[i]._id!, clonedArr[i], 'easy')
+          else api.createUpdateUserWord(ApiData.userId, token, clonedArr[i]._id!, clonedArr[i], 'hard');
         }
         this.createResultsPage(+points.textContent!, correctAnswers, inCorrectAnswers);
       }
@@ -249,8 +252,10 @@ class Sprint {
         for (let i = 0; i < clonedArr.length; i += 1) {
           clonedArr[i].guessedRight = clonedArr[i].userWord?.optional.wordData.guessedRight 
           delete clonedArr[i].userWord;
-          api.createUpdateUserWord(ApiData.userId, token, clonedArr[i]._id!, clonedArr[i], 'hard');
-        }
+          // if user made mistake in word change guessedRight to 0
+          if(!clonedArr[i].isTrue) clonedArr[i].guessedRight = 0;
+          if(clonedArr[i].guessedRight! >= 3) api.createUpdateUserWord(ApiData.userId, token, clonedArr[i]._id!, clonedArr[i], 'easy')
+          else api.createUpdateUserWord(ApiData.userId, token, clonedArr[i]._id!, clonedArr[i], 'hard');        }
       }
       // eslint-disable-next-line default-case
       switch (keyName) {
@@ -349,7 +354,10 @@ class Sprint {
         for (let i = 0; i < clonedArr.length; i += 1) {
           clonedArr[i].guessedRight = clonedArr[i].userWord?.optional.wordData.guessedRight 
           delete clonedArr[i].userWord;
-          api.createUpdateUserWord(ApiData.userId, token, clonedArr[i]._id!, clonedArr[i], 'hard');
+          // if user made mistake in word change guessedRight to 0
+          if(!clonedArr[i].isTrue) clonedArr[i].guessedRight = 0;
+          if(clonedArr[i].guessedRight! >= 3) api.createUpdateUserWord(ApiData.userId, token, clonedArr[i]._id!, clonedArr[i], 'easy')
+          else api.createUpdateUserWord(ApiData.userId, token, clonedArr[i]._id!, clonedArr[i], 'hard');
         }
         callStatistics();
         document.removeEventListener('keydown', controlFromKeyboard);
@@ -365,6 +373,7 @@ class Sprint {
             wordAudio: clonedArr[currentIndex].audio,
             guessedRight: clonedArr[currentIndex].guessedRight
           });
+          falseAnswerAudio.play();
           clonedArr[currentIndex].isTrue = false;
           currentIndex += 1;
           word.textContent = clonedArr[currentIndex].word;
@@ -376,6 +385,7 @@ class Sprint {
             wordAudio: clonedArr[currentIndex].audio,
             guessedRight: clonedArr[currentIndex].guessedRight
           });
+          trueAnswerAudio.play();
           clonedArr[currentIndex].isTrue = true;
           if(clonedArr[currentIndex].userWord) {
             clonedArr[currentIndex].userWord!.optional!.wordData!.guessedRight! += 1;
@@ -394,6 +404,7 @@ class Sprint {
             wordAudio: clonedArr[currentIndex].audio,
             guessedRight: clonedArr[currentIndex].guessedRight
           });
+          trueAnswerAudio.play();
           clonedArr[currentIndex].isTrue = true;
           if(clonedArr[currentIndex].userWord) {
             clonedArr[currentIndex].userWord!.optional!.wordData!.guessedRight! += 1;
@@ -410,6 +421,7 @@ class Sprint {
             wordAudio: clonedArr[currentIndex].audio,
             guessedRight: clonedArr[currentIndex].guessedRight
           });
+          falseAnswerAudio.play();
           clonedArr[currentIndex].isTrue = false;
           currentIndex += 1;
           word.textContent = clonedArr[currentIndex].word;
@@ -424,6 +436,8 @@ class Sprint {
     correctAnswers: { word: string; wordTranslate: string; wordAudio: string }[],
     inCorrectAnswers: { word: string; wordTranslate: string; wordAudio: string }[]
   ) {
+    const burgerMenu = new BurgerMenuForNav();
+    burgerMenu.createBurgerMenu();
     const content = document.querySelector('.container__content') as HTMLDivElement;
     const containerBlock = document.querySelector('.container') as HTMLDivElement;
     const app = new App();
