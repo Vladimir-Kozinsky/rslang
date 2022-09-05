@@ -373,6 +373,7 @@ class Sprint {
             wordAudio: clonedArr[currentIndex].audio,
             guessedRight: clonedArr[currentIndex].guessedRight
           });
+          falseAnswerAudio.play();
           clonedArr[currentIndex].isTrue = false;
           currentIndex += 1;
           word.textContent = clonedArr[currentIndex].word;
@@ -384,6 +385,7 @@ class Sprint {
             wordAudio: clonedArr[currentIndex].audio,
             guessedRight: clonedArr[currentIndex].guessedRight
           });
+          trueAnswerAudio.play();
           clonedArr[currentIndex].isTrue = true;
           if(clonedArr[currentIndex].userWord) {
             clonedArr[currentIndex].userWord!.optional!.wordData!.guessedRight! += 1;
@@ -402,6 +404,7 @@ class Sprint {
             wordAudio: clonedArr[currentIndex].audio,
             guessedRight: clonedArr[currentIndex].guessedRight
           });
+          trueAnswerAudio.play();
           clonedArr[currentIndex].isTrue = true;
           if(clonedArr[currentIndex].userWord) {
             clonedArr[currentIndex].userWord!.optional!.wordData!.guessedRight! += 1;
@@ -418,6 +421,7 @@ class Sprint {
             wordAudio: clonedArr[currentIndex].audio,
             guessedRight: clonedArr[currentIndex].guessedRight
           });
+          falseAnswerAudio.play();
           clonedArr[currentIndex].isTrue = false;
           currentIndex += 1;
           word.textContent = clonedArr[currentIndex].word;
