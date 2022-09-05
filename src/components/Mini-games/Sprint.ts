@@ -98,7 +98,6 @@ class Sprint {
 
   async createWordsForGame(difficulty: string, page: number = -1) {
     const api = new GamesApi();
-    const token: string = localStorage.getItem('token')!;
     let randomPage: string;
 
     // if game launched from menu choose random page
@@ -108,12 +107,12 @@ class Sprint {
     let wordsArr: Word[];
 
     // check is user guest or registered
-    if(ApiData.userIsAuth) wordsArr = (await api.getUserAggregatedWords(ApiData.userId, token, difficulty, randomPage))[0].paginatedResults;
+    if(ApiData.userIsAuth) wordsArr = (await api.getUserAggregatedWords(ApiData.userId, ApiData.token, difficulty, randomPage))[0].paginatedResults;
     else wordsArr = await api.getWords(difficulty, randomPage);
 
     // create additional words if they are not enough
     if(wordsArr.length < 15 && +randomPage > 0) {
-      const additionalWords: Word[] = (await api.getUserAggregatedWords(ApiData.userId, token, difficulty, (+randomPage - 1).toString()))[0].paginatedResults;
+      const additionalWords: Word[] = (await api.getUserAggregatedWords(ApiData.userId, ApiData.token, difficulty, (+randomPage - 1).toString()))[0].paginatedResults;
       for (let i = 0; i < 20 - wordsArr.length; i += 1) {
         wordsArr.push(additionalWords[i])
       }
