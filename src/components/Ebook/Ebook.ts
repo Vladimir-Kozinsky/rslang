@@ -73,6 +73,34 @@ class Ebook {
         ebook.append(await this.drawWords());
 
         container.append(ebook);
+
+        const footer = document.createElement('footer');
+        footer.classList.add('footer');
+        footer.insertAdjacentHTML(
+            'afterbegin',
+            `
+            <span class="footer__copyright">© 2022</span>
+            <ul class="developers-social-list">
+                <li class="developers-social-item">
+                    <a href="https://github.com/Vladimir-Kozinsky" class="developers-social-item__link">Vladimir-Kozinsky</a>
+                </li>
+
+                <li class="developers-social-item">
+                    <a href="https://github.com/ShahzodK" class="developers-social-item__link">ShahzodK</a>
+                </li>
+
+                <li class="developers-social-item">
+                    <a href="https://github.com/ScaronTr" class="developers-social-item__link">ScaronTr</a>
+                </li>
+            </ul>
+            <a href="https://rs.school/js/" class="school-link">
+                <svg class="school-link__icon-wrapper">
+                    <use href="./assets/img/svg/sprite.svg#rss-logo" class="school-link__icon"></use>
+                </svg>
+            </a>
+            `
+            );
+        container.append(footer);
     }
 
     async drawWords(group: number = this.group, page: number = this.page) {
