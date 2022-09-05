@@ -99,6 +99,34 @@ class Statistics {
         const drawGuestUserView = this.drawGuestUserView.bind(this);
         const drawAuthUserView = this.drawAuthUserView.bind(this);
         this.authController.getStartScreen(drawGuestUserView, drawAuthUserView);
+
+        const footer = document.createElement('footer');
+        footer.classList.add('footer');
+        footer.insertAdjacentHTML(
+            'afterbegin',
+            `
+            <span class="footer__copyright">© 2022</span>
+            <ul class="developers-social-list">
+                <li class="developers-social-item">
+                    <a href="https://github.com/Vladimir-Kozinsky" class="developers-social-item__link">Vladimir-Kozinsky</a>
+                </li>
+
+                <li class="developers-social-item">
+                    <a href="https://github.com/ShahzodK" class="developers-social-item__link">ShahzodK</a>
+                </li>
+
+                <li class="developers-social-item">
+                    <a href="https://github.com/ScaronTr" class="developers-social-item__link">ScaronTr</a>
+                </li>
+            </ul>
+            <a href="https://rs.school/js/" class="school-link">
+                <svg class="school-link__icon-wrapper">
+                    <use href="./assets/img/svg/sprite.svg#rss-logo" class="school-link__icon"></use>
+                </svg>
+            </a>
+            `
+            );
+        container.append(footer);
     }
 
     // eslint-disable-next-line @typescript-eslint/no-shadow
@@ -288,10 +316,8 @@ class Statistics {
         signInButton.textContent = 'Войти';
         userInfoBlock.append(signInButton);
 
-        const logOutButton = document.querySelector('.middleBlock__logout-button');
-        if (logOutButton) {
-            logOutButton.remove();
-        }
+        const logoutNavItem = document.getElementById('logout');
+        if (logoutNavItem) logoutNavItem.remove();
 
         Object.assign(this.elements, {
             signInButton,
@@ -331,17 +357,32 @@ class Statistics {
         const logoutNavItem = document.getElementById('logout');
         if (logoutNavItem) logoutNavItem.remove();
 
-        const navList = document.querySelector('.nav__list') as HTMLElement;
-        const navItem = document.createElement('li') as HTMLLIElement;
-        navItem.classList.add('nav__item');
-        navItem.id = 'logout';
+        let logOutButton: HTMLButtonElement;
 
-        const middle = document.createElement('div') as HTMLDivElement;
-        middle.className = 'middleBlock';
-
-        const menuIcon = document.createElement('img') as HTMLImageElement;
-        menuIcon.className = 'middleBlock__icon';
-        menuIcon.src = `./assets/img/svg/exitIcon.svg`;
+        const logOutButtonFromNav: HTMLButtonElement | null = document.querySelector('.middleBlock__logout-button');
+        if (!logOutButtonFromNav) {
+            const navList = document.querySelector('.nav__list') as HTMLElement;
+            const navItem = document.createElement('li') as HTMLLIElement;
+            navItem.classList.add('nav__item');
+            navItem.id = 'logout';
+      
+            const middle = document.createElement('div') as HTMLDivElement;
+            middle.className = 'middleBlock';
+      
+            const menuIcon = document.createElement('img') as HTMLImageElement;
+            menuIcon.className = 'middleBlock__icon';
+            menuIcon.src = `./assets/img/svg/exitIcon.svg`;
+      
+            const logOutButtonCreated = document.createElement('button') as HTMLButtonElement;
+            logOutButtonCreated.classList.add('middleBlock__logout-button');
+            logOutButtonCreated.textContent = 'Выйти';
+      
+            logOutButtonCreated.append(menuIcon);
+            middle.append(logOutButtonCreated);
+            navItem.append(middle)
+            navList.append(navItem);
+            logOutButton = logOutButtonCreated;
+        } else logOutButton = logOutButtonFromNav;
 
         const userName = document.createElement('h4') as HTMLHeadingElement;
         userName.className = 'info-block__name';
@@ -350,10 +391,6 @@ class Statistics {
         const userEmail = document.createElement('h4') as HTMLHeadingElement;
         userEmail.className = 'info-block__email';
         userEmail.textContent = ApiData.userEmail ? ApiData.userEmail : '-';
-
-        const logOutButton = document.createElement('button') as HTMLButtonElement;
-        logOutButton.classList.add('middleBlock__logout-button');
-        logOutButton.textContent = 'Выйти';
 
         const userStatsCont = document.createElement('div') as HTMLDivElement;
         userStatsCont.className = 'user-stats__container';
@@ -379,11 +416,6 @@ class Statistics {
         userInfoBlock.append(userName);
         userInfoBlock.append(userEmail);
         userInfoBlock.append(userStatsCont);
-
-        logOutButton.append(menuIcon);
-        middle.append(logOutButton);
-        navItem.append(middle);
-        navList.append(navItem);
 
         return logOutButton;
     }

@@ -73,6 +73,34 @@ class Ebook {
         ebook.append(await this.drawWords());
 
         container.append(ebook);
+
+        const footer = document.createElement('footer');
+        footer.classList.add('footer');
+        footer.insertAdjacentHTML(
+            'afterbegin',
+            `
+            <span class="footer__copyright">© 2022</span>
+            <ul class="developers-social-list">
+                <li class="developers-social-item">
+                    <a href="https://github.com/Vladimir-Kozinsky" class="developers-social-item__link">Vladimir-Kozinsky</a>
+                </li>
+
+                <li class="developers-social-item">
+                    <a href="https://github.com/ShahzodK" class="developers-social-item__link">ShahzodK</a>
+                </li>
+
+                <li class="developers-social-item">
+                    <a href="https://github.com/ScaronTr" class="developers-social-item__link">ScaronTr</a>
+                </li>
+            </ul>
+            <a href="https://rs.school/js/" class="school-link">
+                <svg class="school-link__icon-wrapper">
+                    <use href="./assets/img/svg/sprite.svg#rss-logo" class="school-link__icon"></use>
+                </svg>
+            </a>
+            `
+            );
+        container.append(footer);
     }
 
     async drawWords(group: number = this.group, page: number = this.page) {
@@ -292,15 +320,28 @@ class Ebook {
         wordTranslate.textContent = item.transcription;
         wordBlockInfo.append(wordTranslate);
 
-        const voiceIcon = document.createElement('img') as HTMLImageElement;
+        const voiceIcon = document.createElement('button') as HTMLButtonElement;
+        const voiceImg = document.createElement('img') as HTMLImageElement;
+        voiceImg.className = 'info-block__voice-icon__img'
+        voiceImg.src = '../../assets/img/svg/voice-icon.svg';
+        voiceIcon.append(voiceImg);
         voiceIcon.className = 'info-block__voice-icon';
-        voiceIcon.src = '../../assets/img/svg/voice-icon.svg';
         voiceIcon.addEventListener('click', () => {
-            const audio = new Audio(`${ApiData.basePath}/${item.audioExample}`);
-            voiceIcon.src = '../../assets/img/svg/voice-icon-active.svg'
+            const audio = new Audio(`${ApiData.basePath}/${item.audio}`);
             audio.play();
+            voiceIcon.disabled = true;
+            voiceImg.src = '../../assets/img/svg/voice-icon-active.svg';
             audio.onended = () => {
-                voiceIcon.src = '../../assets/img/svg/voice-icon.svg'
+                const audioExample = new Audio(`${ApiData.basePath}/${item.audioExample}`)
+                audioExample.play();
+                audioExample.onended = () => {
+                    const audioMeaning = new Audio(`${ApiData.basePath}/${item.audioMeaning}`);
+                    audioMeaning.play();
+                    audioMeaning.onended = () => {
+                        voiceIcon.disabled = false;
+                        voiceImg.src = '../../assets/img/svg/voice-icon.svg';
+                    }
+                }
             }
         })
         wordBlockInfo.append(voiceIcon);
@@ -542,7 +583,7 @@ class Ebook {
         lastPageBtn.addEventListener('click', () => {
             if (this.group === 6) {
                 const totalPages = Math.floor(this.difficultWords.length / 22) + 1;
-                if (this.page !== totalPages - 1 ) {
+                if (this.page !== totalPages - 1) {
                     this.drawDifficultWords(totalPages);
                     page.textContent = totalPages.toString();
                     this.page = totalPages - 1;
