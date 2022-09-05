@@ -6,6 +6,7 @@ import MiniGames from './MiniGames';
 import UserAccountApi from '../Api/UserAccountApi';
 
 import ApiData from '../Api/ApiData';
+import BurgerMenuForNav from '../BurgerMenu/burgerMenuForNav';
 
 
 class AudioCall {
@@ -410,6 +411,8 @@ class AudioCall {
     ) as HTMLDivElement;
     const app = new App();
     const container = new Container();
+    const burgerMenu = new BurgerMenuForNav();
+    burgerMenu.createBurgerMenu();
 
     const containerBlock = document.querySelector('.container') as HTMLDivElement;
     containerBlock.prepend(container.createMenu());

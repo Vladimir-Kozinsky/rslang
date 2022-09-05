@@ -1,6 +1,7 @@
 import ApiData from '../Api/ApiData';
 import UserAccountApi from '../Api/UserAccountApi';
 import App from '../App';
+import BurgerMenuForNav from '../BurgerMenu/burgerMenuForNav';
 import Container from '../Container/Container';
 import  { IObj, IStatisticsOptions, Word } from '../types';
 import GamesApi from './gamesApi';
@@ -426,6 +427,8 @@ class Sprint {
     correctAnswers: { word: string; wordTranslate: string; wordAudio: string }[],
     inCorrectAnswers: { word: string; wordTranslate: string; wordAudio: string }[]
   ) {
+    const burgerMenu = new BurgerMenuForNav();
+    burgerMenu.createBurgerMenu();
     const content = document.querySelector('.container__content') as HTMLDivElement;
     const containerBlock = document.querySelector('.container') as HTMLDivElement;
     const app = new App();

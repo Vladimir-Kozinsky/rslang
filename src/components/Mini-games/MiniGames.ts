@@ -2,6 +2,7 @@ import Sprint from './Sprint';
 import AudioCall from './AudioCall';
 import Container from '../Container/Container';
 import Spinner from '../Spinner/spinner';
+import BurgerMenuForNav from '../BurgerMenu/burgerMenuForNav';
 
 class MiniGames {
   createCarts(imgName: string, title: string, description: string, gameName: string) {
@@ -24,7 +25,6 @@ class MiniGames {
     cart.append(cartIcon);
     cart.append(cartTitle);
     cart.append(cartDescription);
-    console.log(document.querySelectorAll('.games__title') );
 
     if (document.querySelector('.games-cart__container') == null) {
       cartContainer = document.createElement('div');
@@ -35,7 +35,7 @@ class MiniGames {
       cartContainer = document.querySelector('.games-cart__container')!;
       content?.append(cartContainer!);
       cartContainer!.append(cart);
-    }
+    };
   }
 
   createTitle() {
@@ -75,6 +75,8 @@ class MiniGames {
 
   createStartPage(title: string, desc: string, gameName: string) {
     const content = document.querySelector('.container__content') as HTMLDivElement;
+    const menuBurger = document.querySelector('.menu-burger__container') as HTMLDivElement;
+    if(menuBurger) menuBurger.remove();
 
     const sprint = new Sprint();
     const audioCall = new AudioCall();
@@ -172,6 +174,8 @@ class MiniGames {
     const container = new Container();
     
     content.innerHTML = '';
+    const burgerMenu = new BurgerMenuForNav();
+    burgerMenu.createBurgerMenu();
     this.createCarts('headphones.png', 'Аудиовызов', 'Улучшите свои навыки прослушивания с помощью игры Аудиовызов. ', 'audioChallenge');
     this.createCarts('sneaker.png', 'Спринт', 'Тренируйте навыки быстрого перевода с игрой Спринт.', 'sprint');
     if(!containerBlock.children[0].classList.contains('container__menu')) {

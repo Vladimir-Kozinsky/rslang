@@ -5,6 +5,7 @@ import AuthController from './Auth/AuthController';
 import ApiData from './Api/ApiData';
 import Ebook from './Ebook/Ebook';
 import Statistics from './Statistics/Statistics';
+import BurgerMenuForNav from './BurgerMenu/burgerMenuForNav';
 
 class App {
   mainPageController: MainPageController;
@@ -35,6 +36,8 @@ class App {
     const body = document.querySelector('body') as HTMLBodyElement;
     const container = new Container();
     body.append(container.createContainer());
+    const burgerMenu = new BurgerMenuForNav();
+    burgerMenu.createBurgerMenu();
   }
 
   switchToAnotherPage() {
