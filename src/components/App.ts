@@ -54,8 +54,8 @@ class App {
 
     nav?.addEventListener('click', (e: Event) => {
       const target = e.target as HTMLLinkElement;
-      if (target.tagName !== 'A') return
       const link = target.parentNode?.parentNode as HTMLLIElement;
+      if (target.tagName !== 'A' || link.classList.contains('active')) return
       const content = document.querySelector('.container__content') as HTMLDivElement;
       switch (target.textContent) {
         case 'Личный кабинет':
@@ -98,7 +98,7 @@ class App {
   }
 
   setMainPageMenuSwitcher(): void {
-    const { menuList, sectionWelcomeStartButton} = this.mainPageController.view.elements.htmlElements;
+    const { menuList, sectionWelcomeStartButton } = this.mainPageController.view.elements.htmlElements;
     const { book, vocabulary, games, statistics } = this.mainPageController.view.pageLinks;
 
     menuList.onclick = (event) => {
