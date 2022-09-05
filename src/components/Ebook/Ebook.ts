@@ -320,15 +320,28 @@ class Ebook {
         wordTranslate.textContent = item.transcription;
         wordBlockInfo.append(wordTranslate);
 
-        const voiceIcon = document.createElement('img') as HTMLImageElement;
+        const voiceIcon = document.createElement('button') as HTMLButtonElement;
+        const voiceImg = document.createElement('img') as HTMLImageElement;
+        voiceImg.className = 'info-block__voice-icon__img'
+        voiceImg.src = '../../assets/img/svg/voice-icon.svg';
+        voiceIcon.append(voiceImg);
         voiceIcon.className = 'info-block__voice-icon';
-        voiceIcon.src = '../../assets/img/svg/voice-icon.svg';
         voiceIcon.addEventListener('click', () => {
-            const audio = new Audio(`${ApiData.basePath}/${item.audioExample}`);
-            voiceIcon.src = '../../assets/img/svg/voice-icon-active.svg'
+            const audio = new Audio(`${ApiData.basePath}/${item.audio}`);
             audio.play();
+            voiceIcon.disabled = true;
+            voiceImg.src = '../../assets/img/svg/voice-icon-active.svg';
             audio.onended = () => {
-                voiceIcon.src = '../../assets/img/svg/voice-icon.svg'
+                const audioExample = new Audio(`${ApiData.basePath}/${item.audioExample}`)
+                audioExample.play();
+                audioExample.onended = () => {
+                    const audioMeaning = new Audio(`${ApiData.basePath}/${item.audioMeaning}`);
+                    audioMeaning.play();
+                    audioMeaning.onended = () => {
+                        voiceIcon.disabled = false;
+                        voiceImg.src = '../../assets/img/svg/voice-icon.svg';
+                    }
+                }
             }
         })
         wordBlockInfo.append(voiceIcon);
@@ -570,7 +583,7 @@ class Ebook {
         lastPageBtn.addEventListener('click', () => {
             if (this.group === 6) {
                 const totalPages = Math.floor(this.difficultWords.length / 22) + 1;
-                if (this.page !== totalPages - 1 ) {
+                if (this.page !== totalPages - 1) {
                     this.drawDifficultWords(totalPages);
                     page.textContent = totalPages.toString();
                     this.page = totalPages - 1;

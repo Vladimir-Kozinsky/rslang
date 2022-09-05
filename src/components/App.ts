@@ -53,11 +53,16 @@ class App {
     }
 
     nav?.addEventListener('click', (e: Event) => {
+      const body = document.body;
       const target = e.target as HTMLLinkElement;
-      if (target.tagName !== 'A') return
       const link = target.parentNode?.parentNode as HTMLLIElement;
+      if (target.tagName !== 'A' || link.classList.contains('active')) return
       const content = document.querySelector('.container__content') as HTMLDivElement;
       switch (target.textContent) {
+        case 'Главная страница':
+          body.innerHTML = '';
+          this.drawMainPage();
+          break;
         case 'Личный кабинет':
           content.innerHTML = '';
           clearActivLink();
@@ -82,15 +87,6 @@ class App {
           link.classList.add('active');
           this.drawEbook();
           break;
-        case 'Настройки':
-          content.innerHTML = '';
-          clearActivLink();
-          link.classList.add('active');
-          break;
-        case 'Выход':
-          content.innerHTML = '';
-          break;
-
         default:
           break;
       }
@@ -98,7 +94,7 @@ class App {
   }
 
   setMainPageMenuSwitcher(): void {
-    const { menuList, sectionWelcomeStartButton} = this.mainPageController.view.elements.htmlElements;
+    const { menuList, sectionWelcomeStartButton } = this.mainPageController.view.elements.htmlElements;
     const { book, vocabulary, games, statistics } = this.mainPageController.view.pageLinks;
 
     menuList.onclick = (event) => {
@@ -114,7 +110,7 @@ class App {
           if (target === book) {
             this.drawEbook();
           } else if (target === vocabulary) {
-            // to do
+            this.vocabulary.drawVocabulary();
           } else if (target === games) {
             this.drawMiniGames();
           } else if (target === statistics) {

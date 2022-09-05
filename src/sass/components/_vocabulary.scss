@@ -82,7 +82,6 @@
 }
 
 .vocabulary-pagenator {
-    width: 40px;
     margin: 15px auto;
 
     .vocabulary-pagenator__page {
@@ -130,4 +129,17 @@
     justify-content: center;
     height: 93%;
     overflow-y: auto;
+}
+
+@media only screen and (max-width: 480px) {
+    .vocabulary {
+        margin: 50px 3px 0px 3px;
+        .difficult-tab {
+            width: 150px;
+        }
+        .learned-tab {
+            width: 150px;
+            left: 130px
+        }
+    }
 }
