@@ -24,9 +24,11 @@
     display: flex;
     align-items: center;
     transition: all 0.2s;
+
     &:hover {
         cursor: pointer;
         border: 3px solid hsl(250, 25%, 80%);
+
         .sprint-game__title,
         .audioCall-game__title {
             color: hsl(250, 25%, 80%);
@@ -54,75 +56,86 @@
 }
 
 .pagenator {
-    width: 100px;
+    width: 275px;
     height: 10px;
     display: flex;
     align-items: center;
     position: relative;
 }
+
 .pagenator__page {
+    position: relative;
+    left: 120px;
     width: 30px;
     text-align: center;
     font-size: 22px;
     font-weight: 700;
     color: white;
 }
+
 .pagenator__page-btn {
     filter: grayscale(70%);
     height: 25px;
     position: absolute;
     transition: all 0.2s;
+
     &:hover {
         cursor: pointer;
         height: 30px;
     }
 }
+
 .pagenator__page-btn__first {
-    left: -75px;
+    left: 50px;
 
     &:hover {
-        left: -77px;
+        left: 48px;
     }
 }
 
 .pagenator__page-btn__prev {
-    left: -30px;
+    left: 95px;
+
     &:hover {
-        left: -32px;
+        left: 93px;
     }
 }
 
 .pagenator__page-btn__next {
     transform: rotate(180deg);
-    left: 45px;
+    left: 160px;
+
     &:hover {
-        left: 43px;
+        left: 158px;
     }
 }
 
 .pagenator__page-btn__last {
-    left: 70px;
+    left: 188px;
+
     &:hover {
-        left: 68px;
+        left: 186px;
     }
 }
 
 .header-menu {
     position: relative;
-    width: 60px;
+    width: 275px;
 }
 
 .header-menu__items {
     position: relative;
     z-index: 20;
     top: -18px;
-    left: -60px;
+    //left: -95px;
     display: flex;
     flex-direction: column;
     align-items: center;
     transition: all 0.3s;
+
     &.active {
         top: 140px;
+
         .header-menu__item {
             position: relative;
             display: flex;
@@ -139,18 +152,22 @@
         position: absolute;
         display: none;
         transition: all 0.3s;
+
         .header-menu__item__link {
             transition: all 0.2s;
             color: rgb(236, 238, 255);
             font-size: 14px;
-        font-weight: 700;
+            font-weight: 700;
         }
+
         &:hover {
             cursor: pointer;
+
             .header-menu__item__link {
                 font-size: 16px;
             }
         }
+
         &.active {
             display: flex;
         }
@@ -192,6 +209,7 @@
     margin-top: 10px;
     margin-left: 10px;
     transition: all 0.2s;
+
     &:hover {
         cursor: pointer;
         border: 3px solid hsl(250, 25%, 80%);
@@ -202,6 +220,7 @@
 .word-block__img-wrap {
     height: 200px;
     overflow: hidden;
+
     img {
         width: 100%;
     }
@@ -228,6 +247,7 @@
     font-size: 18px;
     font-weight: 700;
 }
+
 .info-block__word-transcript {
     color: white;
     font-size: 18px;
@@ -240,6 +260,7 @@
     margin-left: 15px;
     position: relative;
     top: 8px;
+
     &:hover {
         cursor: pointer;
     }
@@ -252,10 +273,50 @@
     margin-top: 5px;
     font-size: 14px;
 }
+
 .info-block__text-example {
     color: white;
 }
 
 .info-block__text-meaning {
     font-style: italic;
+}
+
+@media only screen and (max-width: 870px) {
+    .ebook-header {
+        flex-direction: column;
+        justify-content: flex-start;
+        gap: 20px;
+        height: 130px;
+        width: 400px;
+
+        .header-menu__items {
+            top: 0px;
+        }
+    }
+}
+
+@media only screen and (max-width: 480px) {
+    .ebook-header {
+        gap: 20px;
+        height: 130px;
+        width: 300px;
+
+        .header-menu__items {
+            top: 0px;
+        }
+    }
+
+    .ebook__words {
+        padding: 20px 0px;
+    }
+
+    .word-block {
+        color: white;
+        width: 300px;
+        height: 350px;
+
+    }
+
+
 }
