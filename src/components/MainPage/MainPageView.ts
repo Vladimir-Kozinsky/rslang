@@ -208,25 +208,25 @@ export default class MainPageView extends ElementCreator {
       `
             <li class="developers-item">
               <div class="developers-item__image"></div>
-              <h3 class="developers-item__name">Имя + фамилия</h3>
+              <h3 class="developers-item__name">Козинский Владимир</h3>
               <p class="developers-item__text">
-                Вклад в проект
+                <i>Teamlead</i>. Автор учебника. Помогает Вам следить за прогрессом. Наполняет словарь 
               </p>
             </li>
 
             <li class="developers-item">
               <div class="developers-item__image"></div>
-              <h3 class="developers-item__name">Имя + фамилия</h3>
+              <h3 class="developers-item__name">Каххоров Шахзод</h3>
               <p class="developers-item__text">
-                Вклад в проект
+                Наш геймдев и главный поставщик слов. Сотворил аудиовызов и спринт
               </p>
             </li>
 
             <li class="developers-item">
               <div class="developers-item__image"></div>
-              <h3 class="developers-item__name">Имя + фамилия</h3>
+              <h3 class="developers-item__name">Олещенко Дмитрий</h3>
               <p class="developers-item__text">
-                Вклад в проект
+                Создатель главной страницы. Отвечает за хранение логинов и паролей
               </p>
             </li>
             `

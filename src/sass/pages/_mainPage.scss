@@ -171,20 +171,13 @@
           width: 120px;
           height: 120px;
           margin-bottom: 35px;
-          border: 2px solid $color-text-dark;
+          outline: 2px solid $color-text-dark;
+          outline-offset: 3px;
           border-radius: 50%;
 
-          background: url("../assets/img/svg/user-male.svg"),
-            conic-gradient(
-              from 180deg at 50% 50%,
-              #ffbda4 -0.12deg,
-              #8df0ff 133.98deg,
-              #ff8cc3 232.5deg,
-              #ffbda4 359.88deg,
-              #8df0ff 493.98deg
-            );
           background-position: center;
           background-repeat: no-repeat;
+          background-size: cover;
         }
 
         .developers-item__name {
@@ -195,6 +188,29 @@
 
         .developers-item__text {
           font-size: 20px;
+          text-align: center;
+
+          i {
+            color: $color-active-link;
+          }
+        }
+
+        &:nth-child(1) {
+          .developers-item__image {
+            background-image: url("../assets/img/jpeg/vladimir.jpg");
+          }
+        }
+
+        &:nth-child(2) {
+          .developers-item__image {
+            background-image: url("../assets/img/jpeg/shahzod.jpg");
+          }
+        }
+
+        &:nth-child(3) {
+          .developers-item__image {
+            background-image: url("../assets/img/jpeg/dima.jpg");
+          }
         }
       }
     }
